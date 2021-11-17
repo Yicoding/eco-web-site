@@ -4,7 +4,7 @@ const pkg = require('./package.json');
 
 const publicPath =
   process.env.NODE_ENV === 'production'
-    ? `https://yicoding.github.io/eco-web-site/refs/heads/${pkg.branch}/`
+    ? `https://yicoding.github.io/eco-web-site/`
     : '/';
 
 const umiConfig = {
