@@ -6,8 +6,6 @@ nav:
 
 # 文档
 
-## 二级标题
-
 ```
 npm run build
 ```
