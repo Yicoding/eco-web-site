@@ -7,7 +7,7 @@ nav:
 # 文档
 
 ```
-npm run build
+npm run build324324
 ```
 
-Balabala...
+Balabala...1
