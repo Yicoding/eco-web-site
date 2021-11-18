@@ -4,7 +4,7 @@ hero:
   desc: 前端技术站点
   actions:
     - text: 快速开始
-      link: /getting-started
+      link: /base
 features:
   - icon: https://gw.alipayobjects.com/zos/bmw-prod/881dc458-f20b-407b-947a-95104b5ec82b/k79dm8ih_w144_h144.png
     title: 易于学习
@@ -14,6 +14,6 @@ features:
     desc: 涵盖前端常用技术
   - icon: https://gw.alipayobjects.com/zos/bmw-prod/d1ee0c6f-5aed-4a45-a507-339a4bfe076c/k7bjsocq_w144_h144.png
     title: 活跃度高
-    desc: 即使归纳新技术
+    desc: 归纳新技术
 footer: Open-source MIT Licensed | Copyright © 2020<br />
 ---
