@@ -28,7 +28,8 @@ jobs:
     - name: Deploy docs
       uses: JamesIves/github-pages-deploy-action@4.1.6
       with:
-        token: ${{ secrets.ECO_WEB_SITE_TOKEN }}
-        branch: gh-pages
-        folder: site
+        GITHUB_TOKEN: ${{ secrets.ECO_WEB_SITE_TOKEN }}
+        BRANCH: gh-pages
+        FOLDER: site
+        # TARGET_FOLDER: ${{github.ref}}
         target-folder: ${{github.ref}}

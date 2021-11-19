@@ -1,6 +1,6 @@
 import { defineConfig } from 'dumi';
 
-const pkg = require('./package.json');
+import pkg from './package.json';
 
 const publicPath =
   process.env.NODE_ENV === 'production'
