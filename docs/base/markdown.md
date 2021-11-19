@@ -4,7 +4,7 @@ nav:
   order: 0
 title: MD书写规范
 order: 0
-toc: false
+toc: menu
 ---
 
 # MD 书写规范
