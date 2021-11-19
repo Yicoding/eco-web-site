@@ -31,4 +31,5 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.ECO_WEB_SITE_TOKEN }}
         BRANCH: gh-pages
         FOLDER: site
-        TARGET_FOLDER: ${{github.ref}}
+        # TARGET_FOLDER: ${{github.ref}}
+        TARGET_FOLDER: ref/header/master
