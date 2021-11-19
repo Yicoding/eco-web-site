@@ -1,0 +1,191 @@
+{
+  "menus": {
+    "en-US": {
+      "*": [
+        {
+          "path": "/",
+          "title": "Index",
+          "meta": {}
+        }
+      ],
+      "/interview": [
+        {
+          "path": "/interview",
+          "title": "JavaScript 库",
+          "meta": {
+            "order": 0
+          }
+        }
+      ],
+      "/algorithm": [
+        {
+          "path": "/algorithm",
+          "title": "JavaScript 库",
+          "meta": {
+            "order": 0
+          }
+        }
+      ],
+      "/base": [
+        {
+          "title": "Markdown",
+          "path": "/base/markdown",
+          "meta": {
+            "order": 0
+          },
+          "children": [
+            {
+              "path": "/base/markdown/bash",
+              "title": "单行代码块",
+              "meta": {}
+            },
+            {
+              "path": "/base/markdown/block",
+              "title": "Block",
+              "meta": {}
+            },
+            {
+              "path": "/base/markdown/br",
+              "title": "Br",
+              "meta": {}
+            },
+            {
+              "path": "/base/markdown/font",
+              "title": "加粗",
+              "meta": {}
+            },
+            {
+              "path": "/base/markdown/image",
+              "title": "行内式",
+              "meta": {}
+            },
+            {
+              "path": "/base/markdown/link",
+              "title": "行内式",
+              "meta": {}
+            },
+            {
+              "path": "/base/markdown/mark",
+              "title": "Mark",
+              "meta": {}
+            },
+            {
+              "path": "/base/markdown/split",
+              "title": "Split",
+              "meta": {}
+            },
+            {
+              "path": "/base/markdown/table",
+              "title": "Table",
+              "meta": {}
+            },
+            {
+              "path": "/base/markdown/title",
+              "title": "第一种写法",
+              "meta": {}
+            },
+            {
+              "path": "/base/markdown/trans",
+              "title": "Trans",
+              "meta": {}
+            },
+            {
+              "path": "/base/markdown/ul",
+              "title": "无序列表",
+              "meta": {}
+            }
+          ]
+        },
+        {
+          "title": "Javascript",
+          "path": "/base/javascript",
+          "meta": {
+            "order": 1
+          },
+          "children": [
+            {
+              "path": "/base/javascript/type",
+              "title": "数据类型",
+              "meta": {}
+            }
+          ]
+        }
+      ],
+      "/engineering": [
+        {
+          "path": "/engineering",
+          "title": "JavaScript 库",
+          "meta": {
+            "order": 0
+          }
+        }
+      ],
+      "/frame": [
+        {
+          "path": "/frame",
+          "title": "JavaScript 库",
+          "meta": {
+            "order": 0
+          }
+        }
+      ],
+      "/other": [
+        {
+          "path": "/other",
+          "title": "JavaScript 库",
+          "meta": {
+            "order": 0
+          }
+        }
+      ]
+    }
+  },
+  "locales": [
+    {
+      "name": "en-US",
+      "label": "English"
+    }
+  ],
+  "navs": {
+    "en-US": [
+      {
+        "title": "基础",
+        "order": 0,
+        "path": "/base"
+      },
+      {
+        "title": "框架",
+        "order": 1,
+        "path": "/frame"
+      },
+      {
+        "title": "工程化",
+        "order": 2,
+        "path": "/algorithm"
+      },
+      {
+        "title": "算法",
+        "order": 3,
+        "path": "/engineering"
+      },
+      {
+        "title": "面试题",
+        "order": 4,
+        "path": "/interview"
+      },
+      {
+        "title": "其他",
+        "order": 5,
+        "path": "/other"
+      }
+    ]
+  },
+  "title": "eco-web-site",
+  "logo": "https://user-images.githubusercontent.com/9554297/83762004-a0761b00-a6a9-11ea-83b4-9c8ff721d4b8.png",
+  "mode": "site",
+  "repository": {
+    "url": "",
+    "branch": "master"
+  },
+  "theme": {}
+}
