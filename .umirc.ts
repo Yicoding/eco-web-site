@@ -23,6 +23,13 @@ const umiConfig = {
   },
   hash: true,
   // more config: https://d.umijs.org/config
+  navs: [
+    null, // null 值代表保留约定式生成的导航，只做增量配置
+    {
+      title: 'GitHub',
+      path: 'https://github.com/Yicoding/eco-web-site',
+    },
+  ],
 };
 
 export default defineConfig(umiConfig);
