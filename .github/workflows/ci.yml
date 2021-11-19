@@ -32,4 +32,4 @@ jobs:
         BRANCH: gh-pages
         FOLDER: site
         # TARGET_FOLDER: ${{github.ref}}
-        TARGET_FOLDER: ref/header/master
+        target-folder: ${{github.ref}}
