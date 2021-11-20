@@ -4,13 +4,15 @@ nav:
   order: 0
 
 group:
-  title: MD书写规范
+  title: MarkDown
 
 order: 0
 toc: menu
 ---
 
-# MD 书写规范
+# MarkDown
+
+`MarkDown文档编写规范`
 
 ## 1.标题
 
