@@ -38,11 +38,7 @@ title: 数据类型检测
 >
 > > 无法通过对象来获得类名(例如: `typeof ''` 得到的类名是`string`)，只能检测对象是否属于指定的类名(例如: `a instanceof String`)
 
-```jsx
-/**
- * defaultShowCode: true
- */
-
+```js
 var simpleStr = 'This is a simple string';
 var myString = new String();
 var newStr = new String('String created with constructor');
@@ -70,11 +66,7 @@ myDate instanceof String; // 返回 false
 
 > 核心: 原型链的向上查找
 
-```jsx
-/**
- * defaultShowCode: true
- */
-
+```js
 function myInstanceof(left, right) {
   // 基本数据类型直接返回false
   if (typeof left !== 'object' || left === null) return false;
