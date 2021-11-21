@@ -26,10 +26,53 @@ const umiConfig = {
   navs: [
     null, // null 值代表保留约定式生成的导航，只做增量配置
     {
+      title: '框架',
+      children: [
+        {
+          title: 'React',
+          path: 'frame/react',
+        },
+        {
+          title: 'Vue',
+          path: '/frame/vue',
+        },
+      ],
+    },
+    {
       title: 'GitHub',
       path: 'https://github.com/Yicoding/eco-web-site',
     },
   ],
+  menus: {
+    '/frame/react': [
+      {
+        children: [
+          {
+            title: '基础',
+            path: 'base',
+          },
+          {
+            title: 'hooks',
+            path: 'hooks',
+          },
+        ],
+      },
+    ],
+    '/frame/vue': [
+      {
+        children: [
+          {
+            title: '基础',
+            path: 'base',
+          },
+          {
+            title: 'hooks',
+            path: 'hooks',
+          },
+        ],
+      },
+    ],
+  },
 };
 
 export default defineConfig(umiConfig);

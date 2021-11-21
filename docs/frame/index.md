@@ -1,14 +1,6 @@
 ---
 nav:
   title: 框架
-  order: 1
-title: JavaScript 库
-order: 0
-toc: menu
+  path: /frame
+  hide: true
 ---
-
-# JavaScript 库
-
-## React
-
-## Vue
