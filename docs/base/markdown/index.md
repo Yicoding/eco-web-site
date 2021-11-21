@@ -1,18 +1,8 @@
 ---
-nav:
-  title: 基础
-  order: 0
-
-group:
-  title: MarkDown
-
-order: 0
 toc: menu
 ---
 
-# MarkDown
-
-`MarkDown文档编写规范`
+# MarkDown 编写规范
 
 ## 1.标题
 

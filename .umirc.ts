@@ -24,13 +24,26 @@ const umiConfig = {
   hash: true,
   // more config: https://d.umijs.org/config
   navs: [
-    null, // null 值代表保留约定式生成的导航，只做增量配置
+    // null, // null 值代表保留约定式生成的导航，只做增量配置
+    {
+      title: '基础',
+      children: [
+        {
+          title: 'MarkDown',
+          path: '/base/markdown',
+        },
+        {
+          title: 'JavaScript',
+          path: '/base/javascript',
+        },
+      ],
+    },
     {
       title: '框架',
       children: [
         {
           title: 'React',
-          path: 'frame/react',
+          path: '/frame/react',
         },
         {
           title: 'Vue',
@@ -44,15 +57,20 @@ const umiConfig = {
     },
   ],
   menus: {
+    '/base/markdown': [
+      {
+        children: ['base/markdown/index'],
+      },
+    ],
     '/frame/react': [
       {
         children: [
           {
-            title: '基础',
+            title: 'react基础',
             path: 'base',
           },
           {
-            title: 'hooks',
+            title: 'react-router',
             path: 'hooks',
           },
         ],
@@ -62,11 +80,11 @@ const umiConfig = {
       {
         children: [
           {
-            title: '基础',
+            title: 'vue基础',
             path: 'base',
           },
           {
-            title: 'hooks',
+            title: 'vue-router',
             path: 'hooks',
           },
         ],
