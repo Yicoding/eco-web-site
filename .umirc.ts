@@ -29,27 +29,31 @@ const umiConfig = {
       title: '基础',
       children: [
         {
-          title: 'MarkDown',
+          title: 'markdown',
           path: '/base/markdown',
         },
         {
-          title: 'ES5',
-          path: '/base/es5',
+          title: 'js',
+          path: '/base/js',
         },
         {
-          title: 'ES6+',
+          title: 'es6+',
           path: '/base/es6',
         },
         {
-          title: 'CSS',
+          title: 'css',
           path: '/base/css',
+        },
+        {
+          title: 'html',
+          path: '/base/html',
         },
         {
           title: '浏览器BOM',
           path: '/base/bom',
         },
         {
-          title: 'TypeScript',
+          title: 'ts',
           path: '/base/ts',
         },
         {
@@ -57,7 +61,7 @@ const umiConfig = {
           path: '/base/internet',
         },
         {
-          title: 'NodeJs',
+          title: 'nodejs',
           path: '/base/node',
         },
       ],
@@ -66,11 +70,11 @@ const umiConfig = {
       title: '框架',
       children: [
         {
-          title: 'React',
+          title: 'react',
           path: '/frame/react',
         },
         {
-          title: 'Vue',
+          title: 'vue',
           path: '/frame/vue',
         },
         {
@@ -78,11 +82,11 @@ const umiConfig = {
           path: '/frame/applet',
         },
         {
-          title: 'Express',
+          title: 'express',
           path: '/frame/express',
         },
         {
-          title: 'Koa',
+          title: 'koa',
           path: '/frame/koa',
         },
       ],
@@ -124,19 +128,46 @@ const umiConfig = {
         },
         {
           title: 'npm',
-          path: '/algorithm/git',
+          path: '/algorithm/npm',
         },
         {
           title: 'yarn',
-          path: '/algorithm/git',
+          path: '/algorithm/yarn',
         },
         {
           title: 'npx',
-          path: '/algorithm/git',
+          path: '/algorithm/npx',
         },
         {
           title: 'nrm',
-          path: '/algorithm/git',
+          path: '/algorithm/nrm',
+        },
+      ],
+    },
+    {
+      title: '算法',
+      children: [
+        {
+          title: '数组',
+          path: '/engineering',
+        },
+      ],
+    },
+    {
+      title: '面试题',
+      children: [
+        {
+          title: '数组',
+          path: '/interview',
+        },
+      ],
+    },
+    {
+      title: '其他',
+      children: [
+        {
+          title: '数组',
+          path: '/other',
         },
       ],
     },
@@ -148,31 +179,51 @@ const umiConfig = {
   menus: {
     /** nav: 基础 */
     // markdown
-    '/base/markdown': [
-      {
-        children: ['base/markdown/index'],
-      },
-    ],
-    // JavaScript
-    '/base/javascript': [
+    '/base/markdown': [{ children: ['/base/markdown/index'] }],
+    // js
+    '/base/js': [
       {
         children: [
           {
-            title: 'ES5',
-            path: 'es5',
+            title: '数据类型',
+            path: '/base/js/type',
           },
           {
-            title: 'ES6+',
-            path: 'es6',
+            title: '数据类型检测',
+            path: '/base/js/typeof',
           },
           {
-            title: '浏览器BOM',
-            path: 'bom',
+            title: '面向对象编程',
+            path: '/base/js/typeof',
+          },
+          {
+            title: '递归',
+            path: '/base/js/typeof',
+          },
+          {
+            title: '作用域',
+            path: '/base/js/typeof',
+          },
+          {
+            title: 'this指向',
+            path: '/base/js/typeof',
+          },
+          {
+            title: '闭包',
+            path: '/base/js/typeof',
+          },
+          {
+            title: '内存泄露',
+            path: '/base/js/typeof',
+          },
+          {
+            title: '重载',
+            path: '/base/js/typeof',
           },
         ],
       },
     ],
-    // JavaScript
+    // 计算机网络
     '/base/internet': [
       {
         children: [

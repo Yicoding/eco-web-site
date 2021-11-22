@@ -2,7 +2,7 @@
 toc: menu
 ---
 
-# MarkDown 编写规范
+# markdown 编写规范
 
 ## 1.标题
 
