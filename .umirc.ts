@@ -193,6 +193,10 @@ const umiConfig = {
             path: '/base/js/typeof',
           },
           {
+            title: '函数',
+            path: '/base/js/function',
+          },
+          {
             title: '面向对象编程',
             path: '/base/js/typeof',
           },
