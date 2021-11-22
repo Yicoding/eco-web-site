@@ -91,7 +91,11 @@ const umiConfig = {
       title: '工程化',
       children: [
         {
-          title: '模块化',
+          title: '前端工程化',
+          path: '/algorithm/base',
+        },
+        {
+          title: '模块化规范',
           path: '/algorithm/modular',
         },
         {
@@ -262,6 +266,7 @@ const umiConfig = {
     ],
     /** nav: 工程化 */
   },
+  dynamicImport: {},
 };
 
 export default defineConfig(umiConfig);
