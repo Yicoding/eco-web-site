@@ -1,12 +1,4 @@
 ---
-nav:
-  title: 基础
-  order: 0
-
-group:
-  title: JavaScript
-
-order: 1
 toc: menu
 ---
 

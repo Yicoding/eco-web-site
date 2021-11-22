@@ -33,8 +33,32 @@ const umiConfig = {
           path: '/base/markdown',
         },
         {
-          title: 'JavaScript',
-          path: '/base/javascript',
+          title: 'ES5',
+          path: '/base/es5',
+        },
+        {
+          title: 'ES6+',
+          path: '/base/es6',
+        },
+        {
+          title: 'CSS',
+          path: '/base/css',
+        },
+        {
+          title: '浏览器BOM',
+          path: '/base/bom',
+        },
+        {
+          title: 'TypeScript',
+          path: '/base/ts',
+        },
+        {
+          title: '计算机网络',
+          path: '/base/internet',
+        },
+        {
+          title: 'NodeJs',
+          path: '/base/node',
         },
       ],
     },
@@ -49,6 +73,67 @@ const umiConfig = {
           title: 'Vue',
           path: '/frame/vue',
         },
+        {
+          title: '小程序',
+          path: '/frame/applet',
+        },
+        {
+          title: 'Express',
+          path: '/frame/express',
+        },
+        {
+          title: 'Koa',
+          path: '/frame/koa',
+        },
+      ],
+    },
+    {
+      title: '工程化',
+      children: [
+        {
+          title: '模块化',
+          path: '/algorithm/modular',
+        },
+        {
+          title: 'webpack',
+          path: '/algorithm/webpack',
+        },
+        {
+          title: 'babel',
+          path: '/algorithm/babel',
+        },
+        {
+          title: 'rollup',
+          path: '/algorithm/rollup',
+        },
+        {
+          title: 'vite',
+          path: '/algorithm/vite',
+        },
+        {
+          title: 'AST',
+          path: '/algorithm/ast',
+        },
+        {
+          title: 'git',
+          path: '/algorithm/git',
+        },
+        {
+          title: 'npm',
+          path: '/algorithm/git',
+        },
+        {
+          title: 'yarn',
+          path: '/algorithm/git',
+        },
+        {
+          title: 'npx',
+          path: '/algorithm/git',
+        },
+        {
+          title: 'nrm',
+          path: '/algorithm/git',
+        },
       ],
     },
     {
@@ -57,11 +142,62 @@ const umiConfig = {
     },
   ],
   menus: {
+    /** nav: 基础 */
+    // markdown
     '/base/markdown': [
       {
         children: ['base/markdown/index'],
       },
     ],
+    // JavaScript
+    '/base/javascript': [
+      {
+        children: [
+          {
+            title: 'ES5',
+            path: 'es5',
+          },
+          {
+            title: 'ES6+',
+            path: 'es6',
+          },
+          {
+            title: '浏览器BOM',
+            path: 'bom',
+          },
+        ],
+      },
+    ],
+    // JavaScript
+    '/base/internet': [
+      {
+        children: [
+          {
+            title: 'HTTP',
+            path: 'http',
+          },
+          {
+            title: 'HTTP2',
+            path: 'http2',
+          },
+          {
+            title: 'HTTPS',
+            path: 'https',
+          },
+          {
+            title: 'TCP/IP',
+            path: 'tcp',
+          },
+          {
+            title: '前端网络安全',
+            path: 'tcp',
+          },
+        ],
+      },
+    ],
+    /** nav: 基础 */
+    /** nav: 框架 */
+    // React
     '/frame/react': [
       {
         children: [
@@ -76,6 +212,7 @@ const umiConfig = {
         ],
       },
     ],
+    // Vue
     '/frame/vue': [
       {
         children: [
@@ -90,6 +227,40 @@ const umiConfig = {
         ],
       },
     ],
+    /** nav: 框架 */
+    /** nav: 工程化 */
+    // 模块化
+    '/algorithm/modular': [
+      {
+        children: [
+          {
+            title: 'IIFE',
+            path: 'base',
+          },
+          {
+            title: 'commonJS',
+            path: 'base',
+          },
+          {
+            title: 'AMD',
+            path: 'hooks',
+          },
+          {
+            title: 'CMD',
+            path: 'hooks',
+          },
+          {
+            title: 'UMD',
+            path: 'hooks',
+          },
+          {
+            title: 'ESModule',
+            path: 'hooks',
+          },
+        ],
+      },
+    ],
+    /** nav: 工程化 */
   },
 };
 
