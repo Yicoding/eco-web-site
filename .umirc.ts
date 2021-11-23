@@ -331,6 +331,10 @@ const umiConfig = {
             title: 'HEAD、master、branch',
             path: '/algorithm/git/concept',
           },
+          {
+            title: 'push',
+            path: '/algorithm/git/push',
+          },
         ],
       },
     ],

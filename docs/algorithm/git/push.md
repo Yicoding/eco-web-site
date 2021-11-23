@@ -2,31 +2,17 @@
 toc: menu
 ---
 
-# HEAD、master、branch
+# push
+
+- push 指令做的事是把你的本地提交上传到中央仓库去
 
 ```
-1.执行 git log
+git push
 ```
 
-![HEAD1](./img/1.png)
+## 把 branch 上传到远端仓库
 
-<!-- ![HEAD1](https://github.com/Yicoding/eco-web-site/raw/master/public/git/1.png) -->
-
-```
-2.执行 git commit
-
-  再次执行 git log
-```
-
-![HEAD2](./img/2.png)
-
-<!-- ![HEAD2](https://github.com/Yicoding/eco-web-site/raw/master/public/git/2.png) -->
-
-## HEAD：当前 commit 的引用
-
-```
-HEAD: 它是指向当前 commit 的引用，每次都会指向最新的commit
-```
+- push 做的事是：把当前 branch 的位置（即它指向哪个 commit）上传到远端仓库，并把它的路径上的 commits 一并上传。
 
 ## branch
 
@@ -42,9 +28,7 @@ HEAD 除了可以指向 commit，还可以指向一个 branch
 HEAD -> master(分支名称) -> commit
 ```
 
-![HEAD3](./img/3.png)
-
-<!-- ![HEAD3](https://github.com/Yicoding/eco-web-site/raw/master/public/git/3.png) -->
+![HEAD3](https://github.com/Yicoding/eco-web-site/raw/master/public/git/3.png)
 
 ### branch 的通俗化理解
 
