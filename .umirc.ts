@@ -15,6 +15,9 @@ const umiConfig = {
   outputPath: 'site',
   mode: 'site',
   publicPath,
+  alias: {
+    images: '/assets/images',
+  },
   devServer: {
     port: 8091,
   },
