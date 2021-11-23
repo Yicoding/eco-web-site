@@ -8,12 +8,7 @@ toc: menu
 1.执行 git log
 ```
 
-<<<<<<< HEAD
 ![image](images/git/1.png)
-=======
-![HEAD1](images/git/1.png)
-
-> > > > > > > 32260cca0243416d7ae0415c840ebe64dde02cc2
 
 ```
 2.执行 git commit
@@ -21,12 +16,7 @@ toc: menu
   再次执行 git log
 ```
 
-<<<<<<< HEAD
 ![image](images/git/2.png)
-=======
-![HEAD2](images/git/2.png)
-
-> > > > > > > 32260cca0243416d7ae0415c840ebe64dde02cc2
 
 ## HEAD：当前 commit 的引用
 
@@ -48,12 +38,7 @@ HEAD 除了可以指向 commit，还可以指向一个 branch
 HEAD -> master(分支名称) -> commit
 ```
 
-<<<<<<< HEAD
 ![image](images/git/3.png)
-=======
-![HEAD3](images/git/3.png)
-
-> > > > > > > 32260cca0243416d7ae0415c840ebe64dde02cc2
 
 ### branch 的通俗化理解
 
