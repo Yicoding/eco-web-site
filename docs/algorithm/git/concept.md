@@ -16,9 +16,7 @@ toc: menu
   再次执行 git log
 ```
 
-返回 commit 98792xxxxx(`HEAD -> master`)
-
-返回 commit 98791xxxxx(`origin/master, origin/HEAD`)
+![HEAD2](https://github.com/Yicoding/eco-web-site/raw/master/public/git/2.png)
 
 ## HEAD：当前 commit 的引用
 
@@ -39,3 +37,29 @@ HEAD 除了可以指向 commit，还可以指向一个 branch
 ```
 HEAD -> master(分支名称) -> commit
 ```
+
+![HEAD3](https://github.com/Yicoding/eco-web-site/raw/master/public/git/3.png)
+
+### master: 默认 branch
+
+> 上面的这个 master ，其实是一个特殊的 branch：它是 Git 的默认 branch（俗称主 branch / 主分支）。
+
+### branch 的通俗化理解
+
+- 所有的 branch 之间都是平等的
+
+- branch 包含了从初始 commit 到它的所有路径，而不是一条路径。并且，这些路径之间也是彼此平等的
+
+### branch 的创建、切换和删除
+
+- 创建 + 切换: `git checkout -b branchName`
+
+  - 创建: `git branch branchName`
+
+  - 切换: `git checkout branchName`
+
+- 删除: `git branch -d branchName`
+
+  - 没有被合并到 master 过的 branch 在删除时会失败
+
+  - 强行删除未合并的分支: `git branch -D branchName`
