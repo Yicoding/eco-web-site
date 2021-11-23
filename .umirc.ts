@@ -180,7 +180,7 @@ const umiConfig = {
     },
   ],
   menus: {
-    /** nav: 基础 */
+    /***************** nav: 基础 *******************/
     // markdown
     '/base/markdown': [{ children: ['/base/markdown/index'] }],
     // js
@@ -257,8 +257,8 @@ const umiConfig = {
         ],
       },
     ],
-    /** nav: 基础 */
-    /** nav: 框架 */
+    /***************** nav: 基础 *******************/
+    /***************** nav: 框架 *******************/
     // React
     '/frame/react': [
       {
@@ -289,8 +289,8 @@ const umiConfig = {
         ],
       },
     ],
-    /** nav: 框架 */
-    /** nav: 工程化 */
+    /***************** nav: 框架 *******************/
+    /***************** nav: 工程化 *******************/
     // 模块化
     '/algorithm/modular': [
       {
@@ -335,13 +335,29 @@ const umiConfig = {
             path: '/algorithm/git/concept',
           },
           {
-            title: 'push',
+            title: 'add、commit',
+            path: '/algorithm/git/add',
+          },
+          {
+            title: 'status、log、show、diff',
+            path: '/algorithm/git/log',
+          },
+          {
+            title: 'merge',
+            path: '/algorithm/git/merge',
+          },
+          {
+            title: 'rebase',
+            path: '/algorithm/git/rebase',
+          },
+          {
+            title: 'pull、push',
             path: '/algorithm/git/push',
           },
         ],
       },
     ],
-    /** nav: 工程化 */
+    /***************** nav: 工程化 *******************/
   },
   dynamicImport: {},
 };

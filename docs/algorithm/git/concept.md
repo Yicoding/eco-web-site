@@ -8,7 +8,7 @@ toc: menu
 1.执行 git log
 ```
 
-![HEAD1](images/git/1.png)
+![image](images/git/1.png)
 
 ```
 2.执行 git commit
@@ -16,13 +16,13 @@ toc: menu
   再次执行 git log
 ```
 
-![HEAD2](images/git/2.png)
+![image](images/git/2.png)
 
 ## HEAD：当前 commit 的引用
 
-```
-HEAD: 它是指向当前 commit 的引用，每次都会指向最新的commit
-```
+- `HEAD`: 它是指向当前 commit 的引用，每次都会指向最新的 commit
+
+- `origin/master` 和 `origin/HEAD`: 它们是对远端仓库的 master 和 HEAD 的本地镜像
 
 ## branch
 
@@ -38,7 +38,7 @@ HEAD 除了可以指向 commit，还可以指向一个 branch
 HEAD -> master(分支名称) -> commit
 ```
 
-![HEAD3](images/git/3.png)
+![image](images/git/3.png)
 
 ### branch 的通俗化理解
 
@@ -54,11 +54,15 @@ HEAD -> master(分支名称) -> commit
 
   - 切换: `git checkout branchName`
 
+- 基于远程 master 分支切出一个新分支: `git checkout -b new_feature origin/master`
+
 - 删除: `git branch -d branchName`
 
   - 没有被合并到 master 过的 branch 在删除时会失败
 
   - 强行删除未合并的分支: `git branch -D branchName`
+
+- 删除远程分支: `git push origin --delete branchName`
 
 ## master: 默认 branch
 
