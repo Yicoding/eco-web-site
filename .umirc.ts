@@ -186,7 +186,7 @@ const umiConfig = {
         children: [
           {
             title: '数据类型',
-            path: '/base/js/type',
+            path: '/base/js',
           },
           {
             title: '数据类型检测',
@@ -315,6 +315,21 @@ const umiConfig = {
           {
             title: 'ESModule',
             path: 'hooks',
+          },
+        ],
+      },
+    ],
+    // git
+    '/algorithm/git': [
+      {
+        children: [
+          {
+            title: '版本控制系统',
+            path: '/algorithm/git',
+          },
+          {
+            title: 'HEAD、master、branch',
+            path: '/algorithm/git/concept',
           },
         ],
       },
