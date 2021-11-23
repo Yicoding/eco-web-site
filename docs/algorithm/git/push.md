@@ -4,11 +4,11 @@ toc: menu
 
 # pull、push
 
-## pull
+## 1.pull
 
 - pull 的内部操作其实是把远程仓库取到本地后（使用的是 fetch），再用一次 merge 来把远端仓库的新 commits 合并到本地
 
-## push
+## 2.push
 
 - push 指令做的事是把你的本地提交上传到中央仓库去
 

@@ -18,13 +18,13 @@ toc: menu
 
 ![image](images/git/2.png)
 
-## HEAD：当前 commit 的引用
+## 1.HEAD：当前 commit 的引用
 
 - `HEAD`: 它是指向当前 commit 的引用，每次都会指向最新的 commit
 
 - `origin/master` 和 `origin/HEAD`: 它们是对远端仓库的 master 和 HEAD 的本地镜像
 
-## branch
+## 2.branch
 
 ```
 HEAD 除了可以指向 commit，还可以指向一个 branch
@@ -40,13 +40,13 @@ HEAD -> master(分支名称) -> commit
 
 ![image](images/git/3.png)
 
-### branch 的通俗化理解
+### 1）branch 的通俗化理解
 
 - 所有的 branch 之间都是平等的
 
 - branch 包含了从初始 commit 到它的所有路径，而不是一条路径。并且，这些路径之间也是彼此平等的
 
-### branch 的创建、切换和删除
+### 2）branch 的创建、切换和删除
 
 - 创建 + 切换: `git checkout -b branchName`
 
@@ -64,6 +64,6 @@ HEAD -> master(分支名称) -> commit
 
 - 删除远程分支: `git push origin --delete branchName`
 
-## master: 默认 branch
+## 3.master: 默认 branch
 
 > 上面的这个 master ，其实是一个特殊的 branch：它是 Git 的默认 branch（俗称主 branch / 主分支）。

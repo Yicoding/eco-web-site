@@ -6,7 +6,7 @@ toc: menu
 
 - 有些人不喜欢` merge`，因为在 `merge` 之后，`commit` 历史就会出现分叉，这种分叉再汇合的结构会让有些人觉得混乱而难以管理。如果你不希望 `commit` 历史出现分叉，可以用 `rebase` 来代替 `merge`
 
-## rebase——在新位置重新提交
+## 1.rebase——在新位置重新提交
 
 - 给你的 commit 序列`重新设置基础点`
 
@@ -16,7 +16,7 @@ toc: menu
 git rebase 目标基础点
 ```
 
-## merge 执行结果
+## 2.merge 执行结果
 
 ```
 git merge branch1
@@ -24,7 +24,7 @@ git merge branch1
 
 ![image](images/git/10.png)
 
-## rebase 执行结果
+## 3.rebase 执行结果
 
 ```
 git checkout branch1

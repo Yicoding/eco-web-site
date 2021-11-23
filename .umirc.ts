@@ -188,43 +188,43 @@ const umiConfig = {
       {
         children: [
           {
-            title: '数据类型',
+            title: '1.数据类型',
             path: '/base/js',
           },
           {
-            title: '数据类型检测',
+            title: '2.数据类型检测',
             path: '/base/js/typeof',
           },
           {
-            title: '函数',
+            title: '3.函数',
             path: '/base/js/function',
           },
           {
-            title: '面向对象编程',
+            title: '4.面向对象编程',
             path: '/base/js/typeof',
           },
           {
-            title: '递归',
+            title: '5.递归',
             path: '/base/js/typeof',
           },
           {
-            title: '作用域',
+            title: '6.作用域',
             path: '/base/js/typeof',
           },
           {
-            title: 'this指向',
+            title: '7.this指向',
             path: '/base/js/typeof',
           },
           {
-            title: '闭包',
+            title: '8.闭包',
             path: '/base/js/typeof',
           },
           {
-            title: '内存泄露',
+            title: '9.内存泄露',
             path: '/base/js/typeof',
           },
           {
-            title: '重载',
+            title: '10.重载',
             path: '/base/js/typeof',
           },
         ],
@@ -296,27 +296,27 @@ const umiConfig = {
       {
         children: [
           {
-            title: 'IIFE',
+            title: '1.IIFE',
             path: 'base',
           },
           {
-            title: 'commonJS',
+            title: '2.commonJS',
             path: 'base',
           },
           {
-            title: 'AMD',
+            title: '3.AMD',
             path: 'hooks',
           },
           {
-            title: 'CMD',
+            title: '4.CMD',
             path: 'hooks',
           },
           {
-            title: 'UMD',
+            title: '5.UMD',
             path: 'hooks',
           },
           {
-            title: 'ESModule',
+            title: '6.ESModule',
             path: 'hooks',
           },
         ],
@@ -327,31 +327,31 @@ const umiConfig = {
       {
         children: [
           {
-            title: '版本控制系统',
+            title: '1.版本控制系统',
             path: '/algorithm/git',
           },
           {
-            title: 'HEAD、master、branch',
+            title: '2.HEAD、master、branch',
             path: '/algorithm/git/concept',
           },
           {
-            title: 'add、commit',
+            title: '3.add、commit',
             path: '/algorithm/git/add',
           },
           {
-            title: 'status、log、show、diff',
+            title: '4.status、log、show、diff',
             path: '/algorithm/git/log',
           },
           {
-            title: 'merge',
+            title: '5.merge',
             path: '/algorithm/git/merge',
           },
           {
-            title: 'rebase',
+            title: '6.rebase',
             path: '/algorithm/git/rebase',
           },
           {
-            title: 'pull、push',
+            title: '7.pull、push',
             path: '/algorithm/git/push',
           },
         ],
