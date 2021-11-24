@@ -88,14 +88,146 @@ npm  config  set  registry  https://registry.npm.taobao.org
 
 ### 6）license
 
-- 包的开源协议名称
+- 包的开源协议名称，许可证，默认是 ISC、有的默认是 MIT
 
 ### 7）author
 
-- 包的主页地址
+- 包的作者
 
-### 8）homepage
+### 8）contributors, maintainers
 
-- 包的主页地址
+- 包的贡献者，是一个数组
+
+### 9）files
+
+- 包所包含的所有文件，可以取值为文件夹。通常我们还是用.npmignore 来去除不想包含到包里的文件
+
+### 10）main
+
+- 包的入口文件
+
+### 11）bin
+
+- 如果你的包里包含可执行文件，通过设置这个字段可以将它们包含到系统的 PATH 中，这样直接就可以运行，很方便
+
+### 12）man
+
+- 为系统的 man 命令提供帮助文档。帮助文件的文件名必须以数字结尾，如果是压缩的，需要以.gz 结尾
+
+```
+"man": ["./man/foo.1", "./man/bar.1", "./man/foo.2" ]
+```
+
+### 13）directories
+
+- commonJS 包所要求的目录结构信息，展示项目的目录结构信息。字段可以是：lib, bin, man, doc, example。值都是字符串
+
+### 14）browserslist
+
+- 浏览器限制(https://caniuse.com/)
+
+```
+"browserslist": [
+  "last 1 version",
+  "> 1%",
+  "maintained node versions",
+  "not dead"
+]
+```
+
+### 15）directories
+
+- commonJS 包所要求的目录结构信息，展示项目的目录结构信息。字段可以是：lib, bin, man, doc, example。值都是字符串
+
+### 16）repository
+
+- 包的`仓库地址`
+
+```
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/youname/xxx.git"
+  },
+```
+
+### 17）scripts
+
+- 通过设置这个可以使 `NPM` 调用一些命令脚本，封装一些功能
+
+```
+  scripts": {
+    "start": "babel-node src/pages/index.js",
+    "build": "webpack --config config/webpack.config.js",
+    "watch": "webpack-dev-server --config config/webpack.config.js --hot --inline --progress"
+  }
+```
+
+### 18）config
+
+- 添加一些设置，可以供 scripts 读取用，同时这里的值也会被添加到系统的环境变量中
+
+```
+"config": {
+  "port": "8080"
+}
+```
+
+### 19）dependencies
+
+- 指定依赖的其它包，这些依赖是指包发布后正常执行时所需要的，也就是线上需要的包。使用下面的命令来安装:
+
+```
+npm install packageName --save
+
+or
+
+yarn add packageName
+```
+
+### 20）devDependencies
+
+- 这些依赖只有在开发时候才需要。使用下面的命令来安装:
+
+```
+npm install packageName --save-dev
+
+or
+
+yarn add packageName --dev
+```
+
+### 21）peerDependencies
+
+- 相关的依赖，如果你的包是插件，而用户在使用你的包时候，通常也会需要这些依赖（插件），那么可以将依赖列到这里
+
+```
+"peerDependencies": {
+  "react": ">= 16.8.0"
+}
+```
+
+### 22）engines
+
+- 指定包运行的环境:
+
+```
+"engines": {
+  "node": ">=0.10.3 < 0.12",
+  "npm": "~1.0.20"
+}
+```
+
+### 23）private
+
+- 设为`true`这个包将不会发布到 NPM 平台下
+
+### 24）包版本规范
+
+- `指定版本`: "moduleName": "1.2.2"，遵循“大版本.次版本.小版本”的格式，`只安装指定版本`
+
+- `~ 指定版本`: "moduleName": "～ 1.2.2"，表示`安装1.2.x版本`，不改变大版本和次版本
+
+- `^ 指定版本`: "moduleName": "^1.2.2"，表示`安装1.x.x版本`，不改变大版本。如果大版本号为 0，则插入号的行为与波浪号相同，这是因为此时处于开发阶段，即使是次要版本号变动，也可能带来程序的不兼容
+- `latest`: `安装最新版本`
 
 ![image](images/git/15.png)
