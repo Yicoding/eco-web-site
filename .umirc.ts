@@ -130,20 +130,8 @@ const umiConfig = {
           path: '/algorithm/git',
         },
         {
-          title: 'npm',
+          title: '常用工具',
           path: '/algorithm/npm',
-        },
-        {
-          title: 'yarn',
-          path: '/algorithm/yarn',
-        },
-        {
-          title: 'npx',
-          path: '/algorithm/npx',
-        },
-        {
-          title: 'nrm',
-          path: '/algorithm/nrm',
         },
       ],
     },
@@ -216,15 +204,19 @@ const umiConfig = {
             path: '/base/js/typeof',
           },
           {
-            title: '8.闭包',
+            title: '8.bind、call、apply',
             path: '/base/js/typeof',
           },
           {
-            title: '9.内存泄露',
+            title: '9.闭包',
             path: '/base/js/typeof',
           },
           {
-            title: '10.重载',
+            title: '10.内存泄露',
+            path: '/base/js/typeof',
+          },
+          {
+            title: '11.重载',
             path: '/base/js/typeof',
           },
         ],
@@ -353,6 +345,45 @@ const umiConfig = {
           {
             title: '7.pull、push',
             path: '/algorithm/git/push',
+          },
+          {
+            title: '8.stash',
+            path: '/algorithm/git/stash',
+          },
+          {
+            title: '9.reflog',
+            path: '/algorithm/git/reflog',
+          },
+          {
+            title: '10.tag',
+            path: '/algorithm/git/tag',
+          },
+          {
+            title: '11.常用命令总结',
+            path: '/algorithm/git/summary',
+          },
+        ],
+      },
+    ],
+    // 常用工具
+    '/algorithm/npm': [
+      {
+        children: [
+          {
+            title: '1.npm',
+            path: '/algorithm/npm',
+          },
+          {
+            title: 'yarn',
+            path: '/algorithm/npm/yarn',
+          },
+          {
+            title: 'npx',
+            path: '/algorithm/npm/npx',
+          },
+          {
+            title: 'nrm',
+            path: '/algorithm/npm/nrm',
           },
         ],
       },

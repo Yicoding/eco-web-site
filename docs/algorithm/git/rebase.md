@@ -43,3 +43,31 @@ git merge branch1
 ```
 
 **不要从 `master` 向其他 `branch` 执行 `rebase` 操作**
+
+## 4.修改写错的 commit
+
+- `git rebase -i 目标commit`
+
+- 在编辑界面中指定需要操作的 `commits` 以及操作类型
+
+- 操作完成之后用 `git rebase --continue` 来继续 `rebase` 过程
+
+## 5.用 rebase --onto 撤销提交
+
+- `--onto` 参数后面有三个附加参数：`目标 commit`、`起点 commit`（注意：rebase 的时候会把起点排除在外）、`终点 commit`
+
+```
+git rebase --onto 第3个commit 第4个commit branch1
+```
+
+![image](images/git/13.png)
+
+**同样的，你也可以用 rebase --onto 来撤销提交**
+
+```
+git rebase --onto HEAD^^ HEAD^ branch1
+```
+
+- 以`倒数第二个 commit` 为起点（起点不包含在 rebase 序列里哟），`branch1 为终点`，rebase 到`倒数第三个 commit` 上
+
+![image](images/git/14.png)

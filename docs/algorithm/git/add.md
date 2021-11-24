@@ -47,10 +47,16 @@ git reset HEAD <撤销的文件1> <撤销的文件2> ...
 git checkout -- <放弃的文件> ...
 ```
 
-### 5）放弃新建的文件
+### 5）git 删除文件
 
 ```
 git rm <文件>...
+```
+
+### 6）git 文件重命名
+
+```
+git mv <旧文件名> <新文件名>
 ```
 
 ## 2.commit
@@ -87,8 +93,19 @@ git reset --soft HEAD^
 git reset --hard HEAD^
 ```
 
-#### 4.只修改 commit 注释
+#### 4.撤消操作
 
 ```
 git commit --amend
 ```
+
+> `commit --amend` 可以修复最新 `commit` 的错误
+
+- 产生的问题
+
+  - 1.如果上一次的 `commit` 在远程仓库，必须提供 `git push -f origin branch` 才能 `push` 到远端
+    - `-f` 是 `--force` 的缩写，意为「忽略冲突，强制 push」
+
+  ![image](images/git/12.png)
+
+  - 2.如果上一次的 `commit` 在本地仓库，可以直接 `git push` 提交
