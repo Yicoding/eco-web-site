@@ -12,7 +12,7 @@ toc: menu
 
 - push 指令做的事是把你的本地提交上传到中央仓库去
 
-```
+```bash
 git push
 
 git push origin branchName

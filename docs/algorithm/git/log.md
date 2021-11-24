@@ -12,7 +12,7 @@ toc: menu
 
 ### 1）查看历史记录
 
-```
+```bash
 git log
 ```
 
@@ -22,7 +22,7 @@ git log
 
 - 很适合用于代码 `review`
 
-```
+```bash
 git log -p
 ```
 
@@ -30,7 +30,7 @@ git log -p
 
 - 大致看一下改动内容，但并不想深入每一行的细节
 
-```
+```bash
 git log --stat
 ```
 
@@ -40,7 +40,7 @@ git log --stat
 
 ### 1）查看当前 commit
 
-```
+```bash
 git show
 ```
 
@@ -48,13 +48,13 @@ git show
 
 - 在 `show` 后面加上这个 commit 的引用（branch 或 HEAD 标记）或它的 `SHA-1 码`
 
-```
+```bash
 git show 5e68b0d8
 ```
 
 ### 3）查看指定 commit 中的指定文件
 
-```
+```bash
 git show 5e68b0d8 shopping\ list.txt
 ```
 
@@ -66,7 +66,7 @@ git show 5e68b0d8 shopping\ list.txt
 
 - 显示工作目录和暂存区之间的不同
 
-```
+```bash
 git diff
 ```
 
@@ -74,13 +74,13 @@ git diff
 
 - 显示暂存区和上一条提交之间的不同
 
-```
+```bash
 git diff --staged
 ```
 
 or
 
-```
+```bash
 git diff --cached
 ```
 
@@ -88,6 +88,6 @@ git diff --cached
 
 - 显示工作目录和上一条提交之间的不同
 
-```
+```bash
 git diff HEAD
 ```

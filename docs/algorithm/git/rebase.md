@@ -12,13 +12,13 @@ toc: menu
 
 - 把你指定的 commit 以及它所在的 commit 串，以指定的目标 commit 为基础，依次重新提交一次
 
-```
+```bash
 git rebase 目标基础点
 ```
 
 ## 2.merge 执行结果
 
-```
+```bash
 git merge branch1
 ```
 
@@ -26,7 +26,7 @@ git merge branch1
 
 ## 3.rebase 执行结果
 
-```
+```bash
 git checkout branch1
 git rebase master
 ```
@@ -37,7 +37,7 @@ git rebase master
 
 - 另外，在 `rebase` 之后，记得切回 `master` 再 `merge` 一下，把 `master` 移到`最新的 commit`：
 
-```
+```bash
 git checkout master
 git merge branch1
 ```
@@ -56,7 +56,7 @@ git merge branch1
 
 - `--onto` 参数后面有三个附加参数：`目标 commit`、`起点 commit`（注意：rebase 的时候会把起点排除在外）、`终点 commit`
 
-```
+```bash
 git rebase --onto 第3个commit 第4个commit branch1
 ```
 
@@ -64,7 +64,7 @@ git rebase --onto 第3个commit 第4个commit branch1
 
 **同样的，你也可以用 rebase --onto 来撤销提交**
 
-```
+```bash
 git rebase --onto HEAD^^ HEAD^ branch1
 ```
 

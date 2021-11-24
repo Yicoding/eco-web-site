@@ -12,7 +12,7 @@ toc: menu
 
   - 将 feature 分支合并到 master 分支
 
-```
+```bash
 git merge master
 ```
 
@@ -42,7 +42,7 @@ git merge master
 
 - 解决完冲突以后，就可以进行第二步—— commit 了
 
-```
+```bash
 git add .
 
 git commit
@@ -50,7 +50,7 @@ git commit
 
 #### 放弃解决冲突，取消 merge
 
-```
+```bash
 git merge --abort
 ```
 
@@ -86,7 +86,7 @@ git merge --abort
 
   - merge 的目标 commit ，是远端仓库的 HEAD，也就是 origin/HEAD
 
-  ```
+  ```bash
   git merge origin/HEAD
   ```
 

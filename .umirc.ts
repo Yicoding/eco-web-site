@@ -374,15 +374,19 @@ const umiConfig = {
             path: '/algorithm/npm',
           },
           {
-            title: 'yarn',
+            title: '2.yarn',
             path: '/algorithm/npm/yarn',
           },
           {
-            title: 'npx',
+            title: '3.npx',
             path: '/algorithm/npm/npx',
           },
           {
-            title: 'nrm',
+            title: '4.nvm',
+            path: '/algorithm/npm/nvm',
+          },
+          {
+            title: '5.nrm',
             path: '/algorithm/npm/nrm',
           },
         ],

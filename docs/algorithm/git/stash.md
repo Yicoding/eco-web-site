@@ -8,12 +8,12 @@ toc: menu
 
 ## 藏匿
 
-```
+```bash
 git stash
 ```
 
 ## 取出
 
-```
+```bash
 git stash pop
 ```

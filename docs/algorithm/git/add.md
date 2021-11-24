@@ -14,9 +14,9 @@ toc: menu
 
 ### 2）add 添加的是文件改动，而不是文件名
 
-- 修改了文件` a.txt`，然后把它 `add` 进了暂存区
+- 修改了文件 `a.txt`，然后把它 `add` 进了暂存区
 
-```
+```bash
 git add a.txt
 git status
 ```
@@ -25,7 +25,7 @@ git status
 
 - 然后又往 `a.txt` 里写了几行东西 ,再 `status`
 
-```
+```bash
 git status
 ```
 
@@ -37,25 +37,25 @@ git status
 
 ### 3）取消 add 暂存
 
-```
+```bash
 git reset HEAD <撤销的文件1> <撤销的文件2> ...
 ```
 
 ### 4）放弃已经修改的内容
 
-```
+```bash
 git checkout -- <放弃的文件> ...
 ```
 
 ### 5）git 删除文件
 
-```
+```bash
 git rm <文件>...
 ```
 
 ### 6）git 文件重命名
 
-```
+```bash
 git mv <旧文件名> <新文件名>
 ```
 
@@ -73,7 +73,7 @@ git mv <旧文件名> <新文件名>
 
 - 不删除工作空间改动代码，撤销 commit，并且撤销 git add . 操作
 
-```
+```bash
 git reset --mixed HEAD^
 ```
 
@@ -81,7 +81,7 @@ git reset --mixed HEAD^
 
 - 不删除工作空间改动代码，撤销 commit，不撤销 git add .
 
-```
+```bash
 git reset --soft HEAD^
 ```
 
@@ -89,13 +89,13 @@ git reset --soft HEAD^
 
 - 删除工作空间改动代码，撤销 commit，撤销 git add .
 
-```
+```bash
 git reset --hard HEAD^
 ```
 
 #### 4.撤消操作
 
-```
+```bash
 git commit --amend
 ```
 

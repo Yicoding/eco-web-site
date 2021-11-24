@@ -10,26 +10,26 @@ toc: menu
 
 - 只需要输入 `git tag` （可带上可选的 `-l` 选项 `--list`）
 
-```
+```bash
 git tag
 ```
 
 得到
 
-```
+```bash
 v1.0
 v2.0
 ```
 
 ---
 
-```
+```bash
 git tag -l "v1.8.5*"
 ```
 
 得到
 
-```
+```bash
 v1.8.5
 v1.8.5-rc0
 v1.8.5-rc1
@@ -49,7 +49,7 @@ v1.8.5-rc3
 
 - 在运行 tag 命令时指定 -a 选项
 
-```
+```bash
 git tag -a v1.4 -m "my version 1.4"
 
 git tag
@@ -57,7 +57,7 @@ git tag
 
 得到
 
-```
+```bash
 v1.4
 ```
 
@@ -69,7 +69,7 @@ v1.4
 
 - 不需要使用 -a、-s 或 -m 选项，只需要提供标签名字
 
-```
+```bash
 git tag v1.4-lw
 
 git tag
@@ -77,26 +77,26 @@ git tag
 
 得到
 
-```
+```bash
 v1.4
 v1.4-lw
 ```
 
 ### 3）后期打标签
 
-```
+```bash
 git tag -a v1.2 commits -m 'xxxx'
 ```
 
 ## 3.提交标签
 
-```
+```bash
 1.git push origin v1.2
 
 2.git push origin --tags
 ```
 
-```
+```bash
 * [new tag]         v1.2 -> v1.2
 * [new tag]         v1.4 -> v1.4
 * [new tag]         v1.4-lw -> v1.4-lw
@@ -106,13 +106,13 @@ git tag -a v1.2 commits -m 'xxxx'
 
 ### 1）删除本地标签
 
-```
+```bash
 git tag -d v1.2
 ```
 
 ### 2）删除远程标签
 
-```
+```bash
 git push origin --delete <tagname>
 ```
 
@@ -122,12 +122,12 @@ git push origin --delete <tagname>
 
   - 此时你做了某些更改然后提交它们，标签不会发生变化， 但你的`新提交将不属于任何分支，并且将无法访问`
 
-```
+```bash
 git checkout v1.2
 ```
 
 - 如果你要`修复旧版本中的错误`，那么通常需要`创建`一个`新分支`
 
-```
+```bash
 git checkout -b version2 v1.2
 ```

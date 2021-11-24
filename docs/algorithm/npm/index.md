@@ -60,8 +60,10 @@ npm list // 全局安装的包查看
 /*9.清除缓存*/
 npm cache clean --force
 
-/*10.添加镜像*/
-npm  config  set  registry  https://registry.npm.taobao.org
+/*10.镜像*/
+npm config set registry  https://registry.npm.taobao.org // 永久使用
+npm --registry https://registry.npm.taobao.org install express // 临时使用淘宝镜像
+npm install -g cnpm --registry=https://registry.npm.taobao.org // 通过cnpm使用
 ```
 
 ## 2.package.json 解析
@@ -114,7 +116,7 @@ npm  config  set  registry  https://registry.npm.taobao.org
 
 - 为系统的 man 命令提供帮助文档。帮助文件的文件名必须以数字结尾，如果是压缩的，需要以.gz 结尾
 
-```
+```json
 "man": ["./man/foo.1", "./man/bar.1", "./man/foo.2" ]
 ```
 
@@ -126,57 +128,59 @@ npm  config  set  registry  https://registry.npm.taobao.org
 
 - 浏览器限制(https://caniuse.com/)
 
+```json
+"browserslist": {
+  "production": [
+    ">0.2%",
+    "not dead",
+    "not op_mini all"
+  ],
+  "development": [
+    "last 1 chrome version",
+    "last 1 firefox version",
+    "last 1 safari version"
+  ]
+}
 ```
-"browserslist": [
-  "last 1 version",
-  "> 1%",
-  "maintained node versions",
-  "not dead"
-]
-```
 
-### 15）directories
-
-- commonJS 包所要求的目录结构信息，展示项目的目录结构信息。字段可以是：lib, bin, man, doc, example。值都是字符串
-
-### 16）repository
+### 15）repository
 
 - 包的`仓库地址`
 
-```
+```json
   "repository": {
     "type": "git",
     "url": "git+https://github.com/youname/xxx.git"
   },
 ```
 
-### 17）scripts
+### 16）scripts
 
 - 通过设置这个可以使 `NPM` 调用一些命令脚本，封装一些功能
 
-```
-  scripts": {
+```json
+  "scripts": {
     "start": "babel-node src/pages/index.js",
     "build": "webpack --config config/webpack.config.js",
     "watch": "webpack-dev-server --config config/webpack.config.js --hot --inline --progress"
   }
 ```
 
-### 18）config
+### 17）config
 
 - 添加一些设置，可以供 scripts 读取用，同时这里的值也会被添加到系统的环境变量中
 
-```
+```json
 "config": {
   "port": "8080"
 }
 ```
 
-### 19）dependencies
+### 18）dependencies
 
 - 指定依赖的其它包，这些依赖是指包发布后正常执行时所需要的，也就是线上需要的包。使用下面的命令来安装:
 
-```
+```bash
 npm install packageName --save
 
 or
@@ -184,11 +188,11 @@ or
 yarn add packageName
 ```
 
-### 20）devDependencies
+### 19）devDependencies
 
 - 这些依赖只有在开发时候才需要。使用下面的命令来安装:
 
-```
+```bash
 npm install packageName --save-dev
 
 or
@@ -196,32 +200,32 @@ or
 yarn add packageName --dev
 ```
 
-### 21）peerDependencies
+### 20）peerDependencies
 
 - 相关的依赖，如果你的包是插件，而用户在使用你的包时候，通常也会需要这些依赖（插件），那么可以将依赖列到这里
 
-```
+```json
 "peerDependencies": {
   "react": ">= 16.8.0"
 }
 ```
 
-### 22）engines
+### 21）engines
 
 - 指定包运行的环境:
 
-```
+```json
 "engines": {
   "node": ">=0.10.3 < 0.12",
   "npm": "~1.0.20"
 }
 ```
 
-### 23）private
+### 22）private
 
 - 设为`true`这个包将不会发布到 NPM 平台下
 
-### 24）包版本规范
+### 23）包版本规范
 
 - `指定版本`: "moduleName": "1.2.2"，遵循“大版本.次版本.小版本”的格式，`只安装指定版本`
 
