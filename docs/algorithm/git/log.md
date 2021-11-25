@@ -2,7 +2,7 @@
 toc: menu
 ---
 
-# status、log、show、diff
+# status/log/show/diff
 
 ## 1.status
 

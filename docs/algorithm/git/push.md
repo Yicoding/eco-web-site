@@ -2,7 +2,7 @@
 toc: menu
 ---
 
-# pull、push
+# pull/push
 
 ## 1.pull
 

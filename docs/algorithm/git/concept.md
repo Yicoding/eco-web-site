@@ -2,7 +2,7 @@
 toc: menu
 ---
 
-# HEAD、master、branch
+# HEAD/master/branch
 
 ```bash
 1.执行 git log

@@ -48,6 +48,6 @@ yarn link // 将本地项目连接到另一个项目
 yarn init // 创建一个新包
 
 yarn config set registry https://registry.npm.taobao.org -g // 使用淘宝镜像
-yarn --registry https://registry.npm.taobao.org add react // 临时使用淘宝镜像安装
+yarn add react --registry https://registry.npm.taobao.org // 临时使用淘宝镜像安装
 ...
 ```

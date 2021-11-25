@@ -145,20 +145,19 @@ const umiConfig = {
       ],
     },
     {
-      title: '面试题',
-      children: [
-        {
-          title: '数组',
-          path: '/interview',
-        },
-      ],
-    },
-    {
       title: '其他',
       children: [
         {
-          title: '数组',
-          path: '/other',
+          title: '面试题',
+          path: '/other/interview',
+        },
+        {
+          title: '性能优化',
+          path: '/other/interview',
+        },
+        {
+          title: '开发遇见的问题',
+          path: '/other/problem',
         },
       ],
     },
@@ -184,40 +183,94 @@ const umiConfig = {
             path: '/base/js/typeof',
           },
           {
-            title: '3.函数',
+            title: '3.数据类型转换',
             path: '/base/js/function',
           },
           {
             title: '4.面向对象编程',
-            path: '/base/js/typeof',
+            path: '/base/js/object',
           },
           {
             title: '5.递归',
-            path: '/base/js/typeof',
+            path: '/base/js/recursion',
           },
           {
-            title: '6.作用域',
-            path: '/base/js/typeof',
+            title: '6.作用域和执行上下文',
+            path: '/base/js/scope',
           },
           {
             title: '7.this指向',
-            path: '/base/js/typeof',
+            path: '/base/js/this',
           },
           {
-            title: '8.bind、call、apply',
-            path: '/base/js/typeof',
+            title: '8.new/bind/call/apply',
+            path: '/base/js/new',
           },
           {
             title: '9.闭包',
-            path: '/base/js/typeof',
+            path: '/base/js/closure',
           },
           {
-            title: '10.内存泄露',
-            path: '/base/js/typeof',
+            title: '10.内存管理机制',
+            path: '/base/js/memory',
           },
           {
             title: '11.重载',
-            path: '/base/js/typeof',
+            path: '/base/js/heavy',
+          },
+          {
+            title: '12.防抖/节流',
+            path: '/base/js/shake',
+          },
+          {
+            title: '13.正则',
+            path: '/base/js/regexp',
+          },
+          {
+            title: '14.数据劫持',
+            path: '/base/js/hijack',
+          },
+          {
+            title: '15.Event Loop 事件循环',
+            path: '/base/js/loop',
+          },
+          {
+            title: '16.事件冒泡和捕获',
+            path: '/base/js/bubble',
+          },
+          {
+            title: '17.深浅拷贝',
+            path: '/base/js/clone',
+          },
+        ],
+      },
+    ],
+    '/base/bom': [
+      {
+        children: [
+          {
+            title: '1.浏览器对象',
+            path: '/base/bom',
+          },
+          {
+            title: '2.浏览器进程',
+            path: '/base/bom',
+          },
+          {
+            title: '3.浏览器线程',
+            path: '/base/bom',
+          },
+          {
+            title: '4.PWA',
+            path: '/base/bom',
+          },
+          {
+            title: '5.web Worker',
+            path: '/base/bom',
+          },
+          {
+            title: '6.web socket',
+            path: '/base/bom',
           },
         ],
       },
@@ -323,15 +376,15 @@ const umiConfig = {
             path: '/algorithm/git',
           },
           {
-            title: '2.HEAD、master、branch',
+            title: '2.HEAD/master/branch',
             path: '/algorithm/git/concept',
           },
           {
-            title: '3.add、commit',
+            title: '3.add/commit',
             path: '/algorithm/git/add',
           },
           {
-            title: '4.status、log、show、diff',
+            title: '4.status/log/show/diff',
             path: '/algorithm/git/log',
           },
           {
@@ -343,7 +396,7 @@ const umiConfig = {
             path: '/algorithm/git/rebase',
           },
           {
-            title: '7.pull、push',
+            title: '7.pull/push',
             path: '/algorithm/git/push',
           },
           {
