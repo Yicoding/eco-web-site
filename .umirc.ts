@@ -421,6 +421,8 @@ const umiConfig = {
     ],
     // babel
     '/algorithm/babel': [{ children: ['/algorithm/babel/index'] }],
+    // webpack
+    '/algorithm/webpack': [{ children: ['/algorithm/webpack/index'] }],
     // 常用工具
     '/algorithm/tool': [
       {
@@ -444,6 +446,10 @@ const umiConfig = {
           {
             title: '5.nrm',
             path: '/algorithm/tool/nrm',
+          },
+          {
+            title: '6.eslint',
+            path: '/algorithm/tool/eslint',
           },
         ],
       },

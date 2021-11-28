@@ -138,7 +138,35 @@ babel 是 source to source 的转换，整体编译流程分为三步：
 
 - transform-runtime：将 api 进行私有化，防止引入外部库冲突，eg：\_promise
 
-## 7.类型
+## 7.polyfill
+
+### 1）core-js 标准库
+
+这是所有 Babel polyfill 方案都需要依赖的开源库 zloirock/core-js，它提供了 ES5、ES6 的 polyfills，包括 promises 、symbols、collections、iterators、typed arrays、ECMAScript 7+ proposals、setImmediate 等等。
+
+### 2）regenerator 运行时库
+
+这是 Facebook 提供的 facebook/regenerator 库，用来实现 ES6/ES7 中 generators、yield、async 及 await 等相关的 polyfills。在下面即将提到的 babel-runtime 中被引用。有些初学者遇到的“regeneratorRuntime is not defined”就是因为只在 preset 中配置了 stage-0 却忘记加上 babel-polyfill。
+
+### 3）babel-runtime 库
+
+babel-runtime 是由 Babel 提供的 polyfill 库，它本身就是由 core-js 与 regenerator-runtime 库组成，除了做简单的合并与映射外，并没有做任何额外的加工
+
+```js
+const Promise = require('babel-runtime/core-js/promise');
+```
+
+由于这种方式十分繁琐，事实上严谨的使用还要配合 interopRequireDefault() 方法使用，所以 Babel 提供了一个插件，即 babel-plugin-transform-runtime。
+
+### 4）babel-plugin-transform-runtime 插件
+
+需要你在 .babelrc 或 Babel 编译选项中将该插件添加到 plugins 中，插件只会 polyfill 你用到的类或方法，由于采用了沙盒（Sandbox）机制，它不会污染全局变量，同时也不会去修改内建类的原型，带来的坏处是它不会 polyfill 原型上的扩展（例如 Array.prototype.includes() 不会被 polyfill，Array.from() 则会被 polyfill）。插件的方式适合于开发第三方类库，不适合开发需要大量使用 Array 等原型链扩展方法的应用
+
+### 5）babel-polyfill
+
+需要在你自己的代码中手工引入（最好放在 vendor 里），它会以全局变量污染的方式 polyfill 内建类（如 Map、Set、Promise 等），同时也会通过修改 Array、String、Object 等原型的方式添加实例方法（如 Array.prototype.includes()、String.prototype.padStart() 等），内建类的静态方法（如 Array.from() 等）也会被 polyfill。babel-polyfill 适合于开发独立的业务应用，及时全局污染、prototype 被修改也不会受到太大的影响，babel-polyfill 不适合开发第三方类库。
+
+## 8.类型
 
 babel 插件分为语法插件和转换插件：
 
@@ -146,7 +174,7 @@ babel 插件分为语法插件和转换插件：
 
 - 转换插件：transform plugin，在@babel/transform 中加载，在 transform 过程中执行的插件
 
-## 8.使用
+## 9.使用
 
 - 安装@babel/core 和@babel/cli 即可使用命令行解析工具
 
@@ -158,7 +186,7 @@ babel 插件分为语法插件和转换插件：
 
 - babel 执行顺序：plugins 先执行、再执行预设 presets
 
-## 9.开发 babel 插件
+## 10.开发 babel 插件
 
 - 做什么插件：自己做什么事情以及受益
 
@@ -166,11 +194,11 @@ babel 插件分为语法插件和转换插件：
 
 - 考手册进行开发：babel 官网插件开发手册、@babel/types 手册、estree 规范手册
 
-## 10.visitor 模式(访问者模式)
+## 11.visitor 模式(访问者模式)
 
 当被操作的对象结构比较稳定，而操作对象的逻辑经常变化的时候，通过分离逻辑和对象结构，使得他们能独立扩展
 
-## 11.path 的属性
+## 12.path 的属性
 
 - `path.node` 当前 AST 节点
 - `path.parent` 父 AST 节点
@@ -181,7 +209,7 @@ babel 插件分为语法插件和转换插件：
 - path.key 当前 AST 节点所在父节点属性的属性名或所在数组的下标
 - path.listkey 当前 AST 节点所在父节点属性的属性值为数组时 listkey 为该属性名，否则为 undefined
 
-## 12.path 的方法
+## 13.path 的方法
 
 - inList() 判断节点是否在数组中，如果 container 为数组，也就是有 listkey 的时候，返回 true
 - get(key) 获取某个属性的 path
@@ -205,19 +233,19 @@ babel 插件分为语法插件和转换插件：
 - skip() 跳过当前节点的子节点的遍历
 - stop() 结束所有遍历
 
-## 13.state
+## 14.state
 
 visitor 对象中每次访问节点方法时传入的第二个参数，包含当前 plugin 的信息、scope 作用域信息、plugin 传入的配置参数信息，当前节点的 path 信息。可以把 babel 插件处理过程中的自定义状态存储到 state 对象中
 
-## 14.Scopes
+## 15.Scopes
 
 与 js 中作用域类似，如函数内外的同名变量需要区分开来
 
-## 15.Bindings
+## 16.Bindings
 
 所有引用属于特定的作用域，引用和作用域的这种关系称作为绑定。
 
-## 16.babel 内核原理
+## 17.babel 内核原理
 
 - parser 就是源码到 ast，babel parser 是 fork 自 acorn，我们也用一样的方式做了下 acorn 的扩展，写了两个 acorn 插件，支持 plugins 的选项来指定语法插件，可以做各种语法的 parse。
 
