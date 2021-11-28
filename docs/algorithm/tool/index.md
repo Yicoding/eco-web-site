@@ -148,10 +148,10 @@ npm install -g cnpm --registry=https://registry.npm.taobao.org // 通过cnpm使�
 - 包的`仓库地址`
 
 ```json
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/youname/xxx.git"
-  },
+"repository": {
+  "type": "git",
+  "url": "git+https://github.com/youname/xxx.git"
+}
 ```
 
 ### 16）scripts
@@ -159,11 +159,11 @@ npm install -g cnpm --registry=https://registry.npm.taobao.org // 通过cnpm使�
 - 通过设置这个可以使 `NPM` 调用一些命令脚本，封装一些功能
 
 ```json
-  "scripts": {
-    "start": "babel-node src/pages/index.js",
-    "build": "webpack --config config/webpack.config.js",
-    "watch": "webpack-dev-server --config config/webpack.config.js --hot --inline --progress"
-  }
+"scripts": {
+  "start": "babel-node src/pages/index.js",
+  "build": "webpack --config config/webpack.config.js",
+  "watch": "webpack-dev-server --config config/webpack.config.js --hot --inline --progress"
+}
 ```
 
 ### 17）config
@@ -225,7 +225,17 @@ yarn add packageName --dev
 
 - 设为`true`这个包将不会发布到 NPM 平台下
 
-### 23）包版本规范
+### 23）sideEffects
+
+- 让 `webpack` 去除 `tree shaking` 带来副作用的代码[详解](https://zhuanlan.zhihu.com/p/41795312)
+
+- sideEffects 支持两种写法，一种是 `false`，一种是`数组`
+
+  - false 为了告诉 webpack 我这个 npm 包里的`所有文件代码都是没有副作用的`
+
+  - 数组则表示告诉 webpack 我这个 npm 包里`指定文件代码是没有副作用的`
+
+### 24）包版本规范
 
 - `指定版本`: "moduleName": "1.2.2"，遵循“大版本.次版本.小版本”的格式，`只安装指定版本`
 

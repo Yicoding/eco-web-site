@@ -24,6 +24,7 @@ const umiConfig = {
   history: {
     type: 'hash',
   },
+  dynamicImport: {},
   hash: true,
   // more config: https://d.umijs.org/config
   navs: [
@@ -40,8 +41,8 @@ const umiConfig = {
           path: '/base/js',
         },
         {
-          title: 'es6+',
-          path: '/base/es6',
+          title: 'esnext',
+          path: '/base/esnext',
         },
         {
           title: 'css',
@@ -56,12 +57,12 @@ const umiConfig = {
           path: '/base/bom',
         },
         {
-          title: 'ts',
-          path: '/base/ts',
-        },
-        {
           title: '计算机网络',
           path: '/base/internet',
+        },
+        {
+          title: 'ts',
+          path: '/base/ts',
         },
         {
           title: 'nodejs',
@@ -106,6 +107,14 @@ const umiConfig = {
           path: '/algorithm/modular',
         },
         {
+          title: '常用工具',
+          path: '/algorithm/tool',
+        },
+        {
+          title: 'git',
+          path: '/algorithm/git',
+        },
+        {
           title: 'webpack',
           path: '/algorithm/webpack',
         },
@@ -124,14 +133,6 @@ const umiConfig = {
         {
           title: 'AST',
           path: '/algorithm/ast',
-        },
-        {
-          title: 'git',
-          path: '/algorithm/git',
-        },
-        {
-          title: '常用工具',
-          path: '/algorithm/npm',
         },
       ],
     },
@@ -418,36 +419,37 @@ const umiConfig = {
         ],
       },
     ],
+    // babel
+    '/algorithm/babel': [{ children: ['/algorithm/babel/index'] }],
     // 常用工具
-    '/algorithm/npm': [
+    '/algorithm/tool': [
       {
         children: [
           {
             title: '1.npm',
-            path: '/algorithm/npm',
+            path: '/algorithm/tool',
           },
           {
             title: '2.yarn',
-            path: '/algorithm/npm/yarn',
+            path: '/algorithm/tool/yarn',
           },
           {
             title: '3.npx',
-            path: '/algorithm/npm/npx',
+            path: '/algorithm/tool/npx',
           },
           {
             title: '4.nvm',
-            path: '/algorithm/npm/nvm',
+            path: '/algorithm/tool/nvm',
           },
           {
             title: '5.nrm',
-            path: '/algorithm/npm/nrm',
+            path: '/algorithm/tool/nrm',
           },
         ],
       },
     ],
     /***************** nav: 工程化 *******************/
   },
-  dynamicImport: {},
 };
 
 export default defineConfig(umiConfig);

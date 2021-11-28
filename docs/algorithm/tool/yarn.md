@@ -21,9 +21,13 @@ yarn add [package]@[version]
 yarn add [package]@[tag]
 yarn add [package]@^ // 列出所有版本，并手动选择一个版本
 
+// 全局安装
+yarn global add [package]
+
 // 将依赖项添加到不同的依赖类别中
-yarn add [package] --dev  // 默认添加到devDependencies中
-yarn add [package] --peer // 默认添加到peerDependencies中
+yarn add [package] --dev  // 默认添加到 devDependencies中
+yarn add [package] --D  // 默认添加到 devDependencies中
+yarn add [package] --peer // 默认添加到 peerDependencies中
 
 // 更新依赖项
 yarn up [package]
