@@ -236,7 +236,7 @@ const umiConfig = {
             path: '/base/js/mode',
           },
           {
-            title: '19.细小知识点',
+            title: '19.知识点',
             path: '/base/js/little',
           },
         ],
