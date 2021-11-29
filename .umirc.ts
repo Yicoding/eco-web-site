@@ -107,28 +107,16 @@ const umiConfig = {
           path: '/algorithm/modular',
         },
         {
-          title: '常用工具',
+          title: '模块工具',
           path: '/algorithm/tool',
+        },
+        {
+          title: '打包工具',
+          path: '/algorithm/build',
         },
         {
           title: 'git',
           path: '/algorithm/git',
-        },
-        {
-          title: 'webpack',
-          path: '/algorithm/webpack',
-        },
-        {
-          title: 'babel',
-          path: '/algorithm/babel',
-        },
-        {
-          title: 'rollup',
-          path: '/algorithm/rollup',
-        },
-        {
-          title: 'vite',
-          path: '/algorithm/vite',
         },
         {
           title: 'AST',
@@ -185,7 +173,7 @@ const umiConfig = {
           },
           {
             title: '3.数据类型转换',
-            path: '/base/js/function',
+            path: '/base/js/transform',
           },
           {
             title: '4.面向对象编程',
@@ -242,6 +230,10 @@ const umiConfig = {
           {
             title: '17.深浅拷贝',
             path: '/base/js/clone',
+          },
+          {
+            title: '18.设计模式',
+            path: '/base/js/mode',
           },
         ],
       },
@@ -419,11 +411,7 @@ const umiConfig = {
         ],
       },
     ],
-    // babel
-    '/algorithm/babel': [{ children: ['/algorithm/babel/index'] }],
-    // webpack
-    '/algorithm/webpack': [{ children: ['/algorithm/webpack/index'] }],
-    // 常用工具
+    // 模块工具
     '/algorithm/tool': [
       {
         children: [
@@ -448,8 +436,39 @@ const umiConfig = {
             path: '/algorithm/tool/nrm',
           },
           {
-            title: '6.eslint',
+            title: '6.yalc',
+            path: '/algorithm/tool/yalc',
+          },
+          {
+            title: '7.eslint',
             path: '/algorithm/tool/eslint',
+          },
+        ],
+      },
+    ],
+    // 打包工具
+    '/algorithm/build': [
+      {
+        children: [
+          {
+            title: '1.babel',
+            path: '/algorithm/build',
+          },
+          {
+            title: '2.webpack',
+            path: '/algorithm/build/webpack',
+          },
+          {
+            title: '3.rollup',
+            path: '/algorithm/build/rollup',
+          },
+          {
+            title: '4.esbuild',
+            path: '/algorithm/build/esbuild',
+          },
+          {
+            title: '5.vite',
+            path: '/algorithm/build/vite',
           },
         ],
       },
