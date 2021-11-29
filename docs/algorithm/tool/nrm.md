@@ -39,7 +39,7 @@ nrm use taobao
 ## 4.增加定制的源
 
 ```bash
-nrm add registry http://registry.npm.taobao.org/
+nrm add taobao http://registry.npm.taobao.org/
 ```
 
 ## 5.删除某个源

@@ -235,6 +235,10 @@ const umiConfig = {
             title: '18.设计模式',
             path: '/base/js/mode',
           },
+          {
+            title: '19.细小知识点',
+            path: '/base/js/little',
+          },
         ],
       },
     ],

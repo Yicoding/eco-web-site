@@ -64,6 +64,11 @@ npm cache clean --force
 npm config set registry  https://registry.npm.taobao.org // 永久使用
 npm --registry https://registry.npm.taobao.org install express // 临时使用淘宝镜像
 npm install -g cnpm --registry=https://registry.npm.taobao.org // 通过cnpm使用
+
+/*11更新node*/
+sudo npm cache clean -f // 清除node的cache（清除node的缓存，这个看情况而定，不是必须的）
+sudo npm install -g n // 安装"n"版本管理工具，管理node（没有错，就是n）
+sudo npm install npm@latest -g // 更新node版本
 ```
 
 ## 2.package.json 解析
