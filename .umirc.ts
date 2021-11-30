@@ -64,10 +64,6 @@ const umiConfig = {
           title: 'ts',
           path: '/base/ts',
         },
-        {
-          title: 'nodejs',
-          path: '/base/node',
-        },
       ],
     },
     {
@@ -86,11 +82,11 @@ const umiConfig = {
           path: '/frame/applet',
         },
         {
-          title: 'express',
-          path: '/frame/express',
+          title: 'react-native',
+          path: '/frame/koa',
         },
         {
-          title: 'koa',
+          title: 'electron',
           path: '/frame/koa',
         },
       ],
@@ -122,6 +118,35 @@ const umiConfig = {
           title: 'AST',
           path: '/algorithm/ast',
         },
+        {
+          title: 'CI/CD',
+          path: '/algorithm/ast',
+        },
+      ],
+    },
+    {
+      title: 'node',
+      children: [
+        {
+          title: '基础',
+          path: '/node/index',
+        },
+        {
+          title: 'express',
+          path: '/node/express',
+        },
+        {
+          title: 'koa',
+          path: '/node/koa',
+        },
+        {
+          title: 'mysql',
+          path: '/node/mysql',
+        },
+        {
+          title: 'nginx',
+          path: '/node/nginx',
+        },
       ],
     },
     {
@@ -141,7 +166,31 @@ const umiConfig = {
           path: '/other/interview',
         },
         {
-          title: '性能优化',
+          title: '前端性能优化',
+          path: '/other/interview',
+        },
+        {
+          title: '前端缓存技术',
+          path: '/other/interview',
+        },
+        {
+          title: '微信公众号开发',
+          path: '/other/interview',
+        },
+        {
+          title: '微信支付',
+          path: '/other/interview',
+        },
+        {
+          title: '微前端',
+          path: '/other/interview',
+        },
+        {
+          title: '低代码平台',
+          path: '/other/interview',
+        },
+        {
+          title: 'hybrid',
           path: '/other/interview',
         },
         {
@@ -176,28 +225,28 @@ const umiConfig = {
             path: '/base/js/transform',
           },
           {
-            title: '4.面向对象编程',
-            path: '/base/js/object',
-          },
-          {
-            title: '5.递归',
-            path: '/base/js/recursion',
-          },
-          {
-            title: '6.作用域和执行上下文',
+            title: '4.作用域和执行上下文',
             path: '/base/js/scope',
           },
           {
-            title: '7.this指向',
+            title: '5.this指向',
             path: '/base/js/this',
           },
           {
-            title: '8.new/bind/call/apply',
+            title: '6.new/bind/call/apply',
             path: '/base/js/new',
           },
           {
-            title: '9.闭包',
+            title: '7.闭包',
             path: '/base/js/closure',
+          },
+          {
+            title: '8.面向对象编程',
+            path: '/base/js/object',
+          },
+          {
+            title: '9.递归',
+            path: '/base/js/recursion',
           },
           {
             title: '10.内存管理机制',
@@ -331,6 +380,9 @@ const umiConfig = {
         ],
       },
     ],
+    '/frame/applet': [],
+    '/frame/react-native': [],
+    '/frame/electron': [],
     /***************** nav: 框架 *******************/
     /***************** nav: 工程化 *******************/
     // 模块化
@@ -478,6 +530,13 @@ const umiConfig = {
       },
     ],
     /***************** nav: 工程化 *******************/
+    /***************** nav: node *******************/
+    '/node/index': [{ children: ['/node/index'] }],
+    '/node/express': [{ children: ['/node/express'] }],
+    '/node/koa': [{ children: ['/node/koa'] }],
+    '/node/mysql': [{ children: ['/node/mysql'] }],
+    '/node/nginx': [{ children: ['/node/nginx'] }],
+    /***************** nav: node *******************/
   },
 };
 
