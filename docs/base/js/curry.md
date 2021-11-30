@@ -60,14 +60,19 @@ prop 函数编写一次后，以后可以多次使用，实际上代码从原本
 
 ```js
 function curry(fn) {
-  function jude(...args) {
+  function judge(...args) {
+    // 闭包
     if (args.length < fn.length) {
-      return (...arg) => jude(...args, ...arg);
+      // 没有达到函数fn的长度时，继续递归调用
+      return (...arg) => judge(...args, ...arg); // 返回一个匿名函数，并且把之前的参数也传入
     }
+    // 满足条件，返回
     return fn(...args);
   }
-  return jude;
+  // 返回闭包
+  return judge;
 }
+
 var add = curry(function (a, b, c) {
   console.log([a, b, c]);
 });
@@ -76,13 +81,6 @@ add(1, 2, 3); // 6
 add(1, 2)(3); // 6
 add(1)(2)(3); // 6
 add(1)(2, 3); // 6
-
-// es6写法
-const curry = (fn) =>
-  (judge = (...args) =>
-    args.length >= fn.length
-      ? fn(...args)
-      : (...arg) => judge(...args, ...arg));
 ```
 
 - 1.调用 curry 函数，获取函数 fn 的参数

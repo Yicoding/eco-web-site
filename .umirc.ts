@@ -213,91 +213,95 @@ const umiConfig = {
       {
         children: [
           {
-            title: '1.基本概念',
+            title: '1.js图谱',
             path: '/base/js',
           },
           {
-            title: '2.数据类型',
+            title: '2.基本概念',
+            path: '/base/js/base',
+          },
+          {
+            title: '3.数据类型',
             path: '/base/js/type',
           },
           {
-            title: '3.数据类型检测',
+            title: '4.数据类型检测',
             path: '/base/js/typeof',
           },
           {
-            title: '4.数据类型转换',
+            title: '5.数据类型转换',
             path: '/base/js/transform',
           },
           {
-            title: '5.作用域和执行上下文',
+            title: '6.作用域和执行上下文',
             path: '/base/js/scope',
           },
           {
-            title: '6.this指向',
+            title: '7.this指向',
             path: '/base/js/this',
           },
           {
-            title: '7.new/bind/call/apply',
+            title: '8.new/bind/call/apply',
             path: '/base/js/new',
           },
           {
-            title: '8.闭包',
+            title: '9.闭包',
             path: '/base/js/closure',
           },
           {
-            title: '9.面向对象编程',
+            title: '10.面向对象编程',
             path: '/base/js/object',
           },
           {
-            title: '10.递归',
+            title: '11.递归',
             path: '/base/js/recursion',
           },
           {
-            title: '11.内存管理机制',
+            title: '12.内存管理机制',
             path: '/base/js/memory',
           },
           {
-            title: '12.重载',
+            title: '13.重载',
             path: '/base/js/heavy',
           },
           {
-            title: '13.正则',
+            title: '14.正则',
             path: '/base/js/regexp',
           },
           {
-            title: '14.Event Loop 事件循环',
+            title: '15.Event Loop 事件循环',
             path: '/base/js/loop',
           },
           {
-            title: '15.事件冒泡和捕获',
+            title: '16.事件冒泡和捕获',
             path: '/base/js/bubble',
           },
           {
-            title: '16.深浅拷贝',
+            title: '17.深浅拷贝',
             path: '/base/js/clone',
           },
           {
-            title: '17.设计模式',
+            title: '18.设计模式',
             path: '/base/js/mode',
           },
           {
-            title: '18.数据劫持',
+            title: '19.数据劫持',
             path: '/base/js/hijack',
           },
           {
-            title: '19.防抖/节流',
+            title: '20.防抖/节流',
             path: '/base/js/shake',
           },
           {
-            title: '20.数组扁平化',
+            title: '21.数组扁平化',
             path: '/base/js/flatten',
           },
           {
-            title: '21.函数柯里化',
+            title: '22.函数柯里化',
             path: '/base/js/curry',
           },
           {
-            title: '22.零散知识点',
+            title: '23.零散知识点',
             path: '/base/js/small',
           },
         ],

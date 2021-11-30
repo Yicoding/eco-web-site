@@ -70,3 +70,12 @@ for (let i = 0; i < 5; ++i) {
 - `for 和 do while 循环效率最高`
 
 - `for ~= do while > forEach ~= map ~= every > $.each > $(e).each > for in`
+
+## 3.+new Date()
+
+会转数字，等同于 new Date().getTime()
+
+```js
+console.log(new Date()); // Tue Nov 30 2021 23:11:55 GMT+0800 (中国标准时间)
+console.log(+new Date()); // 1638285115767
+```
