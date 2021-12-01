@@ -50,6 +50,28 @@ Qiu(1, 2, 3);
 
 被召者
 
+- 1.callee 是 arguments 对象的属性
+
+- 2.arguments.callee 指向参数所属的当前执行的函数. 就是说 callee 返回正在被执行的 function 对象, 也就是所指定的 function 对象的正文.
+
+- 3.callee 属性的初始值就是正被执行的 Function 对象
+
+- 4.callee 表示对函数对象本身的引用，这有利于匿名函数的递归或者保证函数的封装性
+
+- 5.callee 拥有 length 属性，这个属性可用于验证。arguments.length 是实参长度,arguments.callee.length 是形参长度，可以判断调用时形参长度是否和实参长度一致
+
 ## 3.caller
 
 调用者
+
+- caller 是 function 的属性，callee 是 arguments 的属性
+
+```js
+function myq() {
+  if (myq.caller == null) {
+    return console.log('该函数在全局作用域内被调用!');
+  }
+  console.log('调用我的是函数是' + myq.caller);
+}
+myq(); //该函数在全局作用域内被调用!
+```
