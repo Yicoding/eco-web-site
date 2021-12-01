@@ -561,6 +561,12 @@ for (var k in obj) {
 
 ```js
 var obj = { name: 'lucy', age: 20 };
+Object.defineProperty(obj, 'method', {
+  value: function () {
+    alert('Non enumerable property');
+  },
+  enumerable: false,
+});
 console.log(Object.keys(obj));
 // ['name', 'age']
 ```
@@ -593,8 +599,30 @@ console.log(Object.entries(obj));
 
 ```js
 var obj = { name: 'lucy', age: 20 };
+Object.defineProperty(obj, 'method', {
+  value: function () {
+    alert('Non enumerable property');
+  },
+  enumerable: false,
+});
 console.log(Object.getOwnPropertyNames(obj));
-// [['name', 'lucy'], ['age', 20]]
+// ['name', 'age', 'method']
+```
+
+### 6）Reflect.ownKeys
+
+返回所有自有属性 key，不管是否可枚举，但不包括继承自原型的属性
+
+```js
+var obj = { name: 'lucy', age: 20 };
+Object.defineProperty(obj, 'method', {
+  value: function () {
+    alert('Non enumerable property');
+  },
+  enumerable: false,
+});
+console.log(Reflect.ownKeys(obj));
+// ['name', 'age', 'method']
 ```
 
 ## 9.void 运算符
@@ -671,3 +699,13 @@ function test() {
 }
 test();
 ```
+
+## 10.== 和 === 的区别
+
+### 1）==
+
+只比较双方的值，如果双方的类型不一样，先进行类型转换，转换成一样的类型，然后再比较值
+
+### 2）===
+
+判断双方的类型和值是否都相同

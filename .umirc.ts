@@ -301,7 +301,11 @@ const umiConfig = {
             path: '/base/js/curry',
           },
           {
-            title: '23.零散知识点',
+            title: '23.arguments/callee/caller',
+            path: '/base/js/arguments',
+          },
+          {
+            title: '24.零散知识点',
             path: '/base/js/small',
           },
         ],
