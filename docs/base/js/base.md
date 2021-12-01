@@ -55,12 +55,12 @@ Javascript 基本上会将`同步任务`和`异步任务`分组，并将它们�
 ```js
 console.log('我是第一个语句');
 
-// 宏任务 task
+// 宏任务 macrotask（tasks）
 setTimeout(() => {
   console.log('我是第二个语句');
 }, 0);
 
-// 微任务jobs
+// 微任务 microtask(jobs)
 Promise.resolve().then(() => {
   console.log('我是第三个语句');
 });
@@ -595,4 +595,79 @@ console.log(Object.entries(obj));
 var obj = { name: 'lucy', age: 20 };
 console.log(Object.getOwnPropertyNames(obj));
 // [['name', 'lucy'], ['age', 20]]
+```
+
+## 9.void 运算符
+
+### 1）void 是什么
+
+void 运算符 对给定的表达式进行求值，然后返回 `undefined`，通常用 `void 0`
+
+```js
+void xx => undefined
+```
+
+### 2）void 的作用
+
+**1.JavaScript URIs**
+
+- 阻止 a 标签的默认事件
+
+  ```js
+  <a href="javascript:void(0);">
+  ```
+
+**2.立即调用的函数表达式**
+
+- void 运算符让 JavaScript 引擎把一个 function 关键字识别成函数表达式而不是函数声明（语句）
+
+  ```js
+  void function getName() {
+    console.log('void');
+  };
+
+  console.log(getName); // 报错: getName is not defined
+  ```
+
+- 立即使用，而不进行声明
+
+  ```js
+  void (function getName() {
+    console.log('void');
+  })();
+  // 输出：void
+  ```
+
+**3.在箭头函数中避免泄漏**
+
+- 右侧调用了一个原本没有返回值的函数，其返回值改变后，则会导致非预期的副作用
+
+- 当函数返回值是一个不会被使用到的时候，应该使用 void 运算符，来确保返回 undefined
+
+```js
+button.onclick = () => void doSomething();
+```
+
+- 确保了当 doSomething 的返回值从 undefined 变为 true 的时候，不会改变函数的行为
+
+### 3）void 优先级
+
+- void 运算符的优先级比较高（14）
+
+  ```js
+  console.log(void 2 - 1); //返回NaN
+  console.log(void (2 - 1)); //返回undefined
+  ```
+
+### 4）为什么要用 void
+
+undefined 在 JavaScript 中是一个保留字，但是也可以被赋值，如果` undefined 被污染`，用 undefined 所做的判断就不准确了，因此用 `void 可以确保一定返回 undefined`
+
+```js
+function test() {
+  var undefined = '我是字符串';
+  console.log(undefined); // 我是字符串
+  console.log(void 0); // undefined
+}
+test();
 ```
