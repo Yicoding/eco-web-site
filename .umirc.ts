@@ -241,7 +241,7 @@ const umiConfig = {
             path: '/base/js/this',
           },
           {
-            title: '8.new/bind/call/apply',
+            title: '8.new/call/apply/bind',
             path: '/base/js/new',
           },
           {

@@ -46,6 +46,26 @@ function Qiu() {
 Qiu(1, 2, 3);
 ```
 
+### 4）用法
+
+```js
+[].slice.call(arguments, 1);
+
+// 也可以使用es6语法[...arguments]
+```
+
+相当于
+
+```js
+arguments.slice(1);
+```
+
+为什么要使用.call 呢？因为 arguments 的原因
+
+- arguments 是一个`类数组`，他并`不具备`数组原型上所有的方法
+
+- 所以如果 arguments `要使用`数组的方法，这里就通过`修改 this 指针`的方式，让 arguments `继承` array
+
 ## 2.callee
 
 被召者

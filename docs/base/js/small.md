@@ -79,3 +79,130 @@ for (let i = 0; i < 5; ++i) {
 console.log(new Date()); // Tue Nov 30 2021 23:11:55 GMT+0800 (中国标准时间)
 console.log(+new Date()); // 1638285115767
 ```
+
+## 4）解决 for 循环 setTimeout
+
+- 原因：setTimeout 异步任务之宏任务，会进入任务队列，最后执行 console 时，i 的值已经都是最后一个了
+
+```js
+for (var i = 0; i < 5; i++) {
+  setTimeout(() => {
+    console.log(i);
+  }, 10);
+}
+console.log(i);
+// 输出结果：5 -> 5,5,5,5,5 （箭头表示 1s，逗号表示几乎同时输出）
+```
+
+- 解决
+  - 输出结果：5 -> 0,1,2,3,4
+
+### 1）借助 let 的暂时性死区
+
+```js
+for (let i = 0; i < 5; i++) {
+  setTimeout(() => {
+    console.log(i);
+  }, 10);
+}
+console.log(i);
+// 输出结果：5 -> 0,1,2,3,4
+```
+
+### 2）借助 setTimeout 的第三个参数
+
+```js
+for (var i = 0; i < 5; i++) {
+  setTimeout(
+    (i) => {
+      console.log(i);
+    },
+    10,
+    i,
+  );
+}
+console.log(i);
+// 输出结果：5 -> 0,1,2,3,4
+```
+
+### 3）借助立即执行函数
+
+在这里创建了一个闭包，每次循环都会把 i 的最新值传进去，然后被闭包保存起来
+
+```js
+for (var i = 0; i < 5; i++) {
+  (function (j) {
+    setTimeout(() => {
+      console.log(j);
+    }, 10);
+  })(i);
+}
+console.log(i);
+// 输出结果：5 -> 0,1,2,3,4
+```
+
+### 4）借助形参的特性
+
+```js
+var sleepConsole = (i) => {
+  setTimeout(() => {
+    console.log(i);
+  }, 1000);
+};
+
+for (var i = 0; i < 5; i++) {
+  sleepConsole(i); // i会被复制后传递
+}
+
+console.log(i);
+// 输出结果：5 -> 0,1,2,3,4
+```
+
+### 5）借助 Promise
+
+```js
+// 1.建立数组存储 Promise
+const task = [];
+
+// 2.抽取方法生成异步操作
+const output = (i) =>
+  new Promise((resolve) => {
+    setTimeout(() => {
+      console.log(i);
+      resolve();
+    }, 1000 * i);
+  });
+
+// 3.循环执行异步操作
+for (var i = 0; i < 5; i++) {
+  task.push(output(i));
+}
+
+// 4.异步操作执行完成后输出最后的i
+Promise.all(task).then(() => {
+  setTimeout(() => {
+    console.log(i);
+  }, 1000);
+});
+// 输出结果：0 -> 1 -> 2 -> 3 -> 4 -> 5
+```
+
+### 6）借助 async/await
+
+```js
+// 生成休眠函数
+// 生成休眠函数
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+(async () => {
+  for (var i = 0; i < 5; i++) {
+    if (i > 0) {
+      await sleep(1000);
+    }
+    console.log(i);
+  }
+  await sleep(1000);
+  console.log(i);
+})();
+// 输出结果：0 -> 1 -> 2 -> 3 -> 4 -> 5
+```
