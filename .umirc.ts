@@ -261,7 +261,7 @@ const umiConfig = {
             path: '/base/js/memory',
           },
           {
-            title: '13.重载',
+            title: '13.函数重载',
             path: '/base/js/heavy',
           },
           {

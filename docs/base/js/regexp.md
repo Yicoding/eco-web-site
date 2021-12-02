@@ -42,14 +42,14 @@ const regB = /\d/gim;
 
 ## 3.量词
 
-| 正则     | 含义                             |
-| :------- | :------------------------------- |
-| `?`      | 出现零次或一次（最多出现一次）   |
-| `*`      | 出现零次或者多次（任意次）       |
-| `+`      | 出现一次或者多次（至少出现一次） |
-| `{n}`    | 出现 n 次                        |
-| `{n, m}` | 出现 n 到 m 次                   |
-| `{n,}`   | 至少出现 n 次                    |
+| 正则     | 含义                             | 记忆方式 |
+| :------- | :------------------------------- | :------- |
+| `?`      | 出现零次或一次（最多出现一次）   | `0 或 1` |
+| `*`      | 出现零次或者多次（任意次）       | `0+`     |
+| `+`      | 出现一次或者多次（至少出现一次） | `1+`     |
+| `{n}`    | 出现 n 次                        | `n`      |
+| `{n, m}` | 出现 n 到 m 次                   | `n~m`    |
+| `{n,}`   | 至少出现 n 次                    | `n+`     |
 
 ## 4.边界
 
@@ -83,12 +83,12 @@ const reg = /\d/gim;
 
 - 在获取匹配结果的时候，小括号包含的表达式所匹配到的字符串`可以单独获取`
 
-- 在 js 中正则匹配成功的字符串可以用$1 表示第一次匹配成功，$3 表示第三次匹配成功的字符，以此类推至$99）
+- 在 js 中正则匹配成功的字符串可以用`$1` 表示第一次匹配成功，`$3` 表示第三次匹配成功的字符，以此类推至`$99`）
 
 ```js
-var reg = /(\d{4})-(\d{2})-(\d{2})/g;
-var text = '2015-12-25';
-var result = text.replace(reg, '$2/$3/$1');
+const reg = /(\d{4})-(\d{2})-(\d{2})/g;
+const text = '2015-12-25';
+const result = text.replace(reg, '$2/$3/$1');
 console.log(result); // 12/25/2015
 ```
 
@@ -125,7 +125,7 @@ exec
 ### 1）search
 
 ```js
-var str = 'a1b2c3d4';
+const str = 'a1b2c3d4';
 console.log(str.search('1')); // 1
 console.log(str.search('10')); // -1
 console.log(str.search(/b2/)); // 2
@@ -136,17 +136,17 @@ console.log(str.search(/\w\d/g)); // 0 忽略'g',执行多次未返回不同结�
 ### 2）match
 
 ```js
-var reg3 = /\d(\w)\d/;
-var str = '1a2b3c4d5e';
-var arr = str.match(reg3);
+const reg3 = /\d(\w)\d/;
+const str = '1a2b3c4d5e';
+const arr = str.match(reg3);
 console.log(arr); // ['1a2', 'a', index: 0, input: '1a2b3c4d5e', groups: undefined]
 ```
 
 ### 3）split
 
 ```js
-var str = 'a1b2c3d';
-var arr = str.split(/\d/);
+const str = 'a1b2c3d';
+const arr = str.split(/\d/);
 console.log(arr); //['a','b','c','d']
 ```
 
@@ -161,17 +161,19 @@ console.log(arr); //['a','b','c','d']
 - 3.String.prototype.replace(reg,function);
 
 ```js
-var str = 'a1b2c3d4e5';
-var reg = /\d/g;
-var arr = str.replace(reg, function (match, index, origin) {
+const str = 'a1b2c3d4e5';
+const reg = /\d/g;
+const arr = str.replace(reg, function (match, index, origin) {
   console.log(index); // 1 3 5 7 9
   return parseInt(match) + 1;
 });
 console.log(arr); // a2b3c4d5e6 把每次匹配到的结果+1替换
+```
 
-var str = 'a1b2c3d4e5';
-var reg = /(\d)(\w)(\d)/g;
-var arr = str.replace(
+```js
+const str = 'a1b2c3d4e5';
+const reg = /(\d)(\w)(\d)/g;
+const arr = str.replace(
   reg,
   function (match, group1, group2, group3, index, origin) {
     console.log(match); // 1b2   3d4
