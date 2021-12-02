@@ -106,7 +106,7 @@ const newObj = JSON.parse(JSON.stringify(obj));
 console.log(newObj); // {name: 'obj'}
 ```
 
-### 2）递归浅拷贝
+### 2）\*递归浅拷贝
 
 - 一般是工具库中的深拷贝函数实现方式，比如 loadash 中的 cloneDeep
 
