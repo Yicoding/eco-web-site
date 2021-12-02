@@ -4,6 +4,8 @@ toc: menu
 
 # this 指向
 
+非严格模式下，`this 是个对象`
+
 参考资料：[MDN 中 this 解析](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/this)
 
 this 的指向，是在调用函数时根据执行上下文所动态确定的

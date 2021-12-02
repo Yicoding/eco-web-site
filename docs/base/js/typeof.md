@@ -29,7 +29,7 @@ typeof {}; // 'object'
 
 ## 2.instanceof
 
-### 说明
+### 1）说明
 
 ```
 1.instanceof 操作符用来判断 引用类型
@@ -69,22 +69,18 @@ myDate instanceof Object; // 返回 true
 myDate instanceof String; // 返回 false
 ```
 
-### 手动实现 instanceof
+### 2）手动实现 instanceof
 
 > 核心: 原型链的向上查找
 
 ```js
 function myInstanceof(left, right) {
-  let leftValue = left.__proto__;
-  let rightValue = right.prototype;
+  left = left.__proto__;
+  const prototype = right.prototype;
   while (true) {
-    if (leftValue === null) {
-      return false;
-    } else if (leftValue === rightValue) {
-      return true;
-    } else {
-      leftValue = leftValue.__proto__;
-    }
+    if (left === null || left === undefined) return false;
+    if (prototype === left) return true;
+    left = left.__proto__;
   }
 }
 

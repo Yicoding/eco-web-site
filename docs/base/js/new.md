@@ -16,26 +16,26 @@ new 运算符创建一个用户定义的对象类型的实例或具有构造函�
 
 - 2.将这个空对象的**proto**指向构造函数的原型
 
-- 3.将 this 指向空对象
+- 3.将 this 指向这个空对象
 
 - 4.对构造函数返回值做判断，然后返回对应的值
 
 ### 3）模拟实现
 
-方法 1.
+**方法 1.**
 
 ```js
-function _new() {
-  // arguments实际上是一个类数组对象，需要转成数组
-  var args = [].slice.call(arguments);
-  // 第一个参数是构造函数，把它拿出来
-  var constructor = args.shift();
-  // Object.create()返回一个新对象，这个对象的构造函数的原型指向Foo
-  var context = Object.create(constructor.prototype);
-  // 将this指向context
-  var result = constructor.apply(context, args);
-  // 如果Foo显示的返回了一个对象，那么应该直接返回这个对象
-  return typeof result === 'object' && result != null ? result : context;
+function myNew() {
+  // 创建一个新的空对象
+  const obj = {};
+  const Con = [].shift.call(arguments);
+  // 将这个空对象的__proto__指向构造函数的原型
+  // obj.__proto__ = Con.prototype;
+  Object.setPrototypeOf(obj, Con.prototype);
+  // 将this指向空对象
+  const result = Con.apply(obj, arguments);
+  // 对构造函数返回值做判断，然后返回对应的值
+  return result instanceof Object ? result : obj;
 }
 function Foo(name) {
   this.name = name;
@@ -52,16 +52,17 @@ a.getName(); // tom
 方法 2.
 
 ```js
-function myNew(Con, ...args) {
-  // 创建一个新的空对象
-  let obj = {};
-  // 将这个空对象的__proto__指向构造函数的原型
-  // obj.__proto__ = Con.prototype;
-  Object.setPrototypeOf(obj, Con.prototype);
-  // 将this指向空对象
-  let res = Con.apply(obj, args);
-  // 对构造函数返回值做判断，然后返回对应的值
-  return res instanceof Object ? res : obj;
+function _new() {
+  // arguments实际上是一个类数组对象，需要转成数组
+  var args = [].slice.call(arguments);
+  // 第一个参数是构造函数，把它拿出来
+  var constructor = args.shift();
+  // Object.create()返回一个新对象，这个对象的构造函数的原型指向Foo
+  var context = Object.create(constructor.prototype);
+  // 将this指向context
+  var result = constructor.apply(context, args);
+  // 如果Foo显示的返回了一个对象，那么应该直接返回这个对象
+  return typeof result === 'object' && result != null ? result : context;
 }
 function Foo(name) {
   this.name = name;
@@ -223,7 +224,7 @@ console.log(i);
 // 输出结果：5 -> 0,1,2,3,4
 ```
 
-## 手写 call、apply 及 bind
+## 6.手写 call、apply 及 bind
 
 思路：
 
@@ -243,11 +244,11 @@ Function.prototype.call =
     // context 为可选参数，如果不传的话默认上下文为 window
     context = context || window;
     // context 创建一个 fn 属性，并将值设置为需要调用的函数
-    context.fn = this;
+    context.fn = this; // ***把this指向外部调用call的对象，this的指向其中一条是：谁调用this，this指向谁
     // 因为 call 可以传入多个参数作为调用函数的参数，所以需要将参数剥离出来
     const args = [...arguments].slice(1);
     // 然后调用函数并将对象上的函数删除
-    const result = context.fn(...args);
+    const result = context.fn(...args); // 外部对象调用当前函数
     delete context.fn;
     return result;
   };
@@ -265,7 +266,7 @@ Function.prototype.apply =
       return throw new Error('请使用函数进行调用');
     }
     context = context || window;
-    context.fn = this;
+    context.fn = this; // ***把this指向外部调用call的函数
     let result;
     if (arguments[1]) {
       // 参数存在
@@ -292,7 +293,9 @@ Function.prototype.bind =
     }
     const _this = this;
     const args = [...arguments].slice(1);
+    // 返回一个函数
     return function F() {
+      // 因为返回了一个函数，我们可以 new F()，所以需要判断
       if (this instanceof F) {
         return new _this(...args, ...arguments);
       }
@@ -300,3 +303,11 @@ Function.prototype.bind =
     };
   };
 ```
+
+- 1.`bind` 返回了一个函数，对于函数来说有两种方式调用，一种是直接调用，一种是通过 `new` 的方式，我们先来说直接调用的方式
+
+- 2.对于直接调用，使用 apply 的方式实现
+
+  - 因为 bind 可以实现类似这样的代码 `f.bind(obj, 1)(2)`，所以我们需要将两边的参数拼接起来，于是就有了这样的实现 `args.concat(...arguments)`
+
+- 3.对于 `new` 的情况来说，`不会被任何方式改变 this`，所以对于这种情况我们需要忽略传入的 this
