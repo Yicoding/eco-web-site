@@ -239,12 +239,20 @@ Function.prototype.call =
   Function.prototype.call ||
   function (context) {
     if (typeof this !== 'function') {
-      throw new Error('请使用函数进行调用');
+      throw new TypeError('Error');
+      throw new TypeError(`${this.name} is not function`);
     }
     // context 为可选参数，如果不传的话默认上下文为 window
     context = context || window;
     // context 创建一个 fn 属性，并将值设置为需要调用的函数
-    context.fn = this; // ***把this指向外部调用call的对象，this的指向其中一条是：谁调用this，this指向谁
+    context.fn = this; // ***把this指向外部调用call的对象因为通过 context.fn()这种方式执行函数，this就是context
+    /* 相当于
+    var context = {
+      fn: function currentFunction() {
+        直接调用context.fn时，里面的this指向context
+      }
+    }
+    */
     // 因为 call 可以传入多个参数作为调用函数的参数，所以需要将参数剥离出来
     const args = [...arguments].slice(1);
     // 然后调用函数并将对象上的函数删除
@@ -263,7 +271,7 @@ Function.prototype.apply =
   Function.prototype.apply ||
   function (context) {
     if (typeof this !== 'function') {
-      return throw new Error('请使用函数进行调用');
+      return throw new TypeError('Error');
     }
     context = context || window;
     context.fn = this; // ***把this指向外部调用call的函数
@@ -289,9 +297,10 @@ Function.prototype.bind =
   Function.prototype.bind ||
   function (context) {
     if (typeof this !== 'function') {
-      return throw new Error('请使用函数进行调用');
+      return throw new TypeError('Error');
     }
     const _this = this;
+    // const args = Array.prototype.slice.call(arguments, 1);
     const args = [...arguments].slice(1);
     // 返回一个函数
     return function F() {
