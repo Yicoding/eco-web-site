@@ -33,10 +33,6 @@ const umiConfig = {
       title: '基础',
       children: [
         {
-          title: 'markdown',
-          path: '/base/markdown',
-        },
-        {
           title: 'js',
           path: '/base/js',
         },
@@ -63,6 +59,10 @@ const umiConfig = {
         {
           title: 'ts',
           path: '/base/ts',
+        },
+        {
+          title: 'markdown',
+          path: '/base/markdown',
         },
       ],
     },
@@ -233,56 +233,56 @@ const umiConfig = {
             path: '/base/js/transform',
           },
           {
-            title: '6.作用域和执行上下文',
-            path: '/base/js/scope',
-          },
-          {
-            title: '7.this指向',
-            path: '/base/js/this',
-          },
-          {
-            title: '8.new/call/apply/bind',
-            path: '/base/js/new',
-          },
-          {
-            title: '9.闭包',
-            path: '/base/js/closure',
-          },
-          {
-            title: '10.面向对象编程',
-            path: '/base/js/object',
-          },
-          {
-            title: '11.递归',
-            path: '/base/js/recursion',
-          },
-          {
-            title: '12.内存管理机制',
+            title: '6.内存管理机制',
             path: '/base/js/memory',
           },
           {
-            title: '13.函数重载',
-            path: '/base/js/heavy',
+            title: '7.作用域和执行上下文',
+            path: '/base/js/scope',
           },
           {
-            title: '14.正则',
-            path: '/base/js/regexp',
+            title: '8.this指向',
+            path: '/base/js/this',
           },
           {
-            title: '15.Event Loop 事件循环',
+            title: '9.new/call/apply/bind',
+            path: '/base/js/new',
+          },
+          {
+            title: '10.闭包',
+            path: '/base/js/closure',
+          },
+          {
+            title: '11.面向对象编程',
+            path: '/base/js/object',
+          },
+          {
+            title: '12.设计模式',
+            path: '/base/js/mode',
+          },
+          {
+            title: '13.Event Loop 事件循环',
             path: '/base/js/loop',
           },
           {
-            title: '16.事件冒泡和捕获',
+            title: '14.事件冒泡和捕获',
             path: '/base/js/bubble',
           },
           {
-            title: '17.深浅拷贝',
-            path: '/base/js/clone',
+            title: '15.递归',
+            path: '/base/js/recursion',
           },
           {
-            title: '18.设计模式',
-            path: '/base/js/mode',
+            title: '16.函数重载',
+            path: '/base/js/heavy',
+          },
+          {
+            title: '17.正则',
+            path: '/base/js/regexp',
+          },
+          {
+            title: '18.深浅拷贝',
+            path: '/base/js/clone',
           },
           {
             title: '19.数据劫持',
@@ -301,11 +301,7 @@ const umiConfig = {
             path: '/base/js/curry',
           },
           {
-            title: '23.arguments/callee/caller',
-            path: '/base/js/arguments',
-          },
-          {
-            title: '24.零散知识点',
+            title: '23.零散知识点',
             path: '/base/js/small',
           },
         ],
