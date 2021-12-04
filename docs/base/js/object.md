@@ -122,4 +122,8 @@ const person2 = new Person('person2');
 
 ## 3.原型和原型链
 
+### 1）关系图
+
+![image](images/js/2.png)
+
 ## 4.继承
