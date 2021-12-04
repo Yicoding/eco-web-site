@@ -130,6 +130,8 @@ const person2 = new Person('person2');
 function Player(color) {
   this.color = color;
 }
+
+Play;
 ```
 
 ## 4.继承
