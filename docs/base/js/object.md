@@ -126,4 +126,10 @@ const person2 = new Person('person2');
 
 ![image](images/js/2.png)
 
+```js
+function Player(color) {
+  this.color = color;
+}
+```
+
 ## 4.继承

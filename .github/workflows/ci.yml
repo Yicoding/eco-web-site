@@ -17,19 +17,20 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout
-      uses: actions/checkout@v2.3.1 # If you're using actions/checkout@v2 you must set persist-credentials to false in most cases for the deployment to work correctly.
-      with:
-        persist-credentials: false
-    - name: Install
-      run: npm install
-    - name: Build docs
-      run: npm run docs
-    - name: Deploy docs
-      uses: JamesIves/github-pages-deploy-action@4.1.6
-      with:
-        GITHUB_TOKEN: ${{ secrets.ECO_WEB_SITE_TOKEN }}
-        BRANCH: gh-pages
-        FOLDER: site
-        # TARGET_FOLDER: ${{github.ref}}
-        target-folder: ${{github.ref}}
+      - name: Checkout
+        uses: actions/checkout@v2.3.1 # If you're using actions/checkout@v2 you must set persist-credentials to false in most cases for the deployment to work correctly.
+        with:
+          persist-credentials: false
+      - name: Install
+        run: npm install
+      - name: Build docs
+        run: npm run docs
+      - name: Deploy docs
+        uses: JamesIves/github-pages-deploy-action@4.1.6
+        with:
+          # GITHUB_TOKEN: ${{ secrets.ECO_WEB_SITE_TOKEN }}
+          token: ${{ secrets.ECO_WEB_SITE_TOKEN }}
+          BRANCH: gh-pages
+          FOLDER: site
+          # TARGET_FOLDER: ${{github.ref}}
+          target-folder: ${{github.ref}}
