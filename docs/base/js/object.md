@@ -126,12 +126,38 @@ const person2 = new Person('person2');
 
 ![image](images/js/2.png)
 
+原型的 constructor 属性指向构造函数，构造函数又通过 prototype 属性指回原型
+
 ```js
 function Player(color) {
   this.color = color;
 }
 
-Play;
+Player.prototype.sayColor = function () {
+  console.log(this.color);
+};
+
+var whitePlayer = new Player('white');
+var blackPlayer = new Player('black');
+
+whitePlayer.__proto__ === Player.prototype; // true
+(Player.prototype.constructor === whitePlayer.__proto__.constructor) === Player; // true
+
+whitePlayer.__proto__.__proto__ === Object.prototype; // true
+
+(whitePlayer.__proto__.__proto__.constructor ===
+  Object.prototype.constructor) ===
+  Object; // true
+
+whitePlayer.__proto__.__proto__.__proto__ === null; // true
 ```
+
+- 1.Object 是所有对象的爸爸，所有对象都可以通过 `__proto__` 找到它
+
+- 2.Function 是所有函数的爸爸，所有函数都可以通过 `__proto__` 找到它
+
+- 3.函数的 prototype 是一个对象
+
+- 4.对象的 `__proto__` 属性指向原型， `__proto__` 将对象和原型连接起来组成了原型链
 
 ## 4.继承
