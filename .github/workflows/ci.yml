@@ -19,14 +19,15 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2 # If you're using actions/checkout@v2 you must set persist-credentials to false in most cases for the deployment to work correctly.
-        # with:
-        #   persist-credentials: false
+        with:
+          persist-credentials: false
       - name: Install
         run: npm install
       - name: Build docs
         run: npm run docs
       - name: Deploy docs
-        uses: JamesIves/github-pages-deploy-action@4.1.7
+        # uses: JamesIves/github-pages-deploy-action@4.1.7
+        uses: JamesIves/github-pages-deploy-action@4.0.0
         with:
           # GITHUB_TOKEN: ${{ secrets.ECO_WEB_SITE_TOKEN }}
           # BRANCH: gh-pages
