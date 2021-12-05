@@ -150,7 +150,7 @@ const umiConfig = {
       ],
     },
     {
-      title: '算法',
+      title: '数据结构与算法',
       children: [
         {
           title: '数组',
@@ -303,6 +303,20 @@ const umiConfig = {
           {
             title: '23.零散知识点',
             path: '/base/js/small',
+          },
+        ],
+      },
+    ],
+    '/base/esnext': [
+      {
+        children: [
+          {
+            title: '1.ECMAScript',
+            path: '/base/esnext',
+          },
+          {
+            title: '2.ES6(ES2015)',
+            path: '/base/esnext/es6',
           },
         ],
       },
