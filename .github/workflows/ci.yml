@@ -33,7 +33,7 @@ jobs:
           # BRANCH: gh-pages
           # FOLDER: site
           # TARGET_FOLDER: ${{github.ref}}
-          token: ${{ secrets.WEBSITE }}
+          # token: ${{ secrets.WEBSITE }}
           branch: gh-pages
           folder: site
           target-folder: ${{github.ref}}
