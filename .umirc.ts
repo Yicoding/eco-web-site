@@ -25,6 +25,8 @@ const umiConfig = {
     type: 'hash',
   },
   dynamicImport: {},
+  // mfsu: {},
+  // webpack5: {},
   hash: true,
   // more config: https://d.umijs.org/config
   navs: [
@@ -317,6 +319,30 @@ const umiConfig = {
           {
             title: '2.ES6(ES2015)',
             path: '/base/esnext/es6',
+          },
+          {
+            title: '3.ES7(ES2016)',
+            path: '/base/esnext/es7',
+          },
+          {
+            title: '4.ES8(ES2017)',
+            path: '/base/esnext/es8',
+          },
+          {
+            title: '5.ES9(ES2018)',
+            path: '/base/esnext/es9',
+          },
+          {
+            title: '6.ES10(ES2019)',
+            path: '/base/esnext/es10',
+          },
+          {
+            title: '7.ES11(ES2020)',
+            path: '/base/esnext/es11',
+          },
+          {
+            title: '8.ES提案',
+            path: '/base/esnext/es12',
           },
         ],
       },

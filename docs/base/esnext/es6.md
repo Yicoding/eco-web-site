@@ -361,5 +361,3 @@ console.log(keys); // [ 'name', 'age', 'gender' ]
 ```
 
 ### 2）
-
-## 11.Array.prototype.forEach
