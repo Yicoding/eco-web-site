@@ -112,12 +112,14 @@ console.log(newObj); // {name: 'obj'}
 
 - 缺点：对于庞大的数据来说性能并不好，因为需要把整个对象都遍历一遍
 
+**1.简易基础版**
+
 ```js
 // 简易基础版
 const deepClone = (obj) => {
   // 判断是对象和函数
   const isObject = (o) => {
-    return (typeof o === 'object' || typeof o === 'function') && o !== null;
+    return typeof o === 'object' && o !== null;
   };
   // 原始类型直接返回
   if (!isObject(obj)) {
@@ -141,4 +143,37 @@ const obj = {
 };
 const newObj = deepClone(obj);
 console.log(newObj); // {name: 'obj', b: Symbol('b'), c: undefined, d: function () {}}
+```
+
+**2.考虑到复制 Symbol**
+
+```js
+function isObject(val) {
+  return typeof val === 'object' && val !== null;
+}
+
+function deepClone(obj, hash = new WeakMap()) {
+  if (!isObject(obj)) return obj;
+  if (hash.has(obj)) {
+    return hash.get(obj);
+  }
+  let target = Array.isArray(obj) ? [] : {};
+  hash.set(obj, target);
+  Reflect.ownKeys(obj).forEach((item) => {
+    if (isObject(obj[item])) {
+      target[item] = deepClone(obj[item], hash);
+    } else {
+      target[item] = obj[item];
+    }
+  });
+
+  return target;
+}
+
+var obj1 = {
+  a: 1,
+  b: { a: 2 },
+};
+var obj2 = deepClone(obj1);
+console.log(obj1); // {a: 1, b: {a: 2}}}
 ```

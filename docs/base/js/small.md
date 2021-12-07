@@ -119,3 +119,43 @@ parseFloat((0.1 + 0.2).toFixed(10)); // 0.3
 ### 2）===
 
 判断双方的类型和值是否都相同
+
+## 6.setTimeout 模拟实现 setInterval(带清除定时器的版本)
+
+- setInterval 用来实现循环定时调用 可能会存在一定的问题 能用 setTimeout 解决吗
+
+```js
+function mySettimeout(fn, t) {
+  let timer = null;
+  function interval() {
+    fn();
+    timer = setTimeout(interval, t);
+  }
+  interval();
+  return {
+    cancel: () => {
+      clearTimeout(timer);
+    },
+  };
+}
+let a = mySettimeout(() => {
+  console.log(111);
+}, 1000);
+let b = mySettimeout(() => {
+  console.log(222);
+}, 1000);
+```
+
+## 7.使用 setinterval 模拟实现 settimeout
+
+```js
+const mySetTimeout = (fn, time) => {
+  const timer = setInterval(() => {
+    clearInterval(timer);
+    fn();
+  }, time);
+};
+mySetTimeout(() => {
+  console.log(1);
+}, 1000);
+```

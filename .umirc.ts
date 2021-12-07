@@ -295,15 +295,19 @@ const umiConfig = {
             path: '/base/js/shake',
           },
           {
-            title: '21.数组扁平化',
-            path: '/base/js/flatten',
+            title: '21.数组扁平化flat',
+            path: '/base/js/flat',
           },
           {
-            title: '22.函数柯里化',
+            title: '22.函数柯里化curry',
             path: '/base/js/curry',
           },
           {
-            title: '23.零散知识点',
+            title: '23.函数组合compose',
+            path: '/base/js/compose',
+          },
+          {
+            title: '24.零散知识点',
             path: '/base/js/small',
           },
         ],

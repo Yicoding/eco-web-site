@@ -22,7 +22,7 @@ new 运算符创建一个用户定义的对象类型的实例或具有构造函�
 
 - 1.创建一个新的空对象
 
-- 2.将这个空对象的**proto**指向构造函数的原型
+- 2.将这个空对象的\_\_proto\_\_指向构造函数的原型
 
 - 3.将 this 指向这个空对象
 
@@ -35,13 +35,13 @@ new 运算符创建一个用户定义的对象类型的实例或具有构造函�
 ```js
 function _new_() {
   // 创建一个新的空对象
-  const obj = {};
-  const Con = [].shift.call(arguments);
+  const obj = new Object();
+  const Constructor = [].shift.call(arguments);
   // 将这个空对象的__proto__指向构造函数的原型
-  // obj.__proto__ = Con.prototype;
-  Object.setPrototypeOf(obj, Con.prototype);
+  // obj.__proto__ = Constructor.prototype;
+  Object.setPrototypeOf(obj, Constructor.prototype);
   // 将this指向空对象
-  const result = Con.apply(obj, arguments);
+  const result = Constructor.apply(obj, arguments);
   // 对构造函数返回值做判断，然后返回对应的值
   return result instanceof Object ? result : obj;
 }
@@ -66,11 +66,11 @@ function _new() {
   // 第一个参数是构造函数，把它拿出来
   var constructor = args.shift();
   // Object.create()返回一个新对象，这个对象的构造函数的原型指向Foo
-  var context = Object.create(constructor.prototype);
-  // 将this指向context
-  var result = constructor.apply(context, args);
+  var obj = Object.create(constructor.prototype);
+  // 将this指向obj
+  var result = constructor.apply(obj, args);
   // 如果Foo显示的返回了一个对象，那么应该直接返回这个对象
-  return typeof result === 'object' && result != null ? result : context;
+  return result instanceof Object ? result : obj;
 }
 function Foo(name) {
   this.name = name;
@@ -160,7 +160,9 @@ function isType(data, type) {
 }
 ```
 
-### 2）类数组借用数组的方法
+### 2）\*类数组借用数组的方法
+
+**1.Array.prototype.xx.call**
 
 ```js
 var arrayLike = {
@@ -169,6 +171,18 @@ var arrayLike = {
   length: 2,
 };
 Array.prototype.push.call(arrayLike, '添加元素1', '添加元素2');
+console.log(arrayLike); // {"0":"OB","1":"Koro1","2":"添加元素1","3":"添加元素2","length":4}
+```
+
+**2.[].xx.call**
+
+```js
+var arrayLike = {
+  0: 'OB',
+  1: 'Koro1',
+  length: 2,
+};
+[].push.call(arrayLike, '添加元素1', '添加元素2');
 console.log(arrayLike); // {"0":"OB","1":"Koro1","2":"添加元素1","3":"添加元素2","length":4}
 ```
 
