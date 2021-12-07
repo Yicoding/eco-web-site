@@ -706,7 +706,7 @@ console.log(set); // Set(2) { 1, NaN }
 - 储存 DOM 节点：DOM 节点被移除时自动释放此成员，不用担心这些节点从文档移除时会引发内存泄漏
 - 临时存放一组对象或存放跟对象绑定的信息：只要这些对象在外部消失，它在 `WeakSet 结构中`的引用就会自动消失
 
-**2.注意点**
+**2.注意事项**
 
 - 成员都是`弱引用`，垃圾回收机制不考虑 WeakSet 结构对此成员的引用
 - 成员不适合引用，它会随时消失，因此 ES6 规定` WeakSet 结构不可遍历`
@@ -736,7 +736,7 @@ console.log(set); // Set(2) { 1, NaN }
   - entries()：返回以键和值为遍历器的对象
   - forEach()：使用回调函数遍历每个成员
 
-**注意点**
+**注意事项**
 
 - 遍历顺序：插入顺序
 - 对同一个键多次赋值，后面的值将覆盖前面的值
@@ -792,7 +792,7 @@ console.log(map2); // Map(3) { true => 1, 1 => 2, 'Bob' => 'Join' }
 - 储存 DOM 节点：DOM 节点被移除时自动释放此成员键，不用担心这些节点从文档移除时会引发内存泄漏
 - 部署私有属性：内部属性是实例的弱引用，删除实例时它们也随之消失，不会造成内存泄漏
 
-**2.注意点**
+**2.注意事项**
 
 - 成员键都是弱引用，垃圾回收机制不考虑 WeakMap 结构对此成员键的引用
 - 成员键不适合引用，它会随时消失，因此 ES6 规定 WeakMap 结构不可遍历
@@ -800,3 +800,555 @@ console.log(map2); // Map(3) { true => 1, 1 => 2, 'Bob' => 'Join' }
 - 一旦不再需要，成员会自动消失，不用手动删除引用
 - 弱引用的只是键而不是值，值依然是正常引用
 - 即使在外部消除了成员键的引用，内部的成员值依然存在
+
+## 12.Proxy
+
+- 定义：修改某些操作的默认行为
+- 声明：`const proxy = new Proxy(target, handler)`
+- 入参
+
+  - target：拦截的目标对象
+  - handler：定制拦截行为
+
+- 方法
+
+  - Proxy.revocable()：返回可取消的 Proxy 实例(返回`{ proxy, revoke }`，通过 revoke()取消代理)
+
+- 拦截方式
+
+  - `get()`：拦截对象属性读取
+
+  ```js
+  let handler = {
+    //定义了get方法的拦截器
+    get: function (target, key) {
+      //target:要拦截的对象
+      //key: 修改的属性
+      if (target.hasOwnProperty(key)) {
+        if (key == 'name') {
+          return '法外狂徒-张三';
+        }
+      }
+      return '18';
+    },
+  };
+  let obj = {
+    name: '张三',
+  };
+  let user = new Proxy(obj, handler);
+
+  // 注意，这里的user不是上个示例的user对象了,而是Proxy的实例
+  console.log(user.name); // 法外狂徒-张三
+
+  console.log(user.age); //18
+  ```
+
+  - `set()`：拦截对象属性设置，返回布尔
+
+  ```js
+  let user = new Proxy(
+    {
+      age: 18,
+    },
+    {
+      set: function (target, key, value) {
+        if (value > 140) {
+          throw '你要成仙了!';
+        }
+        target[key] = value;
+      },
+    },
+  );
+  user.age = 20;
+  console.log(user.age); //20
+  user.age = 200;
+  // Uncaught 你要成仙了!
+  ```
+
+  - has()：拦截对象属性检查 `k in obj`，返回布尔
+  - deleteProperty()：拦截对象属性删除 `delete obj[k]`，返回布尔
+  - defineProperty()：拦截对象属性定义 `Object.defineProperty()`、`Object.defineProperties()`，返回布尔
+  - ownKeys()：拦截对象属性遍历 `for-in`、`Object.keys()`、`Object.getOwnPropertyNames()`、`Object.getOwnPropertySymbols()`，返回数组
+  - getOwnPropertyDescriptor()：拦截对象属性描述读取 `Object.getOwnPropertyDescriptor()`，返回对象
+  - getPrototypeOf()：拦截对象原型读取 `instanceof`、`Object.getPrototypeOf()`、`Object.prototype.__proto__`、`Object.prototype.isPrototypeOf()`、`Reflect.getPrototypeOf()`，返回对象
+  - setPrototypeOf()：拦截对象原型设置 `Object.setPrototypeOf()`，返回布尔
+  - isExtensible()：拦截对象是否可扩展读取 `Object.isExtensible()`，返回布尔
+  - preventExtensions()：拦截对象不可扩展设置 `Object.preventExtensions()`，返回布尔
+  - apply()：拦截 Proxy 实例作为函数调用 `proxy()`、`proxy.apply()`、`proxy.call()`
+  - `construct()`：拦截 Proxy 实例作为构造函数调用 `new proxy()`
+
+    - construct 方法用于拦截 new 操作符,为了使 new 操作符在生成的 Proxy 对象上生效,用于初始化代理的目标对象自身必须具有 Construct 内部方法
+
+    ```js
+    var p = new Proxy(function () {}, {
+      construct: function (target, argumentsList, newTarget) {
+        console.log('called: ' + argumentsList.join(', '));
+        return { value: argumentsList[0] * 10 };
+      },
+    });
+    console.log(new p(1).value); // called: 1
+    // 10
+    ```
+
+**1.应用场景**
+
+- Proxy.revocable()：不允许直接访问对象，必须通过代理访问，一旦访问结束就收回代理权不允许再次访问
+- get()：读取未知属性报错、读取数组负数索引的值、封装链式操作、生成 DOM 嵌套节点
+- set()：数据绑定(Vue 数据绑定实现原理)、确保属性值设置符合要求、防止内部属性被外部读写
+- has()：隐藏内部属性不被发现、排除不符合属性条件的对象
+- deleteProperty()：保护内部属性不被删除
+- defineProperty()：阻止属性被外部定义
+- ownKeys()：保护内部属性不被遍历
+
+**2.注意事项**
+
+- 要使 `Proxy` 起作用，必须针对`实例`进行操作，而`不是`针对`目标对象`进行操作
+- 没有设置任何拦截时，等同于`直接通向原对象`
+- 属性被定义为`不可读写/扩展/配置/枚举`时，使用拦截方法会报错
+- 代理下的目标对象，内部 `this` 指向 `Proxy` 代理
+
+## 13.Reflect
+
+- 定义：保持 Object 方法的默认行为
+- 方法
+
+  - get()：返回对象属性
+  - set()：设置对象属性，返回布尔
+  - has()：检查对象属性，返回布尔
+  - deleteProperty()：删除对象属性，返回布尔
+  - defineProperty()：定义对象属性，返回布尔
+  - `ownKeys()`：遍历对象属性，返回数组(`Object.getOwnPropertyNames()`+`Object.getOwnPropertySymbols()`)
+  - getOwnPropertyDescriptor()：返回对象属性描述，返回对象
+  - getPrototypeOf()：返回对象原型，返回对象
+  - setPrototypeOf()：设置对象原型，返回布尔
+  - isExtensible()：返回对象是否可扩展，返回布尔
+  - preventExtensions()：设置对象不可扩展，返回布尔
+  - apply()：绑定 this 后执行指定函数
+  - construct()：调用构造函数创建实例
+
+**1.设计目的**
+
+- 将 `Object` 属于语言内部的方法放到 `Reflect` 上
+- 将某些 `Object` 方法报错情况改成返回 `false`
+- 让 `Object` 操作变成`函数行为`
+- `Proxy` 与 `Reflect` 相辅相成
+
+**2.注意事项**
+
+- Proxy 方法和 Reflect 方法一一对应
+- Proxy 和 Reflect `联合使用`，前者负责`拦截赋值操作`，后者负责`完成赋值操作`
+
+**3.数据绑定：观察者模式**
+
+```js
+const observerQueue = new Set();
+const observe = (fn) => observerQueue.add(fn);
+const observable = (obj) =>
+  new Proxy(obj, {
+    set(tgt, key, val, receiver) {
+      const result = Reflect.set(tgt, key, val, receiver);
+      observerQueue.forEach((v) => v());
+      return result;
+    },
+  });
+
+const person = observable({ age: 25, name: 'Yajun' });
+const print = () => console.log(`${person.name} is ${person.age} years old`);
+observe(print);
+person.name = 'Joway';
+```
+
+## 14.Class
+
+- 定义：对一类具有共同特征的事物的抽象(构造函数语法糖)
+- 原理：类本身指向构造函数，所有方法定义在 prototype 上，可看作构造函数的另一种写法(Class === Class.prototype.constructor)
+- 方法和关键字
+
+  - `constructor()`：构造函数，new 命令生成实例时自动调用
+
+  ```js
+  function Point(x, y) {
+    this.x = x;
+    this.y = y;
+  }
+
+  Point.prototype.toString = function () {
+    return '(' + this.x + ',' + this.y + ')';
+  };
+  ```
+
+  等同于
+
+  ```js
+  class Point {
+    constructor(x, y) {
+      this.x = x;
+      this.y = y;
+    }
+
+    toString() {
+      return '(' + this.x + ',' + this.y + ')';
+    }
+  }
+  ```
+
+  - `extends`：继承父类
+  - `super`：新建父类的 this
+
+    - 1. 当做函数使用
+
+    ```js
+    class A {}
+    class B extends A {
+      constructor() {
+        super(); // ES6 要求，子类的构造函数必须执行一次 super 函数，否则会报错。
+      }
+    }
+    ```
+
+    - 2.当做对象使用
+
+    ```js
+    class A {
+      c() {
+        return 2;
+      }
+    }
+
+    class B extends A {
+      constructor() {
+        super();
+        console.log(super.c()); // 2
+      }
+    }
+
+    let b = new B(); // 2
+    ```
+
+  - `static`：定义静态属性方法
+  - `get`：取值函数，拦截属性的取值行为
+  - `set`：存值函数，拦截属性的存值行为
+
+- 属性
+
+  - `__proto__`：构造函数的继承(总是指向父类)
+  - `__proto__`.`__proto__`：子类的原型的原型，即父类的原型(总是指向父类的`__proto__`)
+  - prototype.`__proto_`\_：属性方法的继承(总是指向父类的 prototype)
+
+- 静态属性：定义类完成后赋值属性，该属性`不会被实例继承`，只能通过类来调用
+- 静态方法：使用 `static 定义方法`，该方法`不会被实例继承`，只能通过类来调用(方法中的 `this` 指向类，而不是实例)
+- 继承
+
+  - 实质
+
+    - ES5 实质：先创造子类实例的 this，再将父类的属性方法添加到 this 上(`Parent.apply(this)`)
+    - ES6 实质：先将父类实例的属性方法`加到 this 上`(调用 `super()`)，再用`子类构造函数修改 this`
+
+  - super
+
+    - 作为函数调用：只能在构造函数中调用 super()，内部 `this` 指向`继承的当前子类(super()调用后才可在构造函数中使用 this`)
+    - 作为对象调用：在普通方法中指向父类的原型对象，在静态方法中指向父类
+
+  - 显示定义：使用 constructor() { super(); }定义继承父类，没有书写则显示定义
+  - 子类继承父类：子类使用父类的属性方法时，必须在构造函数中调用 super()，否则得不到父类的 this
+
+    - 父类静态属性方法可被子类继承
+    - 子类继承父类后，可从 super 上调用父类静态属性方法
+
+- 实例：类相当于实例的原型，所有在类中定义的属性方法都会被实例继承
+
+  - 显式指定属性方法：使用 this 指定到自身上(使用 Class.hasOwnProperty()可检测到)
+  - 隐式指定属性方法：直接声明定义在对象原型上(使用 Class.`__proto__`.hasOwnProperty()可检测到)
+
+- 表达式
+
+  - 类表达式：`const Class = class {}`
+  - name 属性：返回紧跟 class 后的类名
+  - 属性表达式：[prop]
+  - Generator 方法：\* mothod() {}
+  - Async 方法：async mothod() {}
+
+- this 指向：解构实例属性或方法时会报错
+
+  - 绑定 this：`this.mothod = this.mothod.bind(this)`
+  - 箭头函数：`this.mothod = () => this.mothod()`
+
+- 属性定义位置
+
+  - 定义在构造函数中并使用 this 指向
+  - 定义在类最顶层
+
+- new.target：确定构造函数是如何调用
+
+**1.注意事项**
+
+- 在实例上调用方法，实质是调用原型上的方法
+- Object.assign()可方便地一次向类添加多个方法(Object.assign(Class.prototype, { ... }))
+- 类内部所有定义的方法是不可枚举的(non-enumerable)
+- 构造函数默认返回实例对象(this)，可指定返回另一个对象
+- 取值函数和存值函数设置在属性的 Descriptor 对象上
+- 类不存在变量提升
+- 利用 new.target === Class 写出不能独立使用必须继承后才能使用的类
+- 子类继承父类后，this 指向子类实例，通过 super 对某个属性赋值，赋值的属性会变成子类实例的属性
+- 使用 super 时，必须显式指定是作为函数还是作为对象使用
+- extends 不仅可继承类还可继承原生的构造函数
+
+**2.私有属性方法**
+
+```js
+const name = Symbol('name');
+const print = Symbol('print');
+class Person {
+  constructor(age) {
+    this[name] = 'Bruce';
+    this.age = age;
+  }
+  [print]() {
+    console.log(`${this[name]} is ${this.age} years old`);
+  }
+}
+```
+
+**3.继承混合类**
+
+```js
+function CopyProperties(target, source) {
+  for (const key of Reflect.ownKeys(source)) {
+    if (key !== 'constructor' && key !== 'prototype' && key !== 'name') {
+      const desc = Object.getOwnPropertyDescriptor(source, key);
+      Object.defineProperty(target, key, desc);
+    }
+  }
+}
+function MixClass(...mixins) {
+  class Mix {
+    constructor() {
+      for (const mixin of mixins) {
+        CopyProperties(this, new mixin());
+      }
+    }
+  }
+  for (const mixin of mixins) {
+    CopyProperties(Mix, mixin);
+    CopyProperties(Mix.prototype, mixin.prototype);
+  }
+  return Mix;
+}
+class Student extends MixClass(Person, Kid) {}
+```
+
+## 15.Module
+
+- 命令
+
+  - `export：规定模块对外接口`
+
+    - 默认导出：export default Person(导入时可指定模块任意名称，无需知晓内部真实名称)
+    - 单独导出：export const name = "Bruce"
+    - 按需导出：export { age, name, sex }(推荐)
+    - 改名导出：export { name as newName }
+
+  - `import：导入模块内部功能`
+
+    - 默认导入：import Person from "person"
+    - 整体导入：import \* as Person from "person"
+    - 按需导入：import { age, name, sex } from "person"
+    - 改名导入：import { name as newName } from "person"
+    - 自执导入：import "person"
+    - 复合导入：import Person, { name } from "person"
+
+  - 复合模式：export 命令和 import 命令结合在一起写成一行，变量实质没有被导入当前模块，相当于对外转发接口，导致当前模块无法直接使用其导入变量
+
+    - 默认导入导出：export { default } from "person"
+    - 整体导入导出：export \* from "person"
+    - 按需导入导出：export { age, name, sex } from "person"
+    - 改名导入导出：export { name as newName } from "person"
+    - 具名改默认导入导出：export { name as default } from "person"
+    - 默认改具名导入导出：export { default as name } from "person"
+
+- 继承：`默认导出`和`改名导出`结合使用可使模块具备继承性
+- 设计思想：尽量地静态化，使得编译时就能确定模块的依赖关系，以及输入和输出的变量
+- 严格模式：ES6 模块自动采用严格模式(不管模块头部是否添加 use strict)
+
+**1.模块方案**
+
+- `CommonJS`：用于服务器(动态化依赖)
+- `AMD`：用于浏览器(动态化依赖)
+- `CMD`：用于浏览器(动态化依赖)
+- `UMD`：用于浏览器和服务器(动态化依赖)
+- `ESM`：用于浏览器和服务器(静态化依赖)
+
+**2.加载方式**
+
+- 运行时加载
+
+  - 定义：整体加载模块生成一个对象，再从对象上获取需要的属性和方法进行加载(全部加载)
+  - 影响：只有运行时才能得到这个对象，导致无法在编译时做静态优化
+
+- 编译时加载
+
+  - 定义：直接从模块中获取需要的属性和方法进行加载(按需加载)
+  - 影响：在编译时就完成模块加载，效率比其他方案高，但无法引用模块本身(本身不是对象)，可拓展 JS 高级语法(宏和类型校验)
+
+**3.加载实现**
+
+- 传统加载：通过<script>进行同步或异步加载脚本
+
+  - 同步加载：<script src=""></script>
+  - Defer 异步加载：<script src="" defer></script>(顺序加载，渲染完再执行)
+  - Async 异步加载：<script src="" async></script>(乱序加载，下载完就执行)
+
+- 模块加载：<script type="module" src=""></script>(默认是 Defer 异步加载)
+
+**4.CommonJS 和 ESM 的区别**
+
+- CommonJS 输出值的拷贝，ESM 输出值的引用
+
+  - CommonJS 一旦输出一个值，模块内部的变化就影响不到这个值
+  - ESM 是动态引用且不会缓存值，模块里的变量绑定其所在的模块，等到脚本真正执行时，再根据这个只读引用到被加载的那个模块里去取值
+
+- CommonJS 是运行时加载，ESM 是编译时加载
+
+  - CommonJS 加载模块是对象(即 module.exports)，该对象只有在脚本运行完才会生成
+  - ESM 加载模块不是对象，它的对外接口只是一种静态定义，在代码静态解析阶段就会生成
+
+**4.Node 加载**
+
+- 背景：CommonJS 和 ESM 互不兼容，目前解决方案是将两者分开，采用各自的加载方案
+- 区分：要求 ESM 采用.mjs 后缀文件名
+
+  - require()不能加载.mjs 文件，只有 import 命令才可加载.mjs 文件
+  - .mjs 文件里不能使用 require()，必须使用 import 命令加载文件
+
+- 驱动：node --experimental-modules file.mjs
+- 限制：Node 的 import 命令目前只支持加载本地模块(file:协议)，不支持加载远程模块
+- 加载优先级
+
+  - 脚本文件省略后缀名：依次尝试加载四个后缀名文件(.mjs、.js、.json、node)
+  - 以上不存在：尝试加载 package.json 的 main 字段指定的脚本
+  - 以上不存在：依次尝试加载名称为 index 四个后缀名文件(.mjs、.js、.json、node)
+  - 以上不存在：报错
+
+- 不存在的内部变量：arguments、exports、module、require、this、**dirname、**filename
+- CommonJS 加载 ESM
+
+  - 不能使用 require()，只能使用 import()
+
+- ESM 加载 CommonJS
+
+  - 自动将 module.exports 转化成 export default
+  - CommonJS 输出缓存机制在 ESM 加载方式下依然有效
+  - 采用 import 命令加载 CommonJS 模块时，不允许采用按需导入，应使用默认导入或整体导入
+
+**5.循环加载**
+
+- 定义：脚本 A 的执行依赖脚本 B，而脚本 A 的执行又依赖脚本 B
+- 加载原理
+
+  - CommonJS：require()首次加载脚本就会执行整个脚本，在内存里生成一个对象缓存下来，二次加载脚本时直接从缓存中获取
+  - ESM：import 命令加载变量不会被缓存，而是成为一个指向被加载模块的引用
+
+- 循环加载
+
+  - CommonJS：只输出已经执行的部分，还未执行的部分不会输出
+  - ESM：需开发者自己保证真正取值时能够取到值(可把变量写成函数形式，函数具有提升作用)
+
+**6.注意事项**
+
+- ES6 模块中，顶层 this 指向 undefined，不应该在顶层代码使用 this
+- 一个模块就是一个独立的文件，该文件内部的所有变量，外部无法获取
+- export 命令输出的接口与其对应的值是动态绑定关系，即通过该接口可获取模块内部实时的值
+- import 命令大括号里的变量名必须与被导入模块对外接口的名称相同
+- import 命令输入的变量只读(本质是输入接口)，不允许在加载模块的脚本里改写接口
+- import 命令命令具有提升效果，会提升到整个模块的头部，首先执行
+- 重复执行同一句 import 语句，只会执行一次
+- export default 命令只能使用一次
+- export default 命令导出的整体模块，在执行 import 命令时其后不能跟大括号
+- export default 命令本质是输出一个名为 default 的变量，后面不能跟变量声明语句
+- export default 命令本质是将后面的值赋给名为 default 的变量，可直接将值写在其后
+- export default 命令和 export {}命令可同时存在，对应复合导入
+- export 命令和 import 命令可出现在模块任何位置，只要处于模块顶层即可，不能处于块级作用域
+- import()加载模块成功后，此模块会作为一个对象，当作 then()的参数，可使用对象解构赋值来获取输出接口
+- 同时动态加载多个模块时，可使用 Promise.all()和 import()相结合来实现
+- import()和结合 async/await 来书写同步操作的代码
+
+```js
+// 导出
+const NAME = 'Bruce';
+const AGE = 25;
+const SEX = 'male';
+export { AGE, NAME, SEX };
+
+// 导入
+// file1.js
+import { AGE } from 'person';
+import Person from 'person';
+import * as Person from 'person';
+```
+
+## 16.Iterator 迭代器
+
+- 定义：为各种不同的数据结构提供统一的访问机制
+- 原理：创建一个指针指向首个成员，按照次序使用 `next()`指向下一个成员，直接到结束位置(数据结构只要部署 `Iterator` 接口就可完成遍历操作)
+- 作用
+
+  - 为各种数据结构提供一个统一的简便的访问接口
+  - 使得数据结构成员能够按某种次序排列
+  - ES6 创造了新的遍历命令 ` for-of``，Iterator ` 接口主要供 `for-of` 消费
+
+- 形式：`for-of`(自动去寻找 Iterator 接口)
+- 数据结构
+
+  - 集合：`Array、Object、Set、Map`
+  - 原生具备接口的数据结构：`String、Array、Set、Map、TypedArray、Arguments、NodeList`
+
+- 部署：默认部署在 Symbol.iterator(具备此属性被认为可遍历的 iterable)
+- 遍历器对象
+
+  - `next()`：下一步操作，返回{ done, value }(必须部署)
+  - `return()`：for-of 提前退出调用，返回{ done: true }
+  - `throw()`：不使用，配合 Generator 函数使用
+
+```js
+const items = ['zero', 'one', 'two'];
+const it = items[Symbol.iterator]();
+it.next();
+// {value: "zero", done: false}
+it.next();
+// {value: "one", done: false}
+it.next();
+// {value: "two", done: false}
+it.next();
+// {value: undefined, done: true}
+```
+
+**1.for...of 循环**
+
+**只有实现了 Iterator 接口的对象才能够使用 for of 来进行遍历取值**
+
+- 定义：调用 Iterator 接口产生遍历器对象(for-of 内部调用数据结构的 Symbol.iterator())
+- 遍历字符串：for-in 获取索引，for-of 获取值(可识别 32 位 UTF-16 字符)
+- 遍历数组：for-in 获取索引，for-of 获取值
+- 遍历对象：for-in 获取键，for-of 需自行部署
+- 遍历 Set：for-of 获取值 => for (const v of set)
+- 遍历 Map：for-of 获取键值对 => for (const [k, v] of map)
+- 遍历类数组：包含 length 的对象、Arguments 对象、NodeList 对象(无 Iterator 接口的类数组可用 Array.from()转换)
+- 计算生成数据结构：Array、Set、Map
+
+  - keys()：返回遍历器对象，遍历所有的键
+  - values()：返回遍历器对象，遍历所有的值
+  - entries()：返回遍历器对象，遍历所有的键值对
+
+- 与 for-in 区别
+
+  - 有着同 for-in 一样的简洁语法，但没有 for-in 那些缺点、
+  - 不同于 forEach()，它可与 break、continue 和 return 配合使用
+  - 提供遍历所有数据结构的统一操作接口
+
+**2.应用场景**
+
+- 改写具有 Iterator 接口的数据结构的 Symbol.iterator
+- 解构赋值：对 Set 进行结构
+- 扩展运算符：将部署 Iterator 接口的数据结构转为数组
+- yield*：yield*后跟一个可遍历的数据结构，会调用其遍历器接口
+- 接受数组作为参数的函数：for-of、Array.from()、new Set()、new WeakSet()、new Map()、new WeakMap()、Promise.all()、Promise.race()

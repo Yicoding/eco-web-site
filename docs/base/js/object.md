@@ -622,8 +622,8 @@ class Parent {
   static get() {
     return 'good';
   }
-  //支持获取和设置访问器
-  //使用get和set关键字对某个属性设置存值函数和取值函数，拦截该函数的存取行为
+  // 支持获取和设置访问器
+  // 使用get和set关键字对某个属性设置存值函数和取值函数，拦截该函数的存取行为
   set name(value) {
     this.name_ = value;
   }
@@ -632,7 +632,7 @@ class Parent {
   }
 }
 Parent.get(); //good
-//通过类继承
+// 通过类继承
 class Child extends Parent {
   constructor() {
     super();
