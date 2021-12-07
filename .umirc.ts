@@ -271,32 +271,32 @@ const umiConfig = {
             path: '/base/js/bubble',
           },
           {
-            title: '15.递归',
-            path: '/base/js/recursion',
-          },
-          {
-            title: '16.函数重载',
-            path: '/base/js/heavy',
-          },
-          {
-            title: '17.正则',
+            title: '15.正则',
             path: '/base/js/regexp',
           },
           {
-            title: '18.深浅拷贝',
+            title: '16.深浅拷贝',
             path: '/base/js/clone',
           },
           {
-            title: '19.数据劫持',
+            title: '17.数据劫持',
             path: '/base/js/hijack',
           },
           {
-            title: '20.防抖/节流',
+            title: '18.防抖/节流',
             path: '/base/js/shake',
           },
           {
-            title: '21.数组扁平化flat',
+            title: '19.递归',
+            path: '/base/js/recursion',
+          },
+          {
+            title: '20.数组扁平化flat',
             path: '/base/js/flat',
+          },
+          {
+            title: '21.函数重载',
+            path: '/base/js/heavy',
           },
           {
             title: '22.函数柯里化curry',
@@ -307,7 +307,15 @@ const umiConfig = {
             path: '/base/js/compose',
           },
           {
-            title: '24.零散知识点',
+            title: '24.斐波那契数列',
+            path: '/base/js/fibo',
+          },
+          {
+            title: '25.尾调用',
+            path: '/base/js/tail',
+          },
+          {
+            title: '26.零散知识点',
             path: '/base/js/small',
           },
         ],

@@ -35,7 +35,7 @@ new 运算符创建一个用户定义的对象类型的实例或具有构造函�
 ```js
 function _new_() {
   // 创建一个新的空对象
-  const obj = new Object();
+  const obj = {};
   const Constructor = [].shift.call(arguments);
   // 将这个空对象的__proto__指向构造函数的原型
   // obj.__proto__ = Constructor.prototype;

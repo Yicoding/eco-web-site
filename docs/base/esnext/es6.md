@@ -230,249 +230,573 @@ for (let i = 0; i < 5; i++) {
     ```
 
 - Object.getPrototypeOf()：返回对象的原型对象
+
+  ```js
+  function Person(name) {
+    this.name = name;
+  }
+  var a = new Person('Bob');
+
+  Object.getPrototypeOf(a) === a.__proto__; // true
+  ```
+
 - Object.setPrototypeOf()：设置对象的原型对象
+
+  > Object.setPrototypeOf(A.prototype,B.prototype)
+
+  ```js
+  //构造函数
+  function Person(name) {
+    this.name = name;
+  }
+
+  var p = new Object();
+  // 等同于将构造函数的原型对象赋给实例对象p的属性__proto__
+  p.__proto__ = Object.setPrototypeOf({}, Person.prototype);
+  Person.call(p, 'Bob');
+
+  p.__proto__; // Person {}
+  ```
+
 - \_\_proto\_\_：返回或设置对象的原型对象
 
-## 2.函数参数默认值
+- for-in：遍历对象自身可继承可枚举属性
 
-### 1）ES6 之前
-
-- ES6 之前，写函数需要定义初始值的时候，需要这么写：
+- Object.keys(): 返回一个给定对象的自身可枚举属性组成的数值
 
   ```js
-  function fn(name, age) {
-    var name = name || 'Bob';
-    var age = age || 18;
-    console.log(name, age);
-  }
-  fn(); // Bob 18
+  const obj = {
+    name: 'Bob',
+    age: 22,
+    gender: '男',
+  };
+
+  const keys = Object.keys(obj);
+  console.log(keys); // [ 'name', 'age', 'gender' ]
   ```
 
-### 2）ES6 写法
-
-- 可以使用 ES6 的默认参数
+- Object.getOwnPropertyNames(): 返回对象自身`非Symbol`属性键组成的数组
 
   ```js
-  function fn(name = 'Bob', age = 18) {
-    console.log(name, age);
-  }
-  fn(); // Bob 18
-  fn('Lucy', 22); // Lucy 22
+  const desc = Symbol('desc');
+  const obj = {
+    name: 'Bob',
+    age: 22,
+    gender: '男',
+    [desc]: 'hello',
+  };
+  Object.defineProperty(obj, 'address', {
+    //定义不可枚举
+    enumerable: false,
+    value: '这是个秘密',
+  });
+
+  const keys = Object.getOwnPropertyNames(obj);
+  console.log(keys); // ['name', 'age', 'gender', 'address']
   ```
 
-## 3.扩展运算符
+- Object.getOwnPropertySymbols(): 返回对象自身`Symbol`属性键组成的数组
 
-- 扩展运算符可以在函数调用/数组构造时, 将数组表达式或者 string 在语法层面展开；还可以在构造字面量对象时, 将对象表达式按 key-value 的方式展开
+  ```js
+  const desc = Symbol('desc');
+  const obj = {
+    name: 'Bob',
+    age: 22,
+    gender: '男',
+    [desc]: 'hello',
+  };
+  Object.defineProperty(obj, 'address', {
+    //定义不可枚举
+    enumerable: false,
+    value: '这是个秘密',
+  });
 
-### 1）ES6 之前
+  const keys = Object.getOwnPropertySymbols(obj);
+  console.log(keys); // [Symbol(desc)]
+  ```
+
+- `Reflect.ownKeys`()：返回对象自身全部属性键组成的数组
+
+  ```js
+  const desc = Symbol('desc');
+  const obj = {
+    name: 'Bob',
+    age: 22,
+    gender: '男',
+    [desc]: 'hello',
+  };
+  Object.defineProperty(obj, 'address', {
+    //定义不可枚举
+    enumerable: false,
+    value: '这是个秘密',
+  });
+
+  const keys = Reflect.ownKeys(obj);
+  console.log(keys); // ['name', 'age', 'gender', 'address', Symbol(desc)]
+  ```
+
+## 6.数组扩展
+
+- `扩展运算符(...)`：转换数组为用逗号分隔的参数序列([...arr]，相当于 rest/spread 参数的逆运算)
+- Array.from()：转换具有 Iterator 接口的数据结构为真正数组，返回新数组
+
+  - 类数组对象：包含 length 的对象、Arguments 对象、NodeList 对象
+  - 可遍历对象：String、Set 结构、Map 结构、Generator 函数
+
+  ```js
+  console.log(Array.from('foo')); // ["f", "o", "o"]
+  console.log(Array.from([1, 2, 3], (x) => x + x)); // [2, 4, 6]
+  ```
+
+- Array.of()：转换一组值为真正数组，返回新数组
+
+  ```js
+  Array.of(7); // [7]
+  Array.of(1, 2, 3); // [1, 2, 3]
+
+  Array(7); // [empty, empty, empty, empty, empty, empty]
+  Array(1, 2, 3); // [1, 2, 3]
+  ```
+
+- copyWithin()：把指定位置的成员复制到其他位置，返回原数组
+
+  ```js
+  const array1 = ['a', 'b', 'c', 'd', 'e'];
+
+  console.log(array1.copyWithin(0, 3, 4)); // ["d", "b", "c", "d", "e"]
+
+  console.log(array1.copyWithin(1, 3)); // ["d", "d", "e", "d", "e"]
+  ```
+
+- `find()`：返回第一个符合条件的成员
+
+  ```js
+  const array1 = [5, 12, 8, 130, 44];
+
+  const found = array1.find((element) => element > 10);
+
+  console.log(found); // 12
+  ```
+
+- `findIndex()`：返回第一个符合条件的成员索引值
+
+  ```js
+  const array1 = [5, 12, 8, 130, 44];
+
+  const isLargeNumber = (element) => element > 13;
+
+  console.log(array1.findIndex(isLargeNumber)); // 3
+  ```
+
+- `fill()`：根据指定值填充整个数组，返回原数组
+
+  > Array.fill(value, start, end)
+
+  - start: 下标
+
+  - end: 第几位
+
+  ```js
+  const array1 = [1, 2, 3, 4];
+
+  console.log(array1.fill(0, 2, 4)); // [1, 2, 0, 0]
+
+  console.log(array1.fill(5, 1)); // [1, 5, 5, 5]
+
+  console.log(array1.fill(6)); // [6, 6, 6, 6]
+  ```
+
+- `keys()`：返回以索引值为遍历器的对象
+
+  ```js
+  const array1 = ['a', 'b', 'c'];
+  const iterator = array1.keys();
+
+  for (const key of iterator) {
+    console.log(key);
+  }
+
+  // 0
+  // 1
+  // 2
+  ```
+
+- `values()`：返回以属性值为遍历器的对象
 
 ```js
-const arr1 = [1, 2, 4];
-const arr2 = [4, 5, 7];
-const arr3 = [7, 8, 9];
+const array1 = ['a', 'b', 'c'];
+const iterator = array1.values();
 
-const arr = arr1.concat(arr2).concat(arr3); // [1, 2, 4, 4, 5, 7, 7, 8, 9]
-```
-
-### 2）ES6 写法
-
-```js
-const arr1 = [1, 2, 4];
-const arr2 = [4, 5, 7];
-const arr3 = [7, 8, 9];
-
-const arr = [...arr1, ...arr2, ...arr3]; // [1, 2, 4, 4, 5, 7, 7, 8,
-```
-
-## 4.剩余参数
-
-- 一个函数，传入参数的个数是不确定的，这就可以用 ES6 的剩余参数
-
-```js
-function fn(name, ...params) {
-  console.log(name);
-  console.log(params);
+for (const key of iterator) {
+  console.log(key);
 }
-fn('Bob', 1, 2); // Bob [ 1, 2 ]
-fn('Bob', 1, 2, 3, 4, 5); // Bob [ 1, 2, 3, 4, 5 ]
+
+// a
+// b
+// c
 ```
 
-## 5.模板字符串
-
-- 用来拼接字符串
-
-### 1）ES6 之前
+- `entries()`：返回以索引值和属性值为遍历器的对象
 
 ```js
-const name = 'Bob';
-const age = '22';
+const array1 = ['a', 'b', 'c'];
+const iterator = array1.entries();
 
-console.log(name + '今年' + age + '岁啦'); // Bob今年22岁啦
+console.log(iterator.next().value); // [0, "a"]
+console.log(iterator.next().value); // [1, "b"]
 ```
 
-### 2）ES6 写法
+- 数组空位：ES6 明确将数组空位转为 `undefined` 或者 `empty`
 
 ```js
-const name = 'Bob';
-const age = '22';
+Array.from(['a',,'b']) // [ "a", undefined, "b" ]
+[...['a',,'b']] // [ "a", undefined, "b" ]
+Array(3) //  [empty × 3]
+[,'a'] // [empty, "a"]
 
-console.log(`${name}今年${age}岁啦`); // Bob今年22岁啦
 ```
 
-## 7.箭头函数
+**应用**
 
-- 箭头函数表达式的语法比函数表达式更简洁，并且没有自己的 this，arguments，super 或 new.target。这些函数表达式更适用于那些本来需要匿名函数的地方，并且它们不能用作构造函数
+- 克隆数组：const arr = [...arr1]
+- 合并数组：const arr = [...arr1, ...arr2]
+- 拼接数组：arr.push(...arr1)
+- 代替 apply：Math.max.apply(null, [x, y]) => Math.max(...[x, y])
+- 转换字符串为数组：[..."hello"]
+- 转换类数组对象为数组：[...Arguments, ...NodeList]
+- 转换可遍历对象为数组：[...String, ...Set, ...Map, ...Generator]
+- 与数组解构赋值结合：const [x, ...rest/spread] = [1, 2, 3]
+- 计算 Unicode 字符长度：Array.from("hello").length => [..."hello"].length
 
-### 1）ES6 之前
+## 7.函数扩展
+
+### 1）参数默认值
+
+- `为函数参数指定默认值`
+
+  - 形式：`function Func(x = 1, y = 2) {}`
+  - 参数赋值：惰性求值(函数调用后才求值)
+  - 参数位置：尾参数
+  - 参数作用域：函数作用域
+  - 声明方式：默认声明，不能用 const 或 let 再次声明
+  - length：返回没有指定默认值的参数个数
+  - 与解构赋值默认值结合：function Func({ x = 1, y = 2 } = {}) {}
+  - 应用
+    - 指定某个参数不得省略，省略即抛出错误：function Func(x = throwMissing()) {}
+    - 将参数默认值设为 undefined，表明此参数可省略：Func(undefined, 1)
+
+  ```js
+  function Func(x = 1, y = 2) {}
+  ```
+
+### 2）rest/spread 参数(...)
+
+- `返回函数多余参数`
+
+  - 形式：以数组的形式存在，之后不能再有其他参数
+  - 作用：代替 Arguments 对象
+  - length：返回没有指定默认值的参数个数但不包括 rest/spread 参数
+
+  ```js
+  function _new(Con, ...args) {}
+  ```
+
+### 3）严格模式
+
+- 在严格条件下运行 JS
+  - 应用：只要函数参数使用默认值、解构赋值、扩展运算符，那么函数内部就不能显式设定为严格模式
+
+### 4）name 属性
+
+- 返回函数的函数名
+
+  - 将匿名函数赋值给变量：空字符串(ES5)、变量名(ES6)
+  - 将具名函数赋值给变量：函数名(ES5 和 ES6)
+  - bind 返回的函数：bound 函数名(ES5 和 ES6)
+  - Function 构造函数返回的函数实例：anonymous(ES5 和 ES6
+
+### 5）箭头函数(=>)
+
+- `函数简写`
+
+  - 无参数：() => {}
+  - 单个参数：x => {}
+  - 多个参数：(x, y) => {}
+  - 解构参数：({x, y}) => {}
+  - 嵌套使用：部署管道机制
+  - `this指向固定化`
+    - 并非因为内部有绑定 this 的机制，而是根本没有自己的 this，导致内部的 this 就是外层代码块的 this
+    - 因为没有 this，因此不能用作构造函数
+
+### 6）尾调用优化
+
+- `尾调用`
+
+  - 定义：某个函数的最后一步是调用另一个函数
+  - 形式：function f(x) { return g(x); }
+
+- `尾递归`
+  - 定义：函数尾调用自身
+  - 作用：只要使用尾递归就不会发生栈溢出，相对节省内存
+  - 实现：把所有用到的内部变量改写成函数的参数并使用参数默认值
+
+## 8.正则扩展
+
+- 变更 RegExp 构造函数入参：允许首参数为正则对象，尾参数为正则修饰符(返回的正则表达式会忽略原正则表达式的修饰符)
+- 正则方法调用变更：字符串对象的 match()、replace()、search()、split()内部调用转为调用 RegExp 实例对应的 RegExp.prototype[Symbol.方法]
+- u 修饰符：Unicode 模式修饰符，正确处理大于\uFFFF 的 Unicode 字符
+
+  - 点字符(.)
+  - Unicode 表示法
+  - 量词
+  - 预定义模式
+  - i 修饰符
+  - 转义
+
+- y 修饰符：粘连修饰符，确保匹配必须从剩余的第一个位置开始全局匹配(与 g 修饰符作用类似)
+- unicode：是否设置 u 修饰符
+- sticky：是否设置 y 修饰符
+- flags：返回正则表达式的修饰符
+
+**注意**
+
+- `y修饰符`隐含头部匹配标志`^`
+- 单单一个 y 修饰符对 `match()`只能返回第一个匹配，必须与 `g 修饰符`联用才能返回所有匹配
+
+## 9.Symbol
+
+主要目的是解决全局变量冲突的问题
+
+- 1.Symbol 数据类型的主要作用就是为对象添加独一无二的属性名
+- 2.改变语言程序内部的逻辑
+
+- 定义：独一无二的值
+- 声明：const set = Symbol(str)
+- 入参：字符串(可选)
+- 方法
+
+  - Symbol()：创建以参数作为描述的 Symbol 值(不登记在全局环境)
+  - Symbol.for()：创建以参数作为描述的 Symbol 值，如存在此参数则返回原有的 Symbol 值(先搜索后创建，登记在全局环境)
+  - Symbol.keyFor()：返回已登记的 Symbol 值的描述(只能返回 Symbol.for()的 key)
+  - Object.getOwnPropertySymbols()：返回对象中所有用作属性名的 Symbol 值的数组
+
+- 内置
+
+  - Symbol.hasInstance：指向一个内部方法，当其他对象使用 instanceof 运算符判断是否为此对象的实例时会调用此方法
+  - Symbol.isConcatSpreadable：指向一个布尔，定义对象用于 Array.prototype.concat()时是否可展开
+  - Symbol.species：指向一个构造函数，当实例对象使用自身构造函数时会调用指定的构造函数
+  - Symbol.match：指向一个函数，当实例对象被 String.prototype.match()调用时会重新定义 match()的行为
+  - Symbol.replace：指向一个函数，当实例对象被 String.prototype.replace()调用时会重新定义 replace()的行为
+  - Symbol.search：指向一个函数，当实例对象被 String.prototype.search()调用时会重新定义 search()的行为
+  - Symbol.split：指向一个函数，当实例对象被 String.prototype.split()调用时会重新定义 split()的行为
+  - Symbol.iterator：指向一个默认遍历器方法，当实例对象执行 for-of 时会调用指定的默认遍历器
+  - Symbol.toPrimitive：指向一个函数，当实例对象被转为原始类型的值时会返回此对象对应的原始类型值
+  - Symbol.toStringTag：指向一个函数，当实例对象被 Object.prototype.toString()调用时其返回值会出现在 toString()返回的字符串之中表示对象的类型
+  - Symbol.unscopables：指向一个对象，指定使用 with 时哪些属性会被 with 环境排除
 
 ```js
-function fn() {}
+const symbol1 = Symbol();
+const symbol2 = Symbol(42);
+const symbol3 = Symbol('foo');
 
-const fn = function () {};
+console.log(typeof symbol1); // "symbol"
+console.log(symbol3.toString()); // "Symbol(foo)"
+console.log(Symbol('foo') === Symbol('foo')); // false
 ```
 
-### 2）ES6 写法
+## 10.Set
+
+### 1）Set
+
+- 定义：类似于数组的数据结构，成员值都是唯一且没有重复的值
+- 声明：`const set = new Set(arr)`
+- 入参：具有 Iterator 接口的数据结构
+- 属性
+
+  - constructor：构造函数，返回 Set
+  - size：返回实例成员总数
+
+- 方法
+
+  - add()：添加值，返回实例
+  - delete()：删除值，返回布尔
+  - has()：检查值，返回布尔
+  - clear()：清除所有成员
+  - keys()：返回以属性值为遍历器的对象
+  - values()：返回以属性值为遍历器的对象
+  - entries()：返回以属性值和属性值为遍历器的对象
+  - forEach()：使用回调函数遍历每个成员
+
+  ```js
+  // 可不传数组
+  const set1 = new Set();
+  set1.add(1);
+  set1.add(2);
+  console.log(set1); // Set(2) { 1, 2 }
+
+  // 也可传数组
+  const set2 = new Set([1, 2, 3]);
+  // 增加元素 使用 add
+  set2.add(4);
+  set2.add('林三心');
+  console.log(set2); // Set(5) { 1, 2, 3, 4, '林三心' }
+  // 是否含有某个元素 使用 has
+  console.log(set2.has(2)); // true
+  // 查看长度 使用 size
+  console.log(set2.size); // 5
+  // 删除元素 使用 delete
+  set2.delete(2);
+  console.log(set2); // Set(4) { 1, 3, 4, '林三心' }
+  ```
+
+**1.应用场景**
+
+- 去重字符串：`[...new Set(str)].join("")`
+- 去重数组：`[...new Set(arr)]`或`Array.from(new Set(arr))`
+- 集合数组
+
+  - 声明：`const a = new Set(arr1)`、`const b = new Set(arr2)`
+  - 并集：`new Set([...a, ...b])`
+  - 交集：`new Set([...a].filter(v => b.has(v)))`
+  - 差集：`new Set([...a].filter(v => !b.has(v)))`
+
+- 映射集合
+
+  - 声明：`let set = new Set(arr)`
+  - 映射：`set = new Set([...set].map(v => v _ 2))`或 `set = new Set(Array.from(set, v => v _ 2))`
+
+**2.数组去重**
 
 ```js
-const fn = () => {};
+const numbers = [2, 3, 4, 4, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 5, 32, 3, 4, 5];
+console.log([...new Set(numbers)]);
+// [2, 3, 4, 5, 6, 7, 32]
 
-// 如果只有一个参数，可以省略括号
-const fn = (name) => {};
+// 两个对象都是不用的指针，所以没法去重
+const set1 = new Set([1, { name: '林三心' }, 2, { name: '林三心' }]);
+console.log(set1); // Set(4) { 1, { name: '林三心' }, 2, { name: '林三心' } }
 
-// 如果函数体里只有一句return
-const fn = (name) => {
-  return 2 * name;
-};
-// 可简写为
-const fn = (name) => 2 * name;
-// 如果返回的是对象
-const fn = (name) => ({ name: name });
+// 如果是两个对象是同一指针，则能去重
+const obj = { name: '林三心' };
+const set2 = new Set([1, obj, 2, obj]);
+console.log(set2); // Set(3) { 1, { name: '林三心' }, 2 }
+
+// NaN !== NaN，NaN是自身不等于自身的，但是在Set中他还是会被去重
+const set = new Set([1, NaN, 1, NaN]);
+console.log(set); // Set(2) { 1, NaN }
 ```
 
-### 3）普通函数和箭头函数的区别
+### 2）WeakSet
 
-- 1、箭头函数不可作为构造函数，不能使用 new
-- 2、箭头函数没有自己的 this
-- 3、箭头函数没有 arguments 对象
-- 4、箭头函数没有原型对象
+- 定义：和 Set 结构类似，成员值只能是对象
+- 声明：`const set = new WeakSet(arr)`
+- 入参：具有 Iterator 接口的数据结构
+- 属性
 
-## 8.对象属性简写
+  - constructor：构造函数，返回 WeakSet
 
-### 1）ES6 之前
+- 方法
+
+  - add()：添加值，返回实例
+  - delete()：删除值，返回布尔
+  - has()：检查值，返回布尔
+
+**1.应用场景**
+
+- 储存 DOM 节点：DOM 节点被移除时自动释放此成员，不用担心这些节点从文档移除时会引发内存泄漏
+- 临时存放一组对象或存放跟对象绑定的信息：只要这些对象在外部消失，它在 `WeakSet 结构中`的引用就会自动消失
+
+**2.注意点**
+
+- 成员都是`弱引用`，垃圾回收机制不考虑 WeakSet 结构对此成员的引用
+- 成员不适合引用，它会随时消失，因此 ES6 规定` WeakSet 结构不可遍历`
+- 其他对象不再引用成员时，垃圾回收机制会自动回收此成员所占用的内存，不考虑此成员是否还存在于 `WeakSet 结构中`
+
+## 11.Map
+
+### 1）Map
+
+- 定义：类似于对象的数据结构，成员键是任何类型的值
+- 声明：`const set = new Map(arr)`
+- 入参：具有 Iterator 接口且每个成员都是一个双元素数组的数据结构
+- 属性
+
+  - constructor：构造函数，返回 Map
+  - size：返回实例成员总数
+
+- 方法
+
+  - get()：返回键值对
+  - set()：添加键值对，返回实例
+  - delete()：删除键值对，返回布尔
+  - has()：检查键值对，返回布尔
+  - clear()：清除所有成员
+  - keys()：返回以键为遍历器的对象
+  - values()：返回以值为遍历器的对象
+  - entries()：返回以键和值为遍历器的对象
+  - forEach()：使用回调函数遍历每个成员
+
+**注意点**
+
+- 遍历顺序：插入顺序
+- 对同一个键多次赋值，后面的值将覆盖前面的值
+- 对同一个对象的引用，被视为一个键
+- 对同样值的两个实例，被视为两个键
+- 键跟内存地址绑定，只要内存地址不一样就视为两个键
+- 添加多个以 NaN 作为键时，只会存在一个以 NaN 作为键的值
+- Object 结构提供字符串—值的对应，Map 结构提供值—值的对应
 
 ```js
-var cat = 'Miaow';
-var dog = 'Woof';
-var bird = 'Peet peet';
+// 定义map
+const map1 = new Map();
+// 新增键值对 使用 set(key, value)
+map1.set(true, 1);
+map1.set(1, 2);
+map1.set('Bob', 'Join');
+console.log(map1); // Map(3) { true => 1, 1 => 2, 'Bob' => 'Join' }
+// 判断map是否含有某个key 使用 has(key)
+console.log(map1.has('Bob')); // true
+// 获取map中某个key对应的value 使用 get(key)
+console.log(map1.get(true)); // 2
+// 删除map中某个键值对 使用 delete(key)
+map1.delete('Bob');
+console.log(map1); // Map(2) { true => 1, 1 => 2 }
 
-var someObject = {
-  cat: cat,
-  dog: dog,
-  bird: bird,
-};
+// 定义map，也可传入键值对数组集合
+const map2 = new Map([
+  [true, 1],
+  [1, 2],
+  ['Bob', 'Join'],
+]);
+console.log(map2); // Map(3) { true => 1, 1 => 2, 'Bob' => 'Join' }
 ```
 
-### 2）ES6 写法
+### 2）WeakMap
 
-```js
-const cat = 'Miaow';
-const dog = 'Woof';
-const bird = 'Peet peet';
+- 定义：和 Map 结构类似，成员键只能是对象
+- 声明：const set = new WeakMap(arr)
+- 入参：具有 Iterator 接口且每个成员都是一个双元素数组的数据结构
+- 属性
 
-const someObject = {
-  cat,
-  dog,
-  bird,
-};
+  - constructor：构造函数，返回 WeakMap
 
-console.log(someObject);
+- 方法
 
-// { cat: 'Miaow', dog: 'Woof', bird: 'Peet peet' }
-```
+  - get()：返回键值对
+  - set()：添加键值对，返回实例
+  - delete()：删除键值对，返回布尔
+  - has()：检查键值对，返回布尔
 
-## 9.模块化（Module）
+**1.应用场景**
 
-在 ES6 之前，JS 并没有模块化的概念，有的也只是社区定制的类似 CommonJS 和 AMD 之类的规则。例如基于 CommonJS 的 NodeJS
+- 储存 DOM 节点：DOM 节点被移除时自动释放此成员键，不用担心这些节点从文档移除时会引发内存泄漏
+- 部署私有属性：内部属性是实例的弱引用，删除实例时它们也随之消失，不会造成内存泄漏
 
-### 1）ES6 之前
+**2.注意点**
 
-```js
-// circle.js
-// 输出
-const { PI } = Math;
-exports.area = (r) => PI * r ** 2;
-exports.circumference = (r) => 2 * PI * r;
-
-// index.js
-// 输入
-const circle = require('./circle.js');
-console.log(`半径为 4 的圆的面积是 ${circle.area(4)}`);
-```
-
-### 2）ES6 写法
-
-```js
-// circle.js
-// 输出
-const { PI } = Math
-export const area = (r) => PI * r ** 2
-export const circumference = (r) => 2 * PI * r
-
-// index.js
-// 输入
-import { area } = './circle.js'
-console.log(`半径为 4 的圆的面积是: ${area(4)}`)
-
-```
-
-## 10.对象扩展
-
-### 1）Object.is
-
-- 对比两值是否相等
-
-```js
-Object.is('foo', 'foo'); // true
-Object.is({}, {}); // false
-Object.is(+0, -0); // false
-Object.is(NaN, NaN); // true
-```
-
-### 3）Object.assign
-
-- 合并对象(浅拷贝)，返回原对象
-
-  - 第一个参数是目标对象，后面的参数都是源对象
-
-```js
-var obj = { a: 1 };
-
-var p1 = Object.assign(obj);
-console.log(obj); // {a: 1}
-console.log(p1); // {a: 1}
-
-var p2 = Object.assign({}, obj, { b: 2 });
-console.log(obj); // {a: 1}
-console.log(p2); // {a: 1, b: 2}
-
-var p3 = Object.assign(obj, { b: 2 });
-console.log(obj); // {a: 1, b: 2}
-console.log(p3); // {a: 1, b: 2}
-```
-
-### 1）Object.keys
-
-- 返回一个给定对象的自身可枚举属性组成的数值
-
-```js
-const obj = {
-  name: 'Bob',
-  age: 22,
-  gender: '男',
-};
-
-const keys = Object.keys(obj);
-console.log(keys); // [ 'name', 'age', 'gender' ]
-```
-
-### 2）
+- 成员键都是弱引用，垃圾回收机制不考虑 WeakMap 结构对此成员键的引用
+- 成员键不适合引用，它会随时消失，因此 ES6 规定 WeakMap 结构不可遍历
+- 其他对象不再引用成员键时，垃圾回收机制会自动回收此成员所占用的内存，不考虑此成员是否还存在于 WeakMap 结构中
+- 一旦不再需要，成员会自动消失，不用手动删除引用
+- 弱引用的只是键而不是值，值依然是正常引用
+- 即使在外部消除了成员键的引用，内部的成员值依然存在

@@ -159,3 +159,170 @@ mySetTimeout(() => {
   console.log(1);
 }, 1000);
 ```
+
+## 8.{}、new Object()和 Object.create()的区别
+
+- 字面量和 new 关键字创建的对象是 `Object 的实例`，原型指向 Object.prototype，继承内置对象 Object
+- Object.create(arg, pro)创建的对象的原型取决于 `arg`，arg 为 null，新对象是空对象，没有原型，不继承任何对象；arg 为指定对象，新对象的原型指向指定对象，继承指定对象
+
+### 1）直接字面量创建{}
+
+```js
+var objA = {};
+objA.name = 'a';
+objA.sayName = function () {
+  console.log(`My name is ${this.name} !`);
+};
+objA.sayName();
+console.log(objA.__proto__ === Object.prototype); // true
+console.log(objA instanceof Object); // true
+```
+
+### 2）new 关键字创建
+
+```js
+var objB = new Object();
+// var objB = Object();
+objB.name = 'b';
+objB.sayName = function () {
+  console.log(`My name is ${this.name} !`);
+};
+objB.sayName();
+console.log(objB.__proto__ === Object.prototype); // true
+console.log(objB instanceof Object); // true
+```
+
+**字面量创建和 new 关键字创建并没有区别，创建的新对象的**proto**都指向 Object.prototype**
+
+### 3）Object.create()
+
+- Object.create()方法创建一个新对象，使用现有的对象来提供新创建的对象的\_\_proto\_\_
+
+> A.prototype = Object.create(B.prototype[, propertiesObject])
+
+- `proto` 必填参数，是新对象的原型对象
+
+- `propertiesObject` 是可选参数，指定要添加到新对象上的可枚举的属性
+
+```js
+const person = {
+  isHuman: false,
+  printIntroduction: function () {
+    console.log(`My name is ${this.name}. Am I human? ${this.isHuman}`);
+  },
+};
+const me = Object.create(person); // me.__proto__ === person
+me.name = 'Matthew'; // name属性被设置在新对象me上，而不是现有对象person上
+me.isHuman = true; // 继承的属性可以被重写
+me.printIntroduction(); // My name is Matthew. Am I human? true
+```
+
+## 9.Object.setPrototypeOf() 与 Object.create() 区别
+
+### 1）用法
+
+```js
+Object.setPrototypeOf(A.prototype, B.prototype);
+
+A.prototype = Object.create(B.prototype[,propertiesObject])
+```
+
+### 2）相同点
+
+- 都可以达到设置对象原型的功能
+
+### 3）不同点
+
+```js
+function Animal(name) {
+  this.name = name;
+}
+Animal.prototype.sayName = function () {
+  console.log(`Animal: ${this.name}`);
+};
+
+function Plants(name) {
+  this.name = name;
+}
+Plants.prototype.sayName = function () {
+  console.log(`Plants: ${this.name}`);
+};
+Plants.prototype.open = function () {
+  console.log(`open: ${this.name}`);
+};
+const dog = new Animal('Join');
+```
+
+- 使用 Object.create,Animal.prototype 将会指向一个空对象，空对象的原型属性指向 Plants 的 prototytpe。所以我们不能再访问 Animal 的原有 prototypoe 中的属性。Object.create 的使用方式也凸显了直接重新赋值
+
+```js
+Animal.prototype = Object.create(Plants.prototype);
+const cat = new Animal('Bob');
+dog.sayName(); // Animal: Join
+cat.sayName(); // Plants: Bob
+cat.open(); // open: Bob
+```
+
+- 使用 Object.setPrototypeOf 则会将 Animal.prototype 将会指向 Animal 原有的 prototype，然后这个 prototype 的 prototype 再指向 Plants 的 prototytpe。所以我们优先访问的 Animal，然后再是 plants
+
+```js
+Object.setPrototypeOf(Animal.prototype, Plants.prototype);
+const cat = new Animal('Bob');
+dog.sayName(); // Animal: Join
+cat.sayName(); // Animal: Bob
+cat.open(); // open: Bob
+```
+
+### 4）总结
+
+- 在进行俩个原型之间的委托时使用`setPrototype更好`，Object.create 更适和直接对一个无原生原型的对象快速进行委托
+
+## 10.函数传参方式
+
+- 函数传参实际上是：参数如果是基本类型是按值传递，如果是引用类型按共享传递
+
+### 1）按值传递
+
+```js
+var name = 'nick';
+function foo(v) {
+  v = 'tom';
+  console.log(v); //tom
+}
+foo(name);
+console.log(name); //nick
+```
+
+- 当传递 name 到函数 foo 中，相当于拷贝了一份 name，假设拷贝的这份叫 \_name，函数中修改的都是 \_name 的值，而不会影响原来的 name 值
+
+### 2）引用传递
+
+```js
+var obj = {
+  value: 1,
+};
+function foo(o) {
+  o.value = 2;
+  console.log(o.value); //2
+}
+foo(obj);
+console.log(obj.value); // 2
+```
+
+- 修改 o.value，可以通过引用找到原值
+
+### 3）共享传递
+
+```js
+var obj = {
+  value: 1,
+};
+function foo(o) {
+  o = 2;
+  console.log(o); //2
+}
+foo(obj);
+console.log(obj.value); // 1
+```
+
+- 直接修改 o，并不会修改原值
