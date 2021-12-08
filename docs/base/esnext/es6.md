@@ -1471,9 +1471,9 @@ Promise.resolve('ok')
 
 ## 18.Generator
 
-- 定义：封装多个内部状态的异步编程解决方案
-- 形式：调用 Generator 函数(该函数不执行)返回指向内部状态的指针对象(不是运行结果)
-- 声明：function\* Func() {}
+- 定义：`封装多个内部状态的异步编程解决方案`
+- 形式：调用 Generator 函数(该函数不执行)返回指向内部状态的`指针对象`(不是运行结果)
+- 声明：`function* Func() {}`
 - 方法
 
   - next()：使指针移向下一个状态，返回{ done, value }(入参会被当作上一个 yield 命令表达式的返回值)
@@ -1491,8 +1491,8 @@ Promise.resolve('ok')
 - 遍历：通过 for-of 自动调用 next()
 - 作为对象属性
 
-  - 全写：const obj = { method: function\*() {} }
-  - 简写：const obj = { \* method() {} }
+  - 全写：`const obj = { method: function*() {} }`
+  - 简写：`const obj = { * method() {} }`
 
 - 上下文：执行产生的上下文环境一旦遇到 yield 命令就会暂时退出堆栈(但并不消失)，所有变量和对象会冻结在当前状态，等到对它执行 next()时，这个上下文环境又会重新加入调用栈，冻结的变量和对象恢复执行
 
@@ -1547,4 +1547,33 @@ const print = Wrapper(function* () {
   return 'done';
 });
 print().next('hello');
+```
+
+```js
+function* myGenerator() {
+  yield '1';
+  yield '2';
+  return '3';
+}
+
+const gen = myGenerator(); // 获取迭代器
+gen.next(); // {value: "1", done: false}
+gen.next(); // {value: "2", done: false}
+gen.next(); // {value: "3", done: true}
+```
+
+```js
+function* myGenerator() {
+  console.log(yield '1'); // test1
+  console.log(yield '2'); // test2
+  console.log(yield '3'); // test3
+}
+
+// 获取迭代器
+const gen = myGenerator();
+
+gen.next();
+gen.next('test1');
+gen.next('test2');
+gen.next('test3');
 ```

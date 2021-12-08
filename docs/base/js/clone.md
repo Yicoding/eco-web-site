@@ -148,8 +148,9 @@ console.log(newObj); // {name: 'obj', b: Symbol('b'), c: undefined, d: function 
 **2.考虑到复制 Symbol**
 
 ```js
-function isObject(val) {
-  return typeof val === 'object' && val !== null;
+function isObject(target) {
+  const type = typeof target;
+  return target !== null && (type === 'object' || type === 'function');
 }
 
 function deepClone(obj, hash = new WeakMap()) {

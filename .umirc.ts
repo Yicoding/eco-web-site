@@ -356,6 +356,10 @@ const umiConfig = {
             title: '8.ES提案',
             path: '/base/esnext/es12',
           },
+          {
+            title: '9.Promise/async/Generator 实现原理解析',
+            path: '/base/esnext/principle',
+          },
         ],
       },
     ],
