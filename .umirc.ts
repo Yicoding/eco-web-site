@@ -509,31 +509,39 @@ const umiConfig = {
             path: '/algorithm/git/log',
           },
           {
-            title: '5.merge',
+            title: '5.checkout',
+            path: '/algorithm/git/checkout',
+          },
+          {
+            title: '6.merge',
             path: '/algorithm/git/merge',
           },
           {
-            title: '6.rebase',
+            title: '7.rebase',
             path: '/algorithm/git/rebase',
           },
           {
-            title: '7.pull/push',
+            title: '8.pull/push',
             path: '/algorithm/git/push',
           },
           {
-            title: '8.stash',
+            title: '9.stash',
             path: '/algorithm/git/stash',
           },
           {
-            title: '9.reflog',
+            title: '10.reflog',
             path: '/algorithm/git/reflog',
           },
           {
-            title: '10.tag',
+            title: '11.tag',
             path: '/algorithm/git/tag',
           },
           {
-            title: '11.常用命令总结',
+            title: '12.cherry-pick',
+            path: '/algorithm/git/cherry-pick',
+          },
+          {
+            title: '13.常用命令总结',
             path: '/algorithm/git/summary',
           },
         ],

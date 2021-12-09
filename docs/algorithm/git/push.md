@@ -8,6 +8,14 @@ toc: menu
 
 - pull 的内部操作其实是把远程仓库取到本地后（使用的是 fetch），再用一次 merge 来把远端仓库的新 commits 合并到本地
 
+```bash
+git pull
+
+// =>
+
+git fetch && git merge
+```
+
 ## 2.push
 
 - push 指令做的事是把你的本地提交上传到中央仓库去
@@ -28,3 +36,27 @@ git push origin branchName
     - git config --global push.default current
 
 - push 的时候之后上传当前分支，并不会上传 HEAD；远程仓库的 HEAD 是永远指向默认分支（即 master）的
+
+### 1）git push（后未加任何参数）
+
+- 当`首次创建`分支但`未关联`任何`远端分支`是（即方法一创建分支的方式），此时 git push 会提示"未存在关联的远端分支"并且`提交失败`
+
+- 默认`只推送当前分支`，这叫做 simple 方式
+
+### 2）git push -u origin test
+
+- 这种方法更通用，当远端没有 test 分支时，会`自动创建`一个 origin test 分支，然后进行关联
+
+- 加了参数`-u` 后，以后即可直接用 git push `代替` git push origin test
+
+```bash
+// 首次
+git push -u origin test
+
+// 之后
+git push
+```
+
+### 3）git push --set-upstream-to=origin/
+
+- 这个方法跟 git push -u 则不同，当`远端没有对应的分支`时，则`无法`进行`关联`。
