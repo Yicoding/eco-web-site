@@ -178,7 +178,7 @@ then(resolveFn, rejectFn) {
 ### 4）值穿透 & 状态已变更的情况
 
 - `值穿透`：根据规范，如果 then() 接收的参数不是 function，那么我们应该忽略它。如果没有忽略，当 then()回调不为 function 时将会抛出异常，导致链式调用中断
-- `处理状态为resolve/reject的情况`：其实我们上边 then() 的写法是对应状态为 padding 的情况，但是有些时候，resolve/reject 在 then() 之前就被执行（比如 Promise.resolve().then()），如果这个时候还把 then()回调 push 进 resolve/reject 的执行队列里，那么回调将不会被执行，因此对于状态已经变为 fulfilled 或 rejected 的情况，我们直接执行 then 回调：
+- `处理状态为resolve/reject的情况`：其实我们上边 then() 的写法是对应状态为 pedding 的情况，但是有些时候，resolve/reject 在 then() 之前就被执行（比如 Promise.resolve().then()），如果这个时候还把 then()回调 push 进 resolve/reject 的执行队列里，那么回调将不会被执行，因此对于状态已经变为 fulfilled 或 rejected 的情况，我们直接执行 then 回调：
 
 ```js
 // then方法,接收一个成功的回调和一个失败的回调
@@ -426,7 +426,7 @@ static all(promiseArr) {
 ### 11）完整代码
 
 ```js
-//Promise/A+规定的三种状态
+// Promise/A+规定的三种状态
 const PENDING = 'pending';
 const FULFILLED = 'fulfilled';
 const REJECTED = 'rejected';
@@ -441,7 +441,7 @@ class MyPromise {
 
     // 由于resolve/reject是在executor内部被调用, 因此需要使用箭头函数固定this指向, 否则找不到this._resolveQueue
     let _resolve = (val) => {
-      //把resolve执行回调的操作封装成一个函数,放进setTimeout里,以兼容executor是同步代码的情况
+      // 把resolve执行回调的操作封装成一个函数,放进setTimeout里,以兼容executor是同步代码的情况
       const run = () => {
         if (this._status !== PENDING) return; // 对应规范中的"状态只能由pending到fulfilled或rejected"
         this._status = FULFILLED; // 变更状态
@@ -524,40 +524,40 @@ class MyPromise {
     });
   }
 
-  //catch方法其实就是执行一下then的第二个回调
+  // catch方法其实就是执行一下then的第二个回调
   catch(rejectFn) {
     return this.then(undefined, rejectFn);
   }
 
-  //finally方法
+  // finally方法
   finally(callback) {
     return this.then(
-      (value) => MyPromise.resolve(callback()).then(() => value), //执行回调,并returnvalue传递给后面的then
+      (value) => MyPromise.resolve(callback()).then(() => value), // 执行回调,并returnvalue传递给后面的then
       (reason) =>
         MyPromise.resolve(callback()).then(() => {
           throw reason;
-        }), //reject同理
+        }), // reject同理
     );
   }
 
-  //静态的resolve方法
+  // 静态的resolve方法
   static resolve(value) {
-    if (value instanceof MyPromise) return value; //根据规范, 如果参数是Promise实例, 直接return这个实例
+    if (value instanceof MyPromise) return value; // 根据规范, 如果参数是Promise实例, 直接return这个实例
     return new MyPromise((resolve) => resolve(value));
   }
 
-  //静态的reject方法
+  // 静态的reject方法
   static reject(reason) {
     return new MyPromise((resolve, reject) => reject(reason));
   }
 
-  //静态的all方法
+  // 静态的all方法
   static all(promiseArr) {
     let index = 0;
     let result = [];
     return new MyPromise((resolve, reject) => {
       promiseArr.forEach((p, i) => {
-        //Promise.resolve(p)用于处理传入值不为Promise的情况
+        // Promise.resolve(p)用于处理传入值不为Promise的情况
         MyPromise.resolve(p).then(
           (val) => {
             index++;
@@ -574,15 +574,15 @@ class MyPromise {
     });
   }
 
-  //静态的race方法
+  // 静态的race方法
   static race(promiseArr) {
     return new MyPromise((resolve, reject) => {
-      //同时执行Promise,如果有一个Promise的状态发生改变,就变更新MyPromise的状态
+      // 同时执行Promise,如果有一个Promise的状态发生改变,就变更新MyPromise的状态
       for (let p of promiseArr) {
         MyPromise.resolve(p).then(
-          //Promise.resolve(p)用于处理传入值不为Promise的情况
+          // Promise.resolve(p)用于处理传入值不为Promise的情况
           (value) => {
-            resolve(value); //注意这个resolve是上边new MyPromise的
+            resolve(value); // 注意这个resolve是上边new MyPromise的
           },
           (err) => {
             reject(err);

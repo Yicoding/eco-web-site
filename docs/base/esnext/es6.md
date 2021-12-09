@@ -1365,6 +1365,9 @@ it.next();
 ## 17.Promise
 
 - 定义：包含异步操作结果的对象
+
+  - 是`异步编程的一种解决方案`，比传统的解决方案——回调函数和事件——更合理和更强大
+
 - 状态
 
   - 进行中：`pending`
@@ -1406,8 +1409,8 @@ it.next();
   - `Promise.all()`：将多个实例包装成一个新实例，返回全部实例状态变更后的结果数组(齐变更再返回)`全部返回`
 
     - 入参：具有 `Iterator 接口`的数据结构
-    - 成功：只有全部实例状态变成 fulfilled，最终状态才会变成 fulfilled
-    - 失败：其中一个实例状态变成 rejected，最终状态就会变成 rejected
+    - 成功：只有`全部实例状态变成 fulfilled`，`最终状态`才会变成 `fulfilled`
+    - 失败：其中`一个实例状态变成 rejected`，`最终状态`就会变成 `rejected`
 
   - `Promise.race()`：将多个实例包装成一个新实例，返回全部实例状态优先变更后的结果(先变更先返回)`只返回一个结果`
 
@@ -1446,14 +1449,65 @@ Promise.resolve('ok')
 **1.应用场景**
 
 - 解决地狱回调
-- 加载图片
+- 异步加载图片
+
+  ```js
+  function loadImageAsync(url) {
+    return new Promise(function (resolve, reject) {
+      const image = new Image();
+
+      image.onload = function () {
+        resolve(image);
+      };
+
+      image.onerror = function () {
+        reject(new Error('Could not load image at ' + url));
+      };
+
+      image.src = url;
+    });
+  }
+  ```
+
 - 封装 ajax
+
+  ```js
+  onst getJSON = function(url) {
+    const promise = new Promise(function(resolve, reject){
+      const handler = function() {
+        if (this.readyState !== 4) {
+          return;
+        }
+        if (this.status === 200) {
+          resolve(this.response);
+        } else {
+          reject(new Error(this.statusText));
+        }
+      };
+      const client = new XMLHttpRequest();
+      client.open("GET", url);
+      client.onreadystatechange = handler;
+      client.responseType = "json";
+      client.setRequestHeader("Accept", "application/json");
+      client.send();
+
+    });
+
+    return promise;
+  };
+
+  getJSON("/posts.json").then(function(json) {
+    console.log('Contents: ' + json);
+  }, function(error) {
+    console.error('出错了', error);
+  });
+  ```
 
 **2.注意事项**
 
 - 只有异步操作的结果可决定当前状态是哪一种，其他操作都无法改变这个状态
 - 状态改变只有两种可能：从 pending 变为 resolved、从 pending 变为 rejected
-- 一旦新建 Promise 对象就会立即执行，无法中途取消
+- 一旦`新建 Promise 对象就会立即执行`，无法中途取消
 - 不设置回调函数，内部抛错不会反应到外部
 - 当处于 pending 时，无法得知目前进展到哪一个阶段
 - 实例状态变为 resolved 或 rejected 时，会触发 then()绑定的回调函数
@@ -1469,7 +1523,55 @@ Promise.resolve('ok')
 - 作为参数的实例定义了 catch()，一旦被 rejected 并不会触发 Promise.all()的 catch()
 - Promise.reject()的参数会原封不动地作为 rejected 的理由，变成后续方法的参数
 
-## 18.Generator
+**3.\*\*区别 all、race、allSettled、any**
+
+```js
+const a = Promise.resolve('a');
+const b = Promise.resolve('b');
+const c = Promise.resolve('c');
+const d = Promise.reject('d');
+const e = Promise.reject('e');
+
+// all
+// 实例全都变成fulfilled，状态才会变成fulfilled，返回由返回值组成一个数组
+Promise.all([a, b, c])
+  .then((res) => console.log('res', res))
+  .catch((err) => console.log('err', err)); // res ['a', 'b', 'c']
+
+// 有一个实例变成rejected，返回第一个被reject的实例的返回值
+Promise.all([a, b, c, d, e])
+  .then((res) => console.log('res', res))
+  .catch((err) => console.log('err', err)); // err d
+
+// race
+// 有一个实例率先改变状态，不管是fulfilled还是rejected，返回第一个状态改变的实例的返回值
+Promise.race([a, b, c, d, e])
+  .then((res) => console.log('res', res))
+  .catch((err) => console.log('err', err)); // res a
+
+Promise.race([d, a, b, c, e])
+  .then((res) => console.log('res', res))
+  .catch((err) => console.log('err', err)); // err d
+
+// allSettled
+// 返回所有实例的返回值，不管是fulfilled还是rejected
+Promise.allSettled([a, b, c, d, e])
+  .then((res) => console.log('res', res))
+  .catch((err) => console.log('err', err)); // res [{"status":"fulfilled","value":"a"},{"status":"fulfilled","value":"b"},{"status":"fulfilled","value":"c"},{"status":"rejected","reason":"d"}, {"status":"rejected","reason":"e"}]
+
+// any
+// 只要参数实例有一个变成fulfilled状态，包装实例就会变成fulfilled状态
+Promise.any([d, a, b, c, e])
+  .then((res) => console.log('res', res))
+  .catch((err) => console.log('err', err)); // res a
+
+// 如果所有参数实例都变成rejected状态，包装实例就会变成rejected状态
+Promise.any([d, d, d, d, e])
+  .then((res) => console.log('res', res))
+  .catch((err) => console.log('err', err)); // err AggregateError: All promises were rejected
+```
+
+## 18.Generator 生成器
 
 - 定义：`封装多个内部状态的异步编程解决方案`
 - 形式：调用 Generator 函数(该函数不执行)返回指向内部状态的`指针对象`(不是运行结果)

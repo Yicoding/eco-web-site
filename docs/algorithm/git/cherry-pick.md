@@ -95,3 +95,59 @@ git cherry-pick A^..B
 ```md
 git cherry-pick -m 1 <commitHash>
 ```
+
+## 6.代码冲突
+
+- 如果操作过程中发生代码冲突，Cherry pick 会停下来，让用户决定如何继续操作
+
+### 1）--continue 继续
+
+- 用户解决代码冲突后，第一步将修改的文件重新加入暂存区（`git add .`），第二步使用下面的命令，让 Cherry pick 过程`继续执行`
+
+```bash
+git cherry-pick --continue
+```
+
+### 2）--abort 放弃
+
+- 发生代码冲突后，放弃合并，`回到操作前的样子`
+
+```bash
+git cherry-pick --abort
+```
+
+### 3）--quit 退出
+
+- 发生代码冲突后，退出 Cherry pick，但是`不回到操作前的样子`
+
+```bash
+git cherry-pick --quit
+```
+
+## 7.转移到另一个代码库
+
+- Cherry pick 也支持转移另一个代码库的提交，方法是先将该库加为远程仓库
+
+### 1）添加远程仓库 target
+
+```bash
+git remote add target git://gitUrl
+```
+
+### 2）将远程代码抓取到本地
+
+```bash
+git fetch target
+```
+
+### 3）检查一下要从远程仓库转移的提交，获取它的哈希值
+
+```bash
+git log target/master
+```
+
+### 4）使用 git cherry-pick 命令转移提交
+
+```bash
+git cherry-pick <commitHash>
+```

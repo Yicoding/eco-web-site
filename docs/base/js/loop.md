@@ -38,9 +38,9 @@ javaScript 是`单线程`的，JavaScript 中的所有任务都需要排队依�
 
 - 微任务不会进入任务队列，但微任务会等待同步任务执行完毕后执行
 
-- 浏览器中：Promise.then/.catch/.finally（promise 本身是同步）、Object.observe 、MutationObserve
+- 浏览器中：Promise.then/.catch/.finally（promise 本身是同步）、Object.observe 、MutationObserver
 
-- Node 中：process.nextTick、Promise.then/.catch/.finally（promise 本身是同步）、Object.observe 、MutationObserve
+- Node 中：process.nextTick、Promise.then/.catch/.finally（promise 本身是同步）、Object.observe 、MutationObserver
 
 ## 5.浏览器如何执行 Event Loop
 

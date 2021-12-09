@@ -48,7 +48,7 @@ git remote show origin // 查看某个远程仓库
 /*5.远程仓库的重命名与移除*/
 git remote rename pb paul // 将pb重命名为paul
 
-/*6.远程仓库的重命名与移除*/
+/*6.添加远程仓库*/
 git remote add origin git@github.com/username/xxx.git // 添加远程仓库
 git remote add origin https://github.com/username/xxx.git // 添加远程仓库
 

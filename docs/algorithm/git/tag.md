@@ -6,7 +6,16 @@ toc: menu
 
 - 给仓库历史中的某一个提交打上标签，以示重要
 
-## 1.列出标签
+## 1.tag 和 branch 有什么区别
+
+- branch 是一个分支；tag 是分支上的一个里程碑，一个点
+- tag 就是一个只读的 branch；一般为每一个可发布的里程碑版本打一个 tag
+- 简单说比如 branch 有 1.0，1.1 等，其中 1.0 分支里可以有 1.0.1，1.0.2 这些 tag
+- tag 就像是一个里程碑一个标志一个点; branch 是一个新的征程一条线
+- tag 是静态的，branch 要向前走
+- 稳定版本备份用 tag，新功能多人开发用 branch（开发完成后 merge 到 master）
+
+## 2.列出标签
 
 - 只需要输入 `git tag` （可带上可选的 `-l` 选项 `--list`）
 
@@ -37,7 +46,7 @@ v1.8.5-rc2
 v1.8.5-rc3
 ```
 
-## 2.创建标签
+## 3.创建标签
 
 - Git 支持两种标签：`轻量标签`（lightweight）与`附注标签`（annotated）。
 
@@ -51,17 +60,11 @@ v1.8.5-rc3
 
 ```bash
 git tag -a v1.4 -m "my version 1.4"
-
-git tag
 ```
 
-得到
+- `a` v1.4 是增加名为 v1.4 的标签
 
-```bash
-v1.4
-```
-
-- `-m` 选项指定了一条将会存储在标签中的信息
+- `-m` 后面跟着的是标签的注释
 
 - 如果没有为附注标签指定一条信息，Git 会启动编辑器要求你输入信息
 
@@ -71,8 +74,6 @@ v1.4
 
 ```bash
 git tag v1.4-lw
-
-git tag
 ```
 
 得到
@@ -88,13 +89,11 @@ v1.4-lw
 git tag -a v1.2 commits -m 'xxxx'
 ```
 
-## 3.提交标签
+## 4.提交标签（两种方式）
 
-```bash
-1.git push origin v1.2
+### 1）git push origin v1.2
 
-2.git push origin --tags
-```
+### 2）git push origin --tags
 
 ```bash
 * [new tag]         v1.2 -> v1.2
@@ -102,7 +101,7 @@ git tag -a v1.2 commits -m 'xxxx'
 * [new tag]         v1.4-lw -> v1.4-lw
 ```
 
-## 4 删除标签
+## 5.删除标签
 
 ### 1）删除本地标签
 
@@ -116,7 +115,7 @@ git tag -d v1.2
 git push origin --delete <tagname>
 ```
 
-## 5.检出标签
+## 6.检出标签
 
 - 查看某个标签所指向的文件版本，使用 `git checkout` 命令，使你的仓库处于“分离头指针（detached HEAD）”的状态
 
