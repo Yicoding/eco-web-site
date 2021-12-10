@@ -98,31 +98,31 @@ const umiConfig = {
       children: [
         {
           title: '前端工程化',
-          path: '/algorithm/base',
+          path: '/engineering/base',
         },
         {
           title: '模块化规范',
-          path: '/algorithm/modular',
+          path: '/engineering/modular',
         },
         {
           title: '模块工具',
-          path: '/algorithm/tool',
+          path: '/engineering/tool',
         },
         {
           title: '打包工具',
-          path: '/algorithm/build',
+          path: '/engineering/build',
         },
         {
           title: 'git',
-          path: '/algorithm/git',
+          path: '/engineering/git',
         },
         {
           title: 'AST',
-          path: '/algorithm/ast',
+          path: '/engineering/ast',
         },
         {
           title: 'CI/CD',
-          path: '/algorithm/ast',
+          path: '/engineering/ast',
         },
       ],
     },
@@ -152,11 +152,19 @@ const umiConfig = {
       ],
     },
     {
-      title: '数据结构与算法',
+      title: '核心竞争力',
       children: [
         {
-          title: '数组',
-          path: '/engineering',
+          title: '设计模式',
+          path: '/core/mode',
+        },
+        {
+          title: '数据结构',
+          path: '/core/data',
+        },
+        {
+          title: '算法',
+          path: '/core/algorithm',
         },
       ],
     },
@@ -259,63 +267,59 @@ const umiConfig = {
             path: '/base/js/object',
           },
           {
-            title: '12.设计模式',
-            path: '/base/js/mode',
-          },
-          {
-            title: '13.Event Loop 事件循环',
+            title: '12.Event Loop 事件循环',
             path: '/base/js/loop',
           },
           {
-            title: '14.事件冒泡和捕获',
+            title: '13.事件冒泡和捕获',
             path: '/base/js/bubble',
           },
           {
-            title: '15.正则',
+            title: '14.正则',
             path: '/base/js/regexp',
           },
           {
-            title: '16.深浅拷贝',
+            title: '15.深浅拷贝',
             path: '/base/js/clone',
           },
           {
-            title: '17.数据劫持和代理',
+            title: '16.数据劫持和代理',
             path: '/base/js/hijack',
           },
           {
-            title: '18.防抖/节流',
+            title: '17.防抖/节流',
             path: '/base/js/shake',
           },
           {
-            title: '19.递归',
+            title: '18.递归',
             path: '/base/js/recursion',
           },
           {
-            title: '20.数组扁平化flat',
+            title: '19.数组扁平化flat',
             path: '/base/js/flat',
           },
           {
-            title: '21.函数重载',
+            title: '20.函数重载',
             path: '/base/js/heavy',
           },
           {
-            title: '22.函数柯里化curry',
+            title: '21.函数柯里化curry',
             path: '/base/js/curry',
           },
           {
-            title: '23.函数组合compose',
+            title: '22.函数组合compose',
             path: '/base/js/compose',
           },
           {
-            title: '24.斐波那契数列',
+            title: '23.斐波那契数列',
             path: '/base/js/fibo',
           },
           {
-            title: '25.尾调用',
+            title: '24.尾调用',
             path: '/base/js/tail',
           },
           {
-            title: '26.零散知识点',
+            title: '25.零散知识点',
             path: '/base/js/small',
           },
         ],
@@ -458,7 +462,7 @@ const umiConfig = {
     /***************** nav: 框架 *******************/
     /***************** nav: 工程化 *******************/
     // 模块化
-    '/algorithm/modular': [
+    '/engineering/modular': [
       {
         children: [
           {
@@ -489,122 +493,122 @@ const umiConfig = {
       },
     ],
     // git
-    '/algorithm/git': [
+    '/engineering/git': [
       {
         children: [
           {
             title: '1.版本控制系统',
-            path: '/algorithm/git',
+            path: '/engineering/git',
           },
           {
             title: '2.HEAD/master/branch',
-            path: '/algorithm/git/concept',
+            path: '/engineering/git/concept',
           },
           {
             title: '3.add/commit',
-            path: '/algorithm/git/add',
+            path: '/engineering/git/add',
           },
           {
             title: '4.status/log/show/diff',
-            path: '/algorithm/git/log',
+            path: '/engineering/git/log',
           },
           {
             title: '5.checkout',
-            path: '/algorithm/git/checkout',
+            path: '/engineering/git/checkout',
           },
           {
             title: '6.merge',
-            path: '/algorithm/git/merge',
+            path: '/engineering/git/merge',
           },
           {
             title: '7.rebase',
-            path: '/algorithm/git/rebase',
+            path: '/engineering/git/rebase',
           },
           {
             title: '8.pull/push',
-            path: '/algorithm/git/push',
+            path: '/engineering/git/push',
           },
           {
             title: '9.stash',
-            path: '/algorithm/git/stash',
+            path: '/engineering/git/stash',
           },
           {
             title: '10.reflog',
-            path: '/algorithm/git/reflog',
+            path: '/engineering/git/reflog',
           },
           {
             title: '11.tag',
-            path: '/algorithm/git/tag',
+            path: '/engineering/git/tag',
           },
           {
             title: '12.cherry-pick',
-            path: '/algorithm/git/cherry-pick',
+            path: '/engineering/git/cherry-pick',
           },
           {
             title: '13.常用命令总结',
-            path: '/algorithm/git/summary',
+            path: '/engineering/git/summary',
           },
         ],
       },
     ],
     // 模块工具
-    '/algorithm/tool': [
+    '/engineering/tool': [
       {
         children: [
           {
             title: '1.npm',
-            path: '/algorithm/tool',
+            path: '/engineering/tool',
           },
           {
             title: '2.yarn',
-            path: '/algorithm/tool/yarn',
+            path: '/engineering/tool/yarn',
           },
           {
             title: '3.npx',
-            path: '/algorithm/tool/npx',
+            path: '/engineering/tool/npx',
           },
           {
             title: '4.nvm',
-            path: '/algorithm/tool/nvm',
+            path: '/engineering/tool/nvm',
           },
           {
             title: '5.nrm',
-            path: '/algorithm/tool/nrm',
+            path: '/engineering/tool/nrm',
           },
           {
             title: '6.yalc',
-            path: '/algorithm/tool/yalc',
+            path: '/engineering/tool/yalc',
           },
           {
             title: '7.eslint',
-            path: '/algorithm/tool/eslint',
+            path: '/engineering/tool/eslint',
           },
         ],
       },
     ],
     // 打包工具
-    '/algorithm/build': [
+    '/engineering/build': [
       {
         children: [
           {
             title: '1.babel',
-            path: '/algorithm/build',
+            path: '/engineering/build',
           },
           {
             title: '2.webpack',
-            path: '/algorithm/build/webpack',
+            path: '/engineering/build/webpack',
           },
           {
             title: '3.rollup',
-            path: '/algorithm/build/rollup',
+            path: '/engineering/build/rollup',
           },
           {
             title: '4.esbuild',
-            path: '/algorithm/build/esbuild',
+            path: '/engineering/build/esbuild',
           },
           {
             title: '5.vite',
-            path: '/algorithm/build/vite',
+            path: '/engineering/build/vite',
           },
         ],
       },
@@ -617,12 +621,56 @@ const umiConfig = {
     '/node/mysql': [{ children: ['/node/mysql'] }],
     '/node/nginx': [{ children: ['/node/nginx'] }],
     /***************** nav: node *******************/
-    /***************** nav: 其他 *******************/
-    '/other/problem': [
+    /***************** nav: 核心竞争力 *******************/
+    '/core/mode': [
       {
-        children: ['/other/problem'],
+        children: [
+          {
+            title: '1.设计模式',
+            path: '/core/mode',
+          },
+          {
+            title: '2.SOLID设计原则',
+            path: '/core/mode/principle',
+          },
+          {
+            title: '3.创建型',
+            path: '/core/mode/create',
+          },
+          {
+            title: '4.结构型',
+            path: '/core/mode/structure',
+          },
+          {
+            title: '5.行为型',
+            path: '/core/mode/behavior',
+          },
+        ],
       },
     ],
+    '/core/data': [
+      {
+        children: [
+          {
+            title: '数据结构',
+            path: '/core/data',
+          },
+        ],
+      },
+    ],
+    '/core/algorithm': [
+      {
+        children: [
+          {
+            title: '算法',
+            path: '/core/algorithm',
+          },
+        ],
+      },
+    ],
+    /***************** nav: 核心竞争力 *******************/
+    /***************** nav: 其他 *******************/
+    '/other/problem': [{ children: ['/other/problem'] }],
     /***************** nav: 其他 *******************/
   },
 };

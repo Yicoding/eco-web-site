@@ -18,11 +18,9 @@ var arr = [1, [2, [3, 4]]];
 
 ### 1）普通递归
 
-- ES6
-
 ```js
-/* ES6 */
 const flatten = (arr) => {
+  if (!arr.length) return;
   let result = [];
   arr.forEach((item, i, arr) => {
     if (Array.isArray(item)) {
@@ -33,26 +31,6 @@ const flatten = (arr) => {
   });
   return result;
 };
-
-const arr = [1, [2, [3, 4]]];
-console.log(flatten(arr));
-```
-
-- ES5
-
-```js
-/* ES5 */
-function flatten(arr) {
-  var result = [];
-  for (var i = 0, len = arr.length; i < len; i++) {
-    if (Array.isArray(arr[i])) {
-      result = result.concat(flatten(arr[i]));
-    } else {
-      result.push(arr[i]);
-    }
-  }
-  return result;
-}
 
 const arr = [1, [2, [3, 4]]];
 console.log(flatten(arr));
@@ -86,51 +64,15 @@ console.log(flatten(arr));
 
 利用 arr.some 判断当数组中还有数组的话，循环调用 flatten 扁平函数(利用 [].concat.apply 扁平), 用 concat 连接，最终返回 arr
 
-- ES6
-
 ```js
 /* ES6 */
 const flatten = (arr) => {
+  if (!arr.length) return;
   while (arr.some((item) => Array.isArray(item))) {
-    arr = [].concat.apply([], arr);
+    arr = [].concat(arr);
   }
   return arr;
 };
-
-const arr = [1, [2, [3, 4]]];
-console.log(flatten(arr));
-```
-
-- ES5
-
-```js
-/* ES5 */
-/**
- * 封装Array.some
- * @param {function} callback    - 回调函数
- * @param {any}      currentThis - 回调函数中this指向
- */
-Array.prototype.some = function (callback, currentThis) {
-  let context = this;
-  let flag = false;
-  currentThis = currentThis || this;
-  for (var i = 0, len = context.length; i < len; i++) {
-    const res = callback.call(currentThis, context[i], i, context);
-    if (res) {
-      flag = true;
-    } else if (!flag) {
-      flag = false;
-    }
-  }
-  return flag;
-};
-
-function flatten(arr) {
-  while (arr.some((item) => Array.isArray(item))) {
-    arr = [].concat.apply([], arr);
-  }
-  return arr;
-}
 
 const arr = [1, [2, [3, 4]]];
 console.log(flatten(arr));
@@ -151,23 +93,7 @@ const arr = [1, [2, [3, 4]]];
 console.log(flatten(arr));
 ```
 
-### 5）ES6 中的 解构运算符 ...
-
-... 每次只能展开最外层的数组，被 [].concat 后，arr 就扁平化一次
-
-```js
-function flatten(arr) {
-  while (arr.some((item) => Array.isArray(item))) {
-    arr = [].concat(...arr);
-  }
-  return arr;
-}
-
-const arr = [1, [2, [3, 4]]];
-console.log(flatten(arr));
-```
-
-### 6）es6 提供的新方法 flat(depth)
+### 5）es6 提供的新方法 flat(depth)
 
 - flat(depth) 方法中的参数 depth，代表展开嵌套数组的深度，默认是 1
 
