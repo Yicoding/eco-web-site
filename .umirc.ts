@@ -279,7 +279,7 @@ const umiConfig = {
             path: '/base/js/clone',
           },
           {
-            title: '17.数据劫持',
+            title: '17.数据劫持和代理',
             path: '/base/js/hijack',
           },
           {
@@ -617,6 +617,13 @@ const umiConfig = {
     '/node/mysql': [{ children: ['/node/mysql'] }],
     '/node/nginx': [{ children: ['/node/nginx'] }],
     /***************** nav: node *******************/
+    /***************** nav: 其他 *******************/
+    '/other/problem': [
+      {
+        children: ['/other/problem'],
+      },
+    ],
+    /***************** nav: 其他 *******************/
   },
 };
 

@@ -2,6 +2,7 @@
   "name": "eco-web-site",
   "description": "前端技术站点",
   "branch": "master",
+  "license": "UNLICENSED",
   "scripts": {
     "start": "dumi dev",
     "docs": "dumi build",
