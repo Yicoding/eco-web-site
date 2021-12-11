@@ -14,19 +14,30 @@ toc: menu
 
 ## 1.SOLID 指代的五个基本原则分别是
 
-- 单一功能原则（Single Responsibility Principle）
+### 1）单一功能原则（Single Responsibility Principle）
 
-- 开放封闭原则（Opened Closed Principle）
+- 模块只做一件事，模块的职责越单一越好
 
-  - 对拓展开放，对修改封闭（软件实体（类、模块、函数）可以扩展，但是不可修改）
-    - 解析：要给扩展的接口，具体使用时无需修改源码即可扩展功
-    - 应用：将通用方法提取成基类，通过继承基类，重写方法实现修改方法，而不是修改存量代码实现
+### 2）开放封闭原则（Opened Closed Principle）
 
-- 里式替换原则（Liskov Substitution Principle）
+- 对拓展开放，对修改封闭（软件实体（类、模块、函数）可以扩展，但是不可修改）
+  - 解析：要给扩展的接口，具体使用时无需修改源码即可扩展功
+  - 应用：将通用方法提取成基类，通过继承基类，重写方法实现修改方法，而不是修改存量代码实现
 
-- 接口隔离原则（Interface Segregation Principle）
+### 3）里式替换原则（Liskov Substitution Principle）
 
-- 依赖反转原则（Dependency Inversion Principle）
+- 子类可以扩展父类，不能改变父类
+  - 解析：它主要关注于继承，它的意义是任何使用父类的地方都可以用子类去替换，直白的说我们子类继承父类的时候，我们的子类必须完全保证继承父类的属性和方法，这样的话父类使用的地方，子类可以进行替换
+
+### 4） 接口隔离原则（Interface Segregation Principle）
+
+- 接口要细化，功能要单一，一个接口不要调用太多方法，使其能力单一
+
+  - 解析：多个专业接口比一个胖接口好用
+
+### 5）依赖反转原则（Dependency Inversion Principle）
+
+- 上层不应依赖下层实现：上层模块依赖于下层接口抽象，不依赖于下层接口实现，接口定义不变，上层不受影响
 
 ## 2.设计模式的核心思想——封装变化
 
