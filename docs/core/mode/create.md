@@ -321,7 +321,7 @@ document.getElementById('close').addEventListener('click', function () {
 });
 ```
 
-## 3.原型模式
+## 3.原型模式-prototype
 
 - 利用实例来描述对象，用实例作为定义对象和继承的基础
 

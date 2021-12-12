@@ -553,11 +553,14 @@ class MyPromise {
 
   // 静态的all方法
   static all(promiseArr) {
-    let index = 0;
-    let result = [];
     return new MyPromise((resolve, reject) => {
+      if (!Array.isArray(promiseArr)) {
+        return reject(new TypeError('arguments must be array'));
+      }
+      let index = 0;
+      let result = [];
       promiseArr.forEach((p, i) => {
-        // Promise.resolve(p)用于处理传入值不为Promise的情况
+        // Promise.resolve(p)用于处理传入值不为Promise的情况，强行转为promise，避免使用 instanceof 再进行一次判断
         MyPromise.resolve(p).then(
           (val) => {
             index++;
@@ -565,6 +568,8 @@ class MyPromise {
             if (index === promiseArr.length) {
               resolve(result);
             }
+            // 错误写法
+            // if (result.length === promiseArr.length)
           },
           (err) => {
             reject(err);

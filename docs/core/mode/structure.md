@@ -200,3 +200,217 @@ export default class App extends Component {
   }
 }
 ```
+
+## 2.适配器模式-兼容代码
+
+- 通过把一个类的接口变换成客户端所期待的另一种接口，可以帮我们解决不兼容的问题
+
+- 适配已有模块，保证模块间的独立解耦且连接兼容
+
+- 相当于耳机接口转换器（之前的圆孔耳机要连接新手机的方形接口）
+
+- 之前暴露出的接口不变，内部做兼容处理
+
+### axios 中的适配器
+
+- axios 完美地抹平了浏览器和 Node 环境下 api 的调用差异，靠的正是对适配器模式的灵活运用
+
+**1.使用**
+
+```js
+function getDefaultAdapter() {
+  var adapter;
+  // 判断当前是否是node环境
+  if (
+    typeof process !== 'undefined' &&
+    Object.prototype.toString.call(process) === '[object process]'
+  ) {
+    // 如果是node环境，调用node专属的http适配器
+    adapter = require('./adapters/http');
+  } else if (typeof XMLHttpRequest !== 'undefined') {
+    // 如果是浏览器环境，调用基于xhr的适配器
+    adapter = require('./adapters/xhr');
+  }
+  return adapter;
+}
+```
+
+**2.http 适配器**
+
+```js
+module.exports = function httpAdapter(config) {
+  return new Promise(function dispatchHttpRequest(resolvePromise, rejectPromise) {
+    // 具体逻辑
+  }
+}
+```
+
+**2.xhr 适配器**
+
+```js
+module.exports = function xhrAdapter(config) {
+  return new Promise(function dispatchXhrRequest(resolve, reject) {
+    // 具体逻辑
+  }
+}
+```
+
+- 两个适配器的入参都是 config；
+- 两个适配器的出参都是一个 Promise
+
+- 把变化留给自己，把统一留给用户
+
+  - 统一的接口，统一的入参，统一的出参，统一的规则
+
+## 3.代理模式
+
+- 某些情况下，出于种种考虑/限制，一个对象不能直接访问另一个对象，需要一个第三者（代理）牵线搭桥从而间接达到访问目的，这样的模式就是代理模式（例如：VPN）
+
+- 使用代理人来替代原始对象，集约流程
+
+- A 不能直接访问 B，A 需要借助一个帮手来访问 B，这个帮手就是代理器
+
+  **ES6 中的 Proxy**
+
+  > const proxy = new Proxy(obj, handler)
+
+  - obj：目标对象
+  - 当我们通过 proxy 去访问目标对象的时候，handler 会对我们的行为作一层拦截，我们的每次访问都需要经过 handler 这个第三方
+
+### 1）事件代理
+
+- 利用浏览器`事件冒泡机制`
+
+**点击每个 a 标签，都可以弹出“我是 xxx”这样的提示**
+
+- html 部分
+
+```html
+<div id="father">
+  <a href="#">链接1号</a>
+  <a href="#">链接2号</a>
+  <a href="#">链接3号</a>
+  <a href="#">链接4号</a>
+  <a href="#">链接5号</a>
+  <a href="#">链接6号</a>
+</div>
+```
+
+- js 部分
+
+  - 不使用事件代理
+
+  ```js
+  const aNodes = document.getElementById('father').getElementByTageName('a');
+  for (let i = 0; i < aNodes.length; i++) {
+    aNodes[i].addEventListener('click', function (e) {
+      e.preventDefault();
+      console.log(`我是${aNodes[i].innerText}`);
+    });
+  }
+  ```
+
+  - 使用事件代理
+
+  ```js
+  const father = document.getElementById('father');
+  father.addEventListener('click', function (e) {
+    if (e.target.tagName === 'a') {
+      e.preventDefault();
+      console.log(`我是${e.target.innerText}`);
+    }
+  });
+  ```
+
+- 点击操作并不会直接触及目标子元素，而是由父元素对事件进行处理和分发、间接地将其作用于子元素，因此这种操作从模式上划分属于代理模式
+
+### 2）虚拟代理
+
+**图片预加载场景**
+
+```js
+class PreLoadImage {
+  constructor(imgNode) {
+    // 获取真实的DOM节点
+    this.imgNode = imgNode;
+  }
+  // 操作img节点的src属性
+  setSrc(imgUrl) {
+    this.imgNode.src = imgUrl;
+  }
+}
+
+class ProxyImage {
+  // 占位图的url地址
+  static LOADING_URL = 'xxxxxx';
+  constructor(targetImage) {
+    // 目标Image，即PreLoadImage实例
+    this.targetImage = targetImage;
+  }
+  // 该方法主要操作虚拟Image，完成加载
+  setSrc(targetUrl) {
+    // 真实img节点初始化时展示的是一个占位图
+    this.targetImage.setSrc(ProxyImage.LOADING_URL);
+    // 创建一个帮我们加载图片的虚拟Image实例
+    const virtualImage = new Image();
+    // 监听目标图片加载的情况，完成时再将DOM上的真实img节点的src属性设置为目标图片的url
+    virtualImage.onload = () => {
+      this.targetImage.setSrc(targetUrl);
+    };
+    // 设置src属性，虚拟Image实例开始加载图片
+    virtualImage.src = targetUrl;
+  }
+}
+```
+
+- ProxyImage 调度了预加载相关的工作，可以通过 ProxyImage 这个代理，实现对真实 img 节点的间接访问，并得到想要的效果。
+
+在这个实例中，virtualImage 这个对象是一个“幕后英雄”，它始终存在于 JavaScript 世界中、代替真实 DOM 发起了图片加载请求、完成了图片加载工作，却从未在渲染层面抛头露面。因此这种模式被称为“虚拟代理”模式
+
+### 3）缓存代理
+
+- 用空间换时间
+
+  - 当我们需要用到某个已经计算过的值的时候，不想再耗时进行二次计算，而是希望能从内存里去取出现成的计算结果。这种场景下，就需要一个代理来帮我们在进行计算的同时，进行计算结果的缓存了
+
+  - vue 中的 `computed`、react 中的 `memo`
+
+- 不使用缓存代理（每次都会计算）
+
+  ```js
+  // addAll方法会对你传入的所有参数做求和操作
+  const addAll = function () {
+    console.log('进行了一次新计算');
+    let result = 0;
+    const len = arguments.length;
+    for (let i = 0; i < len; i++) {
+      result += arguments[i];
+    }
+    return result;
+  };
+  ```
+
+- 使用缓存代理
+
+  ```js
+  // 为求和方法创建代理
+  const proxyAddAll = (function () {
+    // 求和结果的缓存池
+    const resultCache = {};
+    return function () {
+      // 将入参转化为一个唯一的入参字符串
+      const args = Array.prototype.join.call(arguments, ',');
+
+      // 检查本次入参是否有对应的计算结果
+      if (args in resultCache) {
+        // 如果有，则返回缓存池里现成的结果
+        return resultCache[args];
+      }
+      return (resultCache[args] = addAll(...arguments));
+    };
+  })();
+  ```
+
+### 4）保护代理
+
+- 在访问层面做文章，在 getter 和 setter 函数里去进行校验和拦截，确保一部分变量是安全的
