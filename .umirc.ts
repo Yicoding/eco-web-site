@@ -655,6 +655,26 @@ const umiConfig = {
             title: '数据结构',
             path: '/core/data',
           },
+          {
+            title: '1.数组',
+            path: '/core/data/array',
+          },
+          {
+            title: '2.栈',
+            path: '/core/data/stack',
+          },
+          {
+            title: '3.队列',
+            path: '/core/data/queue',
+          },
+          {
+            title: '4.链表',
+            path: '/core/data/chain',
+          },
+          {
+            title: '5.树（二叉树）',
+            path: '/core/data/tree',
+          },
         ],
       },
     ],
