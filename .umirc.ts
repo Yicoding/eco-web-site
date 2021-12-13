@@ -375,24 +375,20 @@ const umiConfig = {
             path: '/base/bom',
           },
           {
-            title: '2.浏览器进程',
-            path: '/base/bom',
+            title: '2.浏览器进程和线程',
+            path: '/base/bom/process',
           },
           {
-            title: '3.浏览器线程',
-            path: '/base/bom',
+            title: '3.PWA',
+            path: '/base/bom/pwa',
           },
           {
-            title: '4.PWA',
-            path: '/base/bom',
+            title: '4.web Worker',
+            path: '/base/bom/webworker',
           },
           {
-            title: '5.web Worker',
-            path: '/base/bom',
-          },
-          {
-            title: '6.web socket',
-            path: '/base/bom',
+            title: '5.web socket',
+            path: '/base/bom/websocket',
           },
         ],
       },
@@ -576,11 +572,15 @@ const umiConfig = {
             path: '/engineering/tool/nrm',
           },
           {
-            title: '6.yalc',
+            title: '6.pnpm',
+            path: '/engineering/tool/pnpm',
+          },
+          {
+            title: '7.yalc',
             path: '/engineering/tool/yalc',
           },
           {
-            title: '7.eslint',
+            title: '8.eslint',
             path: '/engineering/tool/eslint',
           },
         ],
