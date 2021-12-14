@@ -59,3 +59,107 @@ node.right.right = new TreeNode('G');
 ```
 
 ![iamge](images/core/9.png)
+
+## 4.二叉树的遍历的定义
+
+- 以一定的顺序规则，逐个访问二叉树的所有结点，这个过程就是二叉树的遍历
+
+- 按照顺序规则的不同，遍历方式有以下四种：
+
+  - 先序遍历
+  - 中序遍历
+  - 后序遍历
+  - 层次遍历
+
+- 按照实现方式的不同，遍历方式又可以分为以下两种
+
+  - 递归遍历（先、中、后序遍历）
+  - 迭代遍历（层次遍历）
+
+## 5.二叉树的递归遍历
+
+> 编程语言中，函数 Func(Type a,……)直接或间接调用函数本身，则该函数称为递归函数
+
+- “递归”就意味着“反复”
+
+- 递归函数的编写要点：
+
+  - 递归式：指的是每一次重复的内容是什么
+  - 递归边界：指的是什么时候停下来，用 return 返回
+
+- 二叉树递归式的定义：
+
+  - 它可以没有根结点，作为一棵空树存在
+  - 如果它不是空树，那么必须由根结点、左子树和右子树组成，且左右子树都是二叉树
+
+    ![image](images/core/10.png)
+
+  - 指根结点的遍历时机区分“先”、“中”、“后”，根结点的遍历分别被安排在了首要位置、中间位置和最后位置
+    - 先序遍历：根结点 -> 左子树 -> 右子树
+    - 中序遍历：左子树 -> 根结点 -> 右子树
+    - 后序遍历：左子树 -> 右子树 -> 根结点
+
+**二叉树的数据**
+
+```js
+const root = {
+  val: 'A',
+  left: {
+    val: 'B',
+    left: {
+      val: 'D',
+    },
+    right: {
+      val: 'E',
+    },
+  },
+  right: {
+    val: 'C',
+    right: {
+      val: 'F',
+    },
+  },
+};
+```
+
+### 1）先序遍历实现
+
+```js
+function preorder(root) {
+  if (!root) {
+    return;
+  }
+  console.log('当前遍历的节点是：', root.val);
+  preorder(root.left);
+  preorder(root.right);
+}
+preorder(root); // A -> B -> D -> E -> C -> F
+```
+
+### 2）中序遍历实现
+
+```js
+function midorder(root) {
+  if (!root) {
+    return;
+  }
+  midorder(root.left);
+  console.log('当前遍历的节点是：', root.val);
+  midorder(root.right);
+}
+midorder(root); // D -> B -> E -> A -> C -> F
+```
+
+### 3）后序遍历实现
+
+```js
+function afterorder(root) {
+  if (!root) {
+    return;
+  }
+  afterorder(root.left);
+  afterorder(root.right);
+  console.log('当前遍历的节点是：', root.val);
+}
+afterorder(root); // D -> E -> B -> F -> C -> A
+```

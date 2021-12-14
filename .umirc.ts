@@ -652,12 +652,8 @@ const umiConfig = {
       {
         children: [
           {
-            title: '数据结构',
-            path: '/core/data',
-          },
-          {
             title: '1.数组',
-            path: '/core/data/array',
+            path: '/core/data',
           },
           {
             title: '2.栈',
@@ -682,8 +678,12 @@ const umiConfig = {
       {
         children: [
           {
-            title: '算法',
+            title: '1.时间复杂度与空间复杂度',
             path: '/core/algorithm',
+          },
+          {
+            title: '2.数组的应用',
+            path: '/core/algorithm/array',
           },
         ],
       },
