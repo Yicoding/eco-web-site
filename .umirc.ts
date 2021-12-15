@@ -689,6 +689,14 @@ const umiConfig = {
             title: '3.字符串的应用',
             path: '/core/algorithm/string',
           },
+          {
+            title: '4.链表的应用',
+            path: '/core/algorithm/chain',
+          },
+          {
+            title: '5.快慢指针与多指针——链表的复杂操作',
+            path: '/core/algorithm/point',
+          },
         ],
       },
     ],
