@@ -685,6 +685,10 @@ const umiConfig = {
             title: '2.数组的应用',
             path: '/core/algorithm/array',
           },
+          {
+            title: '3.字符串的应用',
+            path: '/core/algorithm/string',
+          },
         ],
       },
     ],

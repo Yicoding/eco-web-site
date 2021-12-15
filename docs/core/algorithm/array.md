@@ -106,7 +106,7 @@ console.log(targetIndexs); // [1, 3]
   - nums2 = [2,5,6], n = 3
 - 输出: [1,2,2,3,5,6]
 
-**1.淳朴写法**
+**1.js 写法**
 
 ```js
 // 未get到双指针用意写法
@@ -120,11 +120,13 @@ function orderArray(nums1, nums2) {
 orderArray(nums1, nums2);
 ```
 
-**2.双指针写法**
+**2.算法：双指针写法**
 
 - 1.定义两个指针，各指向两个数组生效部分的尾部
+  ![image](images/core/11.png)
 
 - 2.每次只对指针所指的元素进行比较。取其中较大的元素，把它从 nums1 的末尾往前面填补
+  ![image](images/core/12.png)
 
   - 为什么是从后往前填补：
     - 因为是要把所有的值合并到 nums1 里，所以说我们这里可以把 nums1 看做是一个“容器”
@@ -143,8 +145,10 @@ orderArray(nums1, nums2);
  * @param {number} n
  * @return {void} Do not return anything, modify nums1 in-place instead.
  */
-const merge = function (nums1, m, nums2, n) {
+const merge = function (nums1, nums2) {
   // 初始化两个指针的指向，初始化 nums1 尾部索引k
+  const m = nums1.length,
+    n = nums2.length;
   let i = m - 1,
     j = n - 1,
     k = m + n - 1;
@@ -168,7 +172,9 @@ const merge = function (nums1, m, nums2, n) {
     k--;
     j--;
   }
+  return nums1;
 };
+merge([1, 2, 3], [2, 5, 6]); // [1, 2, 2, 3, 5, 6]
 ```
 
 ### 2）三数求和问题
@@ -192,6 +198,7 @@ const merge = function (nums1, m, nums2, n) {
 
 - 然后，对数组进行遍历，每次遍历到哪个数字，就固定哪个数字
 - 然后把左指针指向该数字后面一个坑里的数字，把右指针指向数组末尾，让左右指针从起点开始，向中间前进
+  ![image](images/core/13.png)
 
 - 每次指针移动一次位置，就计算一下两个指针指向数字之和加上固定的那个数之后，是否等于 0。如果是，那么我们就得到了一个目标组合；否则，分两种情况来看
 
@@ -261,6 +268,8 @@ const threeSum = function (nums) {
   // 返回结果数组
   return res;
 };
+
+threeSum([-1, 0, 1, 2, -1, -4]); // [[-1, -1, 2], [-1, 0, 1]]
 ```
 
 **3.双指针法中的“对撞指针”法**
