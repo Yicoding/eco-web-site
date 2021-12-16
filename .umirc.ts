@@ -697,6 +697,22 @@ const umiConfig = {
             title: '5.快慢指针与多指针——链表的复杂操作',
             path: '/core/algorithm/point',
           },
+          {
+            title: '6.环形链表',
+            path: '/core/algorithm/ringchain',
+          },
+          {
+            title: '7.栈',
+            path: '/core/algorithm/stack',
+          },
+          {
+            title: '8.队列',
+            path: '/core/algorithm/queue',
+          },
+          {
+            title: '做题思路总结',
+            path: '/core/algorithm/summary',
+          },
         ],
       },
     ],

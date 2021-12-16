@@ -124,12 +124,122 @@ const removeNthFromEnd = function (head, n) {
 
 ### 1）完全反转一个链表
 
+- 处理链表的本质，是处理链表结点之间的指针关系
+
 > 真题描述：定义一个函数，输入一个链表的头结点，反转该链表并输出反转后链表的头结点
 
 - 示例:
   - 输入: 1->2->3->4->5->NULL
   - 输出: 5->4->3->2->1->NULL
 
-```js
+**1.思路分析**
 
+- 这里我们需要用到三个指针，它们分别指向目标结点（cur）、目标结点的前驱结点（pre）、目标结点的后继结点（next）
+
+- 这里只需要一个简单的 `cur.next = pre`，就做到了 next 指针的反转
+
+  ![iamge](images/core/27.png)
+
+- 从第一个结点开始，每个结点都给它进行一次 next 指针的反转。到最后一个结点时，整个链表就已经被彻底反转掉了
+
+**2.编码实现**
+
+```js
+/**
+ * @param {ListNode} head
+ * @return {ListNode}
+ */
+const reverseList = function (head) {
+  // 初始化前驱结点为 null
+  let pre = null;
+  // 初始化目标结点为头结点
+  let cur = head;
+  // 只要目标结点不为 null，遍历就得继续
+  while (cur !== null) {
+    // 记录一下 next 结点
+    let next = cur.next;
+    // 反转指针
+    cur.next = pre;
+    // pre 往前走一步
+    pre = cur;
+    // cur往前走一步
+    cur = next;
+  }
+  // 反转结束后，pre 就会变成新链表的头结点
+  return pre;
+};
 ```
+
+### 2）局部反转一个链表
+
+> 真题描述：反转从位置 m 到 n 的链表。请使用一趟扫描完成反转
+
+- 说明:
+  - 1 ≤ m ≤ n ≤ 链表长度
+- 示例:
+  - 输入: 1->2->3->4->5->NULL, m = 2, n = 4
+  - 输出: 1->4->3->2->5->NULL
+
+**1.思路分析**
+
+- 1.仍然是从指针反转来入手：
+  ![iamge](images/core/28.png)
+
+- 2.除了在单纯的重复“逆序”这个动作之外，还需要对被逆序的区间前后的两个结点做额外的处理
+  ![iamge](images/core/29.png)
+
+- 3.由于遍历链表的顺序是从前往后遍历，为了避免结点 1 和结点 2 随着遍历向后推进被遗失，需要提前把 1 结点缓存下来
+
+- 4.随着遍历的进行，当完成了结点 4 的指针反转后，此时 cur 指针就恰好指在结点 5 上
+  ![iamge](images/core/30.png)
+
+- 5.此时直接将结点 2 的 next 指针指向 cur、将结点 1 的 next 指针指向 pre 即可
+
+**2.编码实现**
+
+```js
+/**
+ * @param {ListNode} head
+ * @param {number} m
+ * @param {number} n
+ * @return {ListNode}
+ */
+// 入参是头结点、m、n
+const reverseBetween = function (head, m, n) {
+  // 定义pre、cur，用leftHead来承接整个区间的前驱结点
+  let pre, cur, leftHead;
+  // 别忘了用 dummy 嗷
+  const dummy = new ListNode();
+  // dummy后继结点是头结点
+  dummy.next = head;
+  // p是一个游标，用于遍历，最初指向 dummy
+  let p = dummy;
+  // p往前走 m-1 步，走到整个区间的前驱结点处
+  for (let i = 0; i < m - 1; i++) {
+    p = p.next;
+  }
+  // 缓存这个前驱结点到 leftHead 里
+  leftHead = p;
+  // start 是反转区间的第一个结点
+  let start = leftHead.next;
+  // pre 指向start
+  pre = start;
+  // cur 指向 start 的下一个结点
+  cur = pre.next;
+  // 开始重复反转动作
+  for (let i = m; i < n; i++) {
+    let next = cur.next;
+    cur.next = pre;
+    pre = cur;
+    cur = next;
+  }
+  //  leftHead 的后继结点此时为反转后的区间的第一个结点
+  leftHead.next = pre;
+  // 将区间内反转后的最后一个结点 next 指向 cur
+  start.next = cur;
+  // dummy.next 永远指向链表头结点
+  return dummy.next;
+};
+```
+
+**3.思考：递归实现**
