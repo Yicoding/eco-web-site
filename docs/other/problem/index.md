@@ -68,3 +68,24 @@ function compareVersion(v1, v2) {
   return 0;
 }
 ```
+
+## 5.如果在一个项目中要使用同一个组件的两个版本
+
+### 1）安装 npm 包
+
+```bash
+npm install --save antd-mobile-v5@npm:antd-mobile@next
+# or
+yarn add antd-mobile-v5@npm:antd-mobile@next
+```
+
+### 2）结果
+
+- `package.json`变成
+
+```json
+{
+  "antd-mobile": "^2.3.2",
+  "antd-mobile-v5": "npm:antd-mobile@next"
+}
+```
