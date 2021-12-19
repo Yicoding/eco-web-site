@@ -710,8 +710,8 @@ const umiConfig = {
             path: '/core/algorithm/queue',
           },
           {
-            title: '9.遍历：DFS与BFS',
-            path: '/core/algorithm/queue',
+            title: '9.遍历: DFS与BFS',
+            path: '/core/algorithm/dfs',
           },
           {
             title: '做题思路总结',
