@@ -1,12 +1,6 @@
 import { defineConfig } from 'dumi';
 
-import pkg from './package.json';
-
-const publicPath =
-  process.env.NODE_ENV === 'production'
-    ? `./`
-    : // ? `https://yicoding.github.io/eco-web-site/refs/heads/${pkg.branch}/`
-      '/';
+const publicPath = process.env.NODE_ENV === 'production' ? `./` : '/';
 
 const umiConfig = {
   title: 'eco-web-site',

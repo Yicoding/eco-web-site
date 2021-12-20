@@ -1,7 +1,6 @@
 {
   "name": "eco-web-site",
   "description": "前端技术站点",
-  "branch": "master",
   "license": "MIT",
   "scripts": {
     "start": "dumi dev",
