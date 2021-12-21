@@ -393,24 +393,32 @@ const umiConfig = {
       {
         children: [
           {
-            title: 'HTTP',
-            path: 'http',
+            title: '1.UDP',
+            path: '/base/internet',
           },
           {
-            title: 'HTTP2',
-            path: 'http2',
+            title: '2.TCP',
+            path: '/base/internet/tcp',
           },
           {
-            title: 'HTTPS',
-            path: 'https',
+            title: '3.HTTP',
+            path: '/base/internet/http',
           },
           {
-            title: 'TCP/IP',
-            path: 'tcp',
+            title: '4.HTTPS',
+            path: '/base/internet/https',
           },
           {
-            title: '前端网络安全',
-            path: 'tcp',
+            title: '5.输入 URL 到页面渲染的整个流程',
+            path: '/base/internet/url',
+          },
+          {
+            title: '6.跨域',
+            path: '/base/internet/cross',
+          },
+          {
+            title: '7.前端网络安全',
+            path: '/base/internet/safe',
           },
         ],
       },
