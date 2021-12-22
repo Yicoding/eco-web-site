@@ -362,6 +362,16 @@ const umiConfig = {
         ],
       },
     ],
+    '/base/css': [
+      {
+        children: [
+          {
+            title: '1.CSS基础',
+            path: '/base/css',
+          },
+        ],
+      },
+    ],
     '/base/bom': [
       {
         children: [
