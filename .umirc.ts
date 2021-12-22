@@ -172,11 +172,11 @@ const umiConfig = {
         },
         {
           title: '前端性能优化',
-          path: '/other/interview',
+          path: '/other/perform',
         },
         {
-          title: '前端缓存技术',
-          path: '/other/interview',
+          title: '浏览器缓存机制',
+          path: '/other/cache',
         },
         {
           title: '微信公众号开发',
@@ -717,7 +717,7 @@ const umiConfig = {
             path: '/core/algorithm/dfs',
           },
           {
-            title: '做题思路总结',
+            title: '算法做题思路总结',
             path: '/core/algorithm/summary',
           },
         ],
@@ -726,6 +726,29 @@ const umiConfig = {
     /***************** nav: 核心竞争力 *******************/
     /***************** nav: 其他 *******************/
     '/other/problem': [{ children: ['/other/problem'] }],
+    '/other/cache': [
+      {
+        children: [
+          '/other/cache',
+          '/other/cache/store',
+          '/other/cache/offline',
+        ],
+      },
+    ],
+    '/other/perform': [
+      {
+        children: [
+          {
+            title: '性能优化',
+            path: '/other/perform',
+          },
+          {
+            title: '性能检测',
+            path: '/other/perform/detection',
+          },
+        ],
+      },
+    ],
     /***************** nav: 其他 *******************/
   },
 };
