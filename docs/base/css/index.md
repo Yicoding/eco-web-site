@@ -12,7 +12,7 @@ toc: menu
 
 - 宽度 = 内容的宽度（content）+ border + padding + margin
 
-### 2）低版本 IE 盒子模型（border-box）
+### 2）低版本 IE 盒子模型：怪异模式（border-box）
 
 - 宽度 = 内容宽度（content+border+padding）+ margin
 
@@ -324,6 +324,16 @@ toc: menu
 </body>
 ```
 
+### 4）清除浮动的几种方式，各自的优缺点
+
+- 父级 div 定义 height
+- 结尾处加空 div 标签 clear:both
+- 父级 div 定义伪类:after 和 zoom
+- 父级 div 定义 overflow:hidden
+- 父级 div 也浮动，需要定义宽度
+- 结尾处加 br 标签 clear:both
+- 比较好的是第 3 种方式
+
 ## 5.BFC
 
 ### 1）定义
@@ -365,6 +375,10 @@ toc: menu
 - 自适应多栏布局
 
 ### 5）BFC 应用
+
+- 可以包含浮动元素
+- 不被浮动元素覆盖
+- 阻止父子元素的 margin 折叠
 
 **1.清除浮动**
 
@@ -475,7 +489,7 @@ toc: menu
 
 **3.flex-flow 属性是 flex-direction 属性和 flex-wrap 属性的简写形式**
 
-> flex-flow: <flex-direction> <flex-wrap>;
+> flex-flow: flex-direction flex-wrap;
 
 **4.justify-content 属性定义了项目在主轴上的对齐方式**
 
@@ -503,13 +517,13 @@ toc: menu
 
 - 数值越小，排列越靠前，默认为 `0`
 
-> order: <number>;
+> order: number;
 
 **2.flex-grow 属性定义项目的放大比例**
 
 - 默认为 `0`，即如果存在剩余空间，也不放大
 
-> flex-grow: <number>;
+> flex-grow: number;
 
 - 如果所有项目的 `flex-grow 属性都为 1`，则它们将`等分`剩余空间（如果有的话）
 - 如果一个项目的 flex-grow 属性为 `2`，其他项目都为 `1`，则前者占据的剩余空间将比其他项`多一倍`
@@ -520,13 +534,13 @@ toc: menu
 
 - 负值对该属性无效
 
-> flex-shrink: <number>;
+> flex-shrink: number;
 
 **4.flex-basis 属性定义了在分配多余空间之前，项目占据的主轴空间（main size）**
 
 - 浏览器根据这个属性，计算主轴是否有多余空间。它的默认值为 `auto`，即项目的本来大小
 
-> flex-basis: <length> | auto;
+> flex-basis: length | auto;
 
 - 可以设为跟 width 或 height 属性一样的值（比如 350px），则项目将占据固定空间
 
@@ -536,7 +550,7 @@ toc: menu
 
 - 该属性有两个快捷值：auto (1 1 auto) 和 none (0 0 auto)
 
-> flex: none | [ <flex-grow> <flex-shrink> <flex-basis> ]
+> flex: none | flex-grow flex-shrink flex-basis
 
 - 建议优先使用这个属性，而不是单独写三个分离的属性，因为浏览器会推算相关值
 
@@ -680,3 +694,172 @@ toc: menu
     - 2.z-index 无效
     - 3.当父元素的 height：100%时，页面滑动到一定高度之后 sticky 属性会失效
     - 4.IE 低版本不支持 sticky 的使用
+
+## 10.元素设置百分比
+
+### 1）宽度百分比
+
+- 相对于父容器的`宽度`计算的
+
+### 2）高度百分比
+
+- 设置 padding-top , padding-bottom , margin-top , margin-bottom 时，依据的也是父容器的`宽度`，而不是高度
+
+### 3）区分规则
+
+- 对于设置绝对定位 position `absolute` 的元素，% 是相对于`参照物`的，left 相对于参照物的 width，top 相对于这个参照物的 height
+
+- 对于设置相对定位 position `relative` 的元素，% 的数值是相对与`自身`的，left 相对于自己的 width，top 相对于自己的 height
+
+- 对于设置固定定位 position `fixed` 的元素，% 的数值是相对于`视口`的，left 相对于视口的 width，top 相对于视口的 height
+
+### 4）margin 和 padding 的 %
+
+- 它是相对于`父元素的宽度`
+
+### 5）border-radius 的 %
+
+- % 是相对于`自身`宽高的
+
+### 6）background-size 的 %
+
+- % 是相对于`自身`宽高的
+
+### 7）transform： translate
+
+- % 是相对于`自身`宽高的
+
+### 8）text-indent 的 %
+
+- % 相对于`父元素的 width`
+
+### 9）font-size 的 %
+
+- % 相对于`父元素`的`字体`大小
+
+### 10）line-height 的 %
+
+- % 相对于`该元素`的 `font-size` 数值
+
+## 11.::before 和 :after 中双冒号和单冒号区别
+
+- 单冒号(:)用于`CSS3伪类`，双冒号(::)用于` CSS3伪元素`
+- ::before 就是以一个子元素的存在，定义在元素主体内容之前的一个伪元素。并不存在于 dom 之中，只存在在页面之中
+- 在 CSS3 的规范里，伪元素的语法被修改成使用双冒号，成为::before ::after
+
+## 12.vw、rem、em、px
+
+### 1）vw、vh
+
+- 视口：浏览器可区域=window.innerWidth/window.innerHeight
+- vw、vh、vmax、vmin 统称为视口单位
+  - 1. vw：1vw 等于视口宽度的 1%
+  - 2. vh：1vh 等于视口高度的 1%
+  - 3. vmin：选取 vw 和 vh 中最小的那个
+  - 4. vmax：选取 vw 和 vh 中最大的那个
+
+### 2）rem
+
+- `相对`的是 HTML 根元素
+- rem 是 css3 新增的相对单位（root em，根 em）
+- 如果 html 元素文字大小为 14px，那么 1rem = 14px
+- 如果 html 元素文字大小为 16px，那么 1rem = 16px
+
+### 3）em
+
+- 相对父元素
+- em 是`相对`长度单位。相对于当前节点内文本的字体大小
+- 如果当期 DOM 节点没有设置字体大小，那么就是它父级的字体大小
+- 如果父级也没有设置字体大小，就找祖父及，依次往上找，直到根节点
+- 根节点有默认的字体大小
+
+### 4）px
+
+- px 像素（Pixel）；是`固定`单位；
+- px 是就是一张图片中最小的点，一张位图就是由这些点构成的
+
+## 13.CSS Sprites
+
+- 雪碧图
+
+- 将一个页面涉及到的所有图片都包含到一张大图中去，然后利用 CSS 的 background-image，background- repeat，background-position 的组合进行背景定位
+
+- 利用 CSS Sprites 能很好地减少网页的 http 请求，从而大大的提高页面的性能
+- CSS Sprites 能减少图片的字节
+
+## 14.css 的引入方式
+
+### 1）行内样式
+
+```html
+<div style="width:100px"></div>
+```
+
+### 2）嵌入样式
+
+```html
+<style>
+  div {
+    width: 100px;
+  }
+</style>
+```
+
+### 3）外链样式
+
+```html
+<link rel="stylesheet" href="index.css" />
+```
+
+### 4）@import 导入样式
+
+```css
+@import url(index.css);
+```
+
+### 5）样式优先级
+
+行内样式>嵌入样式>外链样式
+
+### 6）link 和 import 的区别
+
+- link 是 html 引入的样式；import 是 css 引入的
+- 浏览器会先加载页面时同步加载 link 引入的 css 文件;页面加载完成后，再加载 import 引入的 css
+- 浏览器对 link 的兼容性更高
+- 优先级：link>import
+
+## 常见的问题
+
+### 1）不同浏览器的标签默认的 margin 和 padding 不一样
+
+```css
+* {
+  margin: 0;
+  padding: 0;
+}
+```
+
+### 2）字体小于 12px
+
+- Chrome 中文界面下默认会将小于 12px 的文本强制按照 12px 显示,可通过加入 CSS 属性 -webkit-text-size-adjust: none; 解决
+
+### 3）超链接访问过后 hover 样式就不出现了，被点击访问过的超链接样式不再具有 hover 和 active 了
+
+- 解决方法是改变 CSS 属性的排列顺序
+
+```css
+a:link {
+}
+a:visited {
+}
+a:hover {
+}
+a:active {
+}
+```
+
+### 4）display:inline-block 有间隙
+
+- 有空格时候会有间隙 解决：移除空格
+- margin 正值的时候 解决：margin 使用负值
+- 使用 font-size 时候 解决：font-size:0、letter-spacing、word-spacing

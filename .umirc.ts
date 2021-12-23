@@ -374,8 +374,22 @@ const umiConfig = {
             path: '/base/css/css3',
           },
           {
-            title: '3.高级用法',
+            title: '3.实用技巧',
             path: '/base/css/skill',
+          },
+          {
+            title: '4.CSS变量和CSS Modules',
+            path: '/base/css/module',
+          },
+        ],
+      },
+    ],
+    '/base/html': [
+      {
+        children: [
+          {
+            title: 'html',
+            path: '/base/html',
           },
         ],
       },
