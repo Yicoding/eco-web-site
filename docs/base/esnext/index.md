@@ -4,6 +4,8 @@ toc: menu
 
 # ECMAScript
 
+![image](images/es/1.png)
+
 ## 1.介绍
 
 ### 1）ES6
@@ -52,5 +54,3 @@ TC39 成员制定着 ECMAScript 的未来。
 - Stage 4: Finished
 
   表示已准备好将其添加到正式的 ECMAScript 标准中
-
-![image](images/es/1.png)

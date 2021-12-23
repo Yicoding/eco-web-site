@@ -455,6 +455,24 @@ const umiConfig = {
         ],
       },
     ],
+    '/base/ts': [
+      {
+        children: [
+          {
+            title: '1.TypeScript 图谱',
+            path: '/base/ts',
+          },
+          {
+            title: '2.前置知识',
+            path: '/base/ts/pre',
+          },
+          {
+            title: '3.ts中的类型',
+            path: '/base/ts/type',
+          },
+        ],
+      },
+    ],
     /***************** nav: 基础 *******************/
     /***************** nav: 框架 *******************/
     // React
