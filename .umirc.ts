@@ -366,8 +366,16 @@ const umiConfig = {
       {
         children: [
           {
-            title: '1.CSS基础',
+            title: '1.css基础',
             path: '/base/css',
+          },
+          {
+            title: '2.css3',
+            path: '/base/css/css3',
+          },
+          {
+            title: '3.高级用法',
+            path: '/base/css/skill',
           },
         ],
       },

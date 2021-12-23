@@ -2,9 +2,9 @@
 toc: menu
 ---
 
-# CSS 基础
+# css 基础
 
-## 1.CSS 的盒子模型
+## 1.css 的盒子模型
 
 - 可以通过 `box-sizing` 设置
 
@@ -16,9 +16,9 @@ toc: menu
 
 - 宽度 = 内容宽度（content+border+padding）+ margin
 
-## 2.CSS 选择器
+## 2.css 选择器
 
-### 1）CSS 选择符
+### 1）css 选择符
 
 - id 选择器(#myid)
 - 类选择器(.myclassname)
@@ -446,14 +446,237 @@ toc: menu
 
 - FFC 的全称是 Flex formatting contexts，弹性盒模型
 
+- 目的是提供一种更加高效的方式来对容器中的条目进行布局、对齐和分配空间
+
 ### 2）形成条件
 
 - 父级元素设置 `display: flex` 或者 `display: inline-flex`
 
 - 生成 FFC 后，其子元素的 float、clear 和 vertical-align 属性将失效
 
-### 3）应用
+### 3）容器的属性
 
-**1.自动撑开页面高度，底栏总是出现在页面的底部**
+**1.flex-direction 属性决定主轴的方向（即项目的排列方向）**
+
+> flex-direction: row | row-reverse | column | column-reverse;
+
+- `row`（默认值）：主轴为水平方向，起点在左端
+- `row-reverse`：主轴为水平方向，起点在右端
+- `column`：主轴为垂直方向，起点在上沿
+- `column-reverse`：主轴为垂直方向，起点在下沿
+
+**2.flex-wrap 属性定义，如果一条轴线排不下，如何换行**
+
+> flex-wrap: nowrap | wrap | wrap-reverse;
+
+- `nowrap`（默认）：不换行
+- `wrap`：换行，第一行在上方
+- `wrap-reverse`：换行，第一行在下方
+
+**3.flex-flow 属性是 flex-direction 属性和 flex-wrap 属性的简写形式**
+
+> flex-flow: <flex-direction> <flex-wrap>;
+
+**4.justify-content 属性定义了项目在主轴上的对齐方式**
+
+> justify-content: flex-start | flex-end | center | space-between | space-around;
+
+- `flex-start`（默认值）：左对齐
+- `flex-end`：右对齐
+- `center`： 居中
+- `space-between`：两端对齐，项目之间的间隔都相等
+- `space-around`：每个项目两侧的间隔相等。所以，项目之间的间隔比项目与边框的间隔大一倍
+
+**5.align-items 属性定义项目在交叉轴上如何对齐**
+
+> align-items: flex-start | flex-end | center | baseline | stretch;
+
+- `stretch`（默认值）：如果项目未设置高度或设为 auto，将占满整个容器的高度
+- `flex-start`：交叉轴的起点对齐
+- `flex-end`：交叉轴的终点对齐
+- `center`：交叉轴的中点对齐
+- `baseline`: 项目的第一行文字的基线对齐
+
+### 4）项目的属性
+
+**1.order 属性定义项目的排列顺序**
+
+- 数值越小，排列越靠前，默认为 `0`
+
+> order: <number>;
+
+**2.flex-grow 属性定义项目的放大比例**
+
+- 默认为 `0`，即如果存在剩余空间，也不放大
+
+> flex-grow: <number>;
+
+- 如果所有项目的 `flex-grow 属性都为 1`，则它们将`等分`剩余空间（如果有的话）
+- 如果一个项目的 flex-grow 属性为 `2`，其他项目都为 `1`，则前者占据的剩余空间将比其他项`多一倍`
+
+**3.flex-shrink 属性定义了项目的缩小比例**
+
+- 默认为 `1`，即如果空间不足，该项目将缩小
+
+- 负值对该属性无效
+
+> flex-shrink: <number>;
+
+**4.flex-basis 属性定义了在分配多余空间之前，项目占据的主轴空间（main size）**
+
+- 浏览器根据这个属性，计算主轴是否有多余空间。它的默认值为 `auto`，即项目的本来大小
+
+> flex-basis: <length> | auto;
+
+- 可以设为跟 width 或 height 属性一样的值（比如 350px），则项目将占据固定空间
+
+**5.flex 属性是 flex-grow, flex-shrink 和 flex-basis 的简写**
+
+- 默认值为 `0 1 auto`。后两个属性可选
+
+- 该属性有两个快捷值：auto (1 1 auto) 和 none (0 0 auto)
+
+> flex: none | [ <flex-grow> <flex-shrink> <flex-basis> ]
+
+- 建议优先使用这个属性，而不是单独写三个分离的属性，因为浏览器会推算相关值
+
+**6.align-self 属性允许单个项目有与其他项目不一样的对齐方式**
+
+- 可覆盖 align-items 属性
+- 默认值为`auto`，表示继承父元素的 align-items 属性，如果没有父元素，则等同于 stretch
+
+> align-self: auto | flex-start | flex-end | center | baseline | stretch;
+
+### 5）应用
+
+**1.网格布局**
+
+- 1.最简单的网格布局，就是平均分布。在容器里面平均分配空间，需要设置项目的自动缩放
+
+```html
+<style>
+  .parent {
+    display: flex;
+  }
+  .child {
+    flex: 1;
+  }
+</style>
+<div class="parent">
+  <div class="child" />
+  <div class="child" />
+  <div class="child" />
+</div>
+```
+
+- 2.百分比布局：某个网格的宽度为固定的百分比，其余网格平均分配剩余的空间
+
+```html
+<style>
+  .parent {
+    display: flex;
+  }
+  .child {
+    flex: 1;
+  }
+  .child-u {
+    flex: 0 0 50%;
+  }
+</style>
+<div class="parent">
+  <div class="child child-u" />
+  <div class="child" />
+  <div class="child" />
+</div>
+```
 
 **2.圣杯布局**
+
+- 页面从上到下，分成三个部分：头部（header），躯干（body），尾部（footer）
+- 其中躯干又水平分成三栏，从左到右为：导航、主栏、副栏
+
+```html
+<style>
+  .root {
+    display: flex;
+    flex-direction: column;
+    height: 600px;
+  }
+  header,
+  footer {
+    width: 100%;
+    height: 50px;
+    background: red;
+  }
+  .main {
+    flex: 1;
+    width: 100%;
+    display: flex;
+  }
+  .left,
+  .right {
+    flex: 1;
+    background: green;
+  }
+  .center {
+    flex: 2;
+    background: gray;
+  }
+</style>
+<div class="root">
+  <header></header>
+  <div class="main">
+    <div class="left"></div>
+    <div class="center"></div>
+    <div class="right"></div>
+  </div>
+  <footer></footer>
+</div>
+```
+
+**3.自动撑开页面高度，底栏总是出现在页面的底部**
+
+```html
+<style>
+  .root {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+  .main {
+    flex: 1;
+  }
+</style>
+<div class="root">
+  <div class="main" />
+  <div class="footer" />
+</div>
+```
+
+## 8.display 属性值
+
+- `inline`（默认）--内联
+- `none`--隐藏
+- `block`--块显示
+- `table`--表格显示
+- `list-item`--项目列表
+- `inline-block`
+
+## 9.position 属性值
+
+- `static`(默认)：按照正常文档流进行排列
+- `relative`(相对定位)：不脱离文档流，参考自身静态位置通过 top, bottom, left, right 定位
+- `absolute`(绝对定位)：参考距其最近一个不为 static 的父级元素通过 top, bottom, left, right 定位
+- `fixed`(固定定位)：所固定的参照对像是可视窗口
+- `sticky`(粘性定位元素)：
+  - 当粘性约束矩形在可视范围内为 relative，反之，则为 fixed
+  - 使用条件：
+    - 1.父元素不能 overflow:hidden 或者 overflow:auto 属性。
+    - 2.必须指定 top、bottom、left、right4 个值之一，否则只会处于相对定位
+    - 3.父元素的高度不能低于 sticky 元素的高度
+    - 4.sticky 元素仅在其父元素内生效
+  - 注意事项：
+    - 1.sticky 不会触发 BFC
+    - 2.z-index 无效
+    - 3.当父元素的 height：100%时，页面滑动到一定高度之后 sticky 属性会失效
+    - 4.IE 低版本不支持 sticky 的使用
