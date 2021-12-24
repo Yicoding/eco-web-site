@@ -470,6 +470,18 @@ const umiConfig = {
             title: '3.ts中的类型',
             path: '/base/ts/type',
           },
+          {
+            title: '4.枚举类型',
+            path: '/base/ts/enum',
+          },
+          {
+            title: '5.接口(interface)',
+            path: '/base/ts/interface',
+          },
+          {
+            title: '6.类(class)',
+            path: '/base/ts/class',
+          },
         ],
       },
     ],
