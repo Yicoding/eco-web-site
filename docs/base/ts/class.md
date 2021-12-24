@@ -117,9 +117,7 @@ export default class Props {
   public height: number = 160;
 }
 
-public static defaultProps = new Props()
+function Home(props: Props) {}
 
-function Home(props: Props) {
-
-}
+Home.defaultProps = new Props();
 ```

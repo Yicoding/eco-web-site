@@ -471,7 +471,7 @@ const umiConfig = {
             path: '/base/ts/type',
           },
           {
-            title: '4.枚举类型',
+            title: '4.枚举类型(enum)',
             path: '/base/ts/enum',
           },
           {
@@ -481,6 +481,38 @@ const umiConfig = {
           {
             title: '6.类(class)',
             path: '/base/ts/class',
+          },
+          {
+            title: '7.函数(Function)',
+            path: '/base/ts/function',
+          },
+          {
+            title: '8.泛型(generic)',
+            path: '/base/ts/generic',
+          },
+          {
+            title: '9.类型断言与类型守卫',
+            path: '/base/ts/assert',
+          },
+          {
+            title: '10.类型兼容性',
+            path: '/base/ts/compatible',
+          },
+          {
+            title: '11.高级类型',
+            path: '/base/ts/senior',
+          },
+          {
+            title: '12.可辨识联合类型',
+            path: '/base/ts/union',
+          },
+          {
+            title: '13.装饰器',
+            path: '/base/ts/decorator',
+          },
+          {
+            title: '14.赋值断言、is 关键字、可调用类型注解和类型推导',
+            path: '/base/ts/compre',
           },
         ],
       },
