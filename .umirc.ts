@@ -58,6 +58,10 @@ const umiConfig = {
           path: '/base/ts',
         },
         {
+          title: 'node',
+          path: '/base/node',
+        },
+        {
           title: 'markdown',
           path: '/base/markdown',
         },
@@ -122,31 +126,6 @@ const umiConfig = {
       ],
     },
     {
-      title: 'node',
-      children: [
-        {
-          title: '基础',
-          path: '/node/index',
-        },
-        {
-          title: 'express',
-          path: '/node/express',
-        },
-        {
-          title: 'koa',
-          path: '/node/koa',
-        },
-        {
-          title: 'mysql',
-          path: '/node/mysql',
-        },
-        {
-          title: 'nginx',
-          path: '/node/nginx',
-        },
-      ],
-    },
-    {
       title: '核心竞争力',
       children: [
         {
@@ -180,11 +159,11 @@ const umiConfig = {
         },
         {
           title: '微信公众号开发',
-          path: '/other/interview',
+          path: '/other/wechat',
         },
         {
           title: '微信支付',
-          path: '/other/interview',
+          path: '/other/pay',
         },
         {
           title: '微前端',
@@ -517,6 +496,7 @@ const umiConfig = {
         ],
       },
     ],
+    '/base/node': [{ children: ['/base/node'] }],
     /***************** nav: 基础 *******************/
     /***************** nav: 框架 *******************/
     // React
@@ -711,13 +691,6 @@ const umiConfig = {
       },
     ],
     /***************** nav: 工程化 *******************/
-    /***************** nav: node *******************/
-    '/node/index': [{ children: ['/node/index'] }],
-    '/node/express': [{ children: ['/node/express'] }],
-    '/node/koa': [{ children: ['/node/koa'] }],
-    '/node/mysql': [{ children: ['/node/mysql'] }],
-    '/node/nginx': [{ children: ['/node/nginx'] }],
-    /***************** nav: node *******************/
     /***************** nav: 核心竞争力 *******************/
     '/core/mode': [
       {
@@ -820,6 +793,8 @@ const umiConfig = {
     /***************** nav: 核心竞争力 *******************/
     /***************** nav: 其他 *******************/
     '/other/problem': [{ children: ['/other/problem'] }],
+    '/other/pay': [{ children: ['/other/pay'] }],
+    '/other/wechat': [{ children: ['/other/wechat'] }],
     '/other/cache': [
       {
         children: [

@@ -39,7 +39,7 @@ interface User {
 
 ## 3.只读属性
 
-- 利用 `readonly` 我们可以把一个属性` 变成``只读 `性质，此后就无法对他进行修改
+- 利用 `readonly` 我们可以把一个属性变成`只读` 性质，此后就无法对他进行修改
 
 ```ts
 interface User {
