@@ -263,3 +263,455 @@ class Index extends React.Component {
   }
 }
 ```
+
+## 4.实战-处理海量数据
+
+### 1）时间分片（ Time slicing ）
+
+- 时间分片主要解决，初次加载，`一次性渲染大量数据`造成的卡顿现象
+
+- 浏览器执 js 速度要比渲染 DOM 速度快的多
+
+- 时间分片，并没有本质减少浏览器的工作量，而是把一次性`任务分割`开来，给用户一种流畅的体验效果
+
+**QA:一次性加载 20000 个元素块，元素块的位置和颜色是随机的**
+
+- 第一步：计算时间片，首先用 eachRenderNum 代表一次渲染多少个，那么除以总数据就能得到渲染多少次
+- 第二步：开始渲染数据，通过 index>times 判断渲染完成，如果没有渲染完成，那么通过 `requestIdleCallback` 代替 setTimeout 浏览器空闲执行下一帧渲染
+- 第三步：通过 renderList 把已经渲染的 element 缓存起来，渲染控制章节讲过，这种方式可以直接跳过下一次的渲染。实际每一次渲染的数量仅仅为 demo 中设置的 500 个
+
+```js
+class Index extends React.Component {
+  state = {
+    dataList: [], //数据源列表
+    renderList: [], //渲染列表
+    position: { width: 0, height: 0 }, // 位置信息
+    eachRenderNum: 500, // 每次渲染数量
+  };
+  box = React.createRef();
+  componentDidMount() {
+    const { offsetHeight, offsetWidth } = this.box.current;
+    const originList = new Array(20000).fill(1);
+    const times = Math.ceil(
+      originList.length / this.state.eachRenderNum,
+    ); /* 计算需要渲染此次数*/
+    let index = 1;
+    this.setState(
+      {
+        dataList: originList,
+        position: { height: offsetHeight, width: offsetWidth },
+      },
+      () => {
+        this.toRenderList(index, times);
+      },
+    );
+  }
+  toRenderList = (index, times) => {
+    if (index > times) return; /* 如果渲染完成，那么退出 */
+    const { renderList } = this.state;
+    renderList.push(
+      this.renderNewList(index),
+    ); /* 通过缓存element把所有渲染完成的list缓存下来，下一次更新，直接跳过渲染 */
+    this.setState({
+      renderList,
+    });
+    requestIdleCallback(() => {
+      /* 用 requestIdleCallback 代替 setTimeout 浏览器空闲执行下一批渲染 */
+      this.toRenderList(++index, times);
+    });
+  };
+  renderNewList(index) {
+    /* 得到最新的渲染列表 */
+    const { dataList, position, eachRenderNum } = this.state;
+    const list = dataList.slice(
+      (index - 1) * eachRenderNum,
+      index * eachRenderNum,
+    );
+    return (
+      <React.Fragment key={index}>
+        {list.map((item, index) => (
+          <Circle key={index} position={position} />
+        ))}
+      </React.Fragment>
+    );
+  }
+  render() {
+    return (
+      <div className="bigData_index" ref={this.box}>
+        {this.state.renderList}
+      </div>
+    );
+  }
+}
+```
+
+### 2）虚拟列表（ Virtual list ）
+
+- 虚拟列表是一种长列表的`解决方案`
+
+- 虚拟列表，就是在`长列表滚动过程中`，只有`视图区域`显示的是`真实 DOM` ，滚动过程中，不断截取视图的有效区域，让人视觉上感觉列表是在滚动,达到`无限滚动`的效果
+
+- 虚拟列表划分可以分为三个区域：`视图区` + `缓冲区` + `虚拟区`
+
+  - 视图区：视图区就是能够直观看到的列表区，此时的元素都是真实的 DOM 元素
+  - 缓冲区：缓冲区是为了防止用户上滑或者下滑过程中，出现白屏等效果。（缓冲区和视图区为渲染真实的 DOM ）
+  - 虚拟区：对于用户看不见的区域（除了缓冲区），剩下的区域，不需要渲染真实的 DOM 元素。虚拟列表就是通过这个方式来减少页面上 DOM 元素的数量
+
+- 实现思路
+  - 通过 useRef 获取元素，缓存变量
+  - useEffect 初始化计算容器的高度。截取初始化列表长度。这里需要 div 占位，撑起滚动条
+  - 通过监听滚动容器的 onScroll 事件，根据 scrollTop 来计算渲染区域向上偏移量, 这里需要注意的是，当用户向下滑动的时候，为了渲染区域，能在可视区域内，可视区域要向上滚动；当用户向上滑动的时候，可视区域要向下滚动
+  - 通过重新计算 end 和 start 来重新渲染列表
+
+```js
+function VirtualList() {
+  const [dataList, setDataList] = React.useState([]); /* 保存数据源 */
+  const [position, setPosition] = React.useState([
+    0, 0,
+  ]); /* 截取缓冲区 + 视图区索引 */
+  const scroll = React.useRef(null); /* 获取scroll元素 */
+  const box = React.useRef(null); /* 获取元素用于容器高度 */
+  const context = React.useRef(null); /* 用于移动视图区域，形成滑动效果。 */
+  const scrollInfo = React.useRef({
+    height: 500 /* 容器高度 */,
+    bufferCount: 8 /* 缓冲区个数 */,
+    itemHeight: 60 /* 每一个item高度 */,
+    renderCount: 0 /* 渲染区个数 */,
+  });
+  React.useEffect(() => {
+    const height = box.current.offsetHeight;
+    const { itemHeight, bufferCount } = scrollInfo.current;
+    const renderCount = Math.ceil(height / itemHeight) + bufferCount;
+    scrollInfo.current = { renderCount, height, bufferCount, itemHeight };
+    const dataList = new Array(10000).fill(1).map((item, index) => index + 1);
+    setDataList(dataList);
+    setPosition([0, renderCount]);
+  }, []);
+  const handleScroll = () => {
+    const { scrollTop } = scroll.current;
+    const { itemHeight, renderCount } = scrollInfo.current;
+    const currentOffset = scrollTop - (scrollTop % itemHeight);
+    const start = Math.floor(scrollTop / itemHeight);
+    context.current.style.transform = `translate3d(0, ${currentOffset}px, 0)`; /* 偏移，造成下滑效果 */
+    const end = Math.floor(scrollTop / itemHeight + renderCount + 1);
+    if (end !== position[1] || start !== position[0]) {
+      /* 如果render内容发生改变，那么截取  */
+      setPosition([start, end]);
+    }
+  };
+  const { itemHeight, height } = scrollInfo.current;
+  const [start, end] = position;
+  const renderList = dataList.slice(start, end); /* 渲染区间 */
+  console.log('渲染区间', position);
+  return (
+    <div className="list_box" ref={box}>
+      <div
+        className="scroll_box"
+        style={{ height: height + 'px' }}
+        onScroll={handleScroll}
+        ref={scroll}
+      >
+        <div
+          className="scroll_hold"
+          style={{ height: `${dataList.length * itemHeight}px` }}
+        />
+        <div className="context" ref={context}>
+          {renderList.map((item, index) => (
+            <div className="list" key={index}>
+              {' '}
+              {item + ''} Item{' '}
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+```
+
+## 5.异步渲染
+
+- 异步模式：请求数据 -> 渲染组件
+
+- 解决问题：优化性能、延迟加载
+
+### 1）传统模式
+
+- `渲染组件 -> 请求数据 -> 再渲染组件`
+
+### 2）异步模式
+
+- `请求数据-> 渲染组件`
+
+- `Suspense` 是 React 提出的一种`同步的代码来实现异步操作`的方案。Suspense 让组件‘等待’异步操作，`异步请求结束后在进行组件的渲染`，也就是所谓的异步渲染
+
+- `Suspense` 是`组件`，有一个 `fallback` 属性，用来代替当 Suspense 处于 loading 状态下渲染的内容，Suspense 的 children 就是异步组件。多个异步组件可以用 Suspense 嵌套使用
+
+```js
+// 子组件
+function UserInfo() {
+  // 获取用户数据信息，然后再渲染组件。
+  const user = getUserInfo();
+  return <h1>{user.name}</h1>;
+}
+// 父组件
+export default function Index() {
+  return (
+    <Suspense fallback={<h1>Loading...</h1>}>
+      <UserInfo />
+    </Suspense>
+  );
+}
+```
+
+- Suspense 包裹异步渲染组件 UserInfo ，当 UserInfo 处于数据加载状态下，展示 Suspense 中 fallback 的内容
+
+- 异步渲染相比传统数据交互相比好处:
+  - 不再需要 componentDidMount 或 useEffect 配合做数据交互，也不会因为数据交互后，改变 state 而产生的二次更新作用
+  - 代码逻辑更简单，清晰
+
+### 3）Suspense 原理
+
+- Suspense 在执行内部可以通过 try{}catch{} 方式捕获异常
+- 这个异常通常是一个 Promise ，可以在这个 Promise 中进行数据请求工作
+- Suspense 内部会处理这个 Promise
+- Promise 结束后，Suspense 会再一次重新 render 把数据渲染出来，达到异步渲染的效果
+
+![image](images/frame/2.png)
+
+```js
+export class Suspense extends React.Component {
+  state = { isRender: true };
+  componentDidCatch(e) {
+    /* 异步请求中，渲染 fallback */
+    this.setState({ isRender: false });
+    const { p } = e;
+    Promise.resolve(p).then(() => {
+      /* 数据请求后，渲染真实组件 */
+      this.setState({ isRender: true });
+    });
+  }
+  render() {
+    const { isRender } = this.state;
+    const { children, fallback } = this.props;
+    return isRender ? children : fallback;
+  }
+}
+```
+
+### 4）React.lazy 原理
+
+- lazy `内部模拟`一个 `promiseA` 规范场景
+- React.lazy 用 Promise 模拟了一个请求数据的过程，但是`请求`的结果不是数据，而是`一个动态的组件`
+- `下一次渲染就直接渲染这个组件`，所以是 React.lazy 利用 Suspense 接收 Promise ，执行 Promise ，然后再渲染这个特性做到`动态加载的`
+
+![image](images/frame/3.png)
+
+```js
+function lazy(ctor) {
+  return {
+    $$typeof: REACT_LAZY_TYPE,
+    _payload: {
+      _status: -1, //初始化状态
+      _result: ctor,
+    },
+    _init: function (payload) {
+      if (payload._status === -1) {
+        /* 第一次执行会走这里  */
+        const ctor = payload._result;
+        const thenable = ctor();
+        payload._status = Pending;
+        payload._result = thenable;
+        thenable.then((moduleObject) => {
+          const defaultExport = moduleObject.default;
+          resolved._status = Resolved; // 1 成功状态
+          resolved._result =
+            defaultExport; /* defaultExport 为我们动态加载的组件本身  */
+        });
+      }
+      if (payload._status === Resolved) {
+        // 成功状态
+        return payload._result;
+      } else {
+        //第一次会抛出Promise异常给Suspense
+        throw payload._result;
+      }
+    },
+  };
+}
+```
+
+- React.lazy 包裹的组件会标记 REACT_LAZY_TYPE 类型的 element，在调和阶段会变成 LazyComponent 类型的 fiber
+
+- React 对 LazyComponent 会有单独的处理逻辑
+
+  - 第一次渲染首先会执行 init 方法，里面会执行 lazy 的第一个函数，得到一个 Promise，绑定 Promise.then 成功回调，回调里得到将要渲染组件 defaultExport ，这里要注意的是，如上面的函数当第二个 if 判断的时候，因为此时状态不是 Resolved ，所以会走 else ，抛出异常 Promise，抛出异常会让当前渲染终止
+
+  - 这个异常 Promise 会被 Suspense 捕获到，Suspense 会处理 Promise ，Promise 执行成功回调得到 defaultExport（将想要渲染组件），然后 Susponse 发起第二次渲染，第二次 init 方法已经是 Resolved 成功状态，那么直接返回 result 也就是真正渲染的组件。这时候就可以正常渲染组件了
+
+## 6.渲染错误边界
+
+### 1）componentDidCatch
+
+- componentDidCatch 可以捕获异常，它接受两个参数：
+
+  - 1.error —— 抛出的错误
+  - 2.info —— 带有 componentStack key 的对象，其中包含有关组件引发错误的栈信息
+
+- componentDidCatch 中可以再次触发 setState，来降级 UI 渲染，componentDidCatch() 会在 commit 阶段被调用，因此允许执行副作用
+
+  ```js
+  class Index extends React.Component {
+    state = {
+      hasError: false,
+    };
+    componentDidCatch(...arg) {
+      uploadErrorLog(arg); /* 上传错误日志 */
+      this.setState({
+        /* 降级UI */ hasError: true,
+      });
+    }
+    render() {
+      const { hasError } = this.state;
+      return (
+        <div>
+          {hasError ? <div>组件出现错误</div> : <ErrorTest />}
+          <div> hello, my name is alien! </div>
+          <Test />
+        </div>
+      );
+    }
+  }
+  ```
+
+- componentDidCatch 作用：
+
+  - 可以调用 setState 促使组件渲染，并做一些错误拦截功能
+  - 监控组件，发生错误，上报错误日志
+
+### 2）static getDerivedStateFromError
+
+- 用 getDerivedStateFromError 代替 componentDidCatch 用于处理渲染异常
+
+- getDerivedStateFromError 是静态方法，内部不能调用 setState
+
+- getDerivedStateFromError 返回的值可以合并到 state，作为渲染使用
+
+```js
+class Index extends React.Component {
+  state = {
+    hasError: false,
+  };
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+  render() {
+    const { hasError } = this.state;
+    return (
+      <div>
+        {hasError ? <div>组件出现错误</div> : <ErrorTest />}
+        <div> hello, my name is alien! </div>
+        <Test />
+      </div>
+    );
+  }
+}
+```
+
+## 7.key 的合理使用
+
+- 合理的使用 key 有助于能精准的找到用于新节点复用的老节点
+
+  - React diffChild 时间复杂度 O(n^3) 优化到 O(n)
+
+- diff children 流程
+
+### 1）第一步：遍历新 children ，复用 oldFiber
+
+```js
+function reconcileChildrenArray() {
+  /* 第一步  */
+  for (; oldFiber !== null && newIdx < newChildren.length; newIdx++) {
+    if (oldFiber.index > newIdx) {
+      nextOldFiber = oldFiber;
+      oldFiber = null;
+    } else {
+      nextOldFiber = oldFiber.sibling;
+    }
+    const newFiber = updateSlot(
+      returnFiber,
+      oldFiber,
+      newChildren[newIdx],
+      expirationTime,
+    );
+    if (newFiber === null) {
+      break;
+    }
+    // ..一些其他逻辑
+    if (shouldTrackSideEffects) {
+      // shouldTrackSideEffects 为更新流程。
+      if (oldFiber && newFiber.alternate === null) {
+        /* 找到了与新节点对应的fiber，但是不能复用，那么直接删除老节点 */
+        deleteChild(returnFiber, oldFiber);
+      }
+    }
+  }
+}
+```
+
+- 第一步对于 React.createElement 产生新的 child 组成的数组，首先会遍历数组，因为 fiber 对于同一级兄弟节点是用 sibling 指针指向，所以在遍历 children 遍历，sibling 指针同时移动，找到与 child 对应的 oldFiber
+- 然后通过调用 updateSlot ，updateSlot 内部会判断当前的 tag 和 key 是否匹配，如果匹配复用老 fiber 形成新的 fiber ，如果不匹配，返回 null ，此时 newFiber 等于 null
+- 如果是处于更新流程，找到与新节点对应的老 fiber ，但是不能复用 alternate === null ，那么会删除老 fiber
+
+### 2）第二步：统一删除 oldfiber
+
+```js
+if (newIdx === newChildren.length) {
+  deleteRemainingChildren(returnFiber, oldFiber);
+  return resultingFirstChild;
+}
+```
+
+- 第二步适用于以下情况，当第一步结束完 newIdx === newChildren.length 此时证明所有 newChild 已经全部被遍历完，那么剩下没有遍历 oldFiber 也就没有用了，那么调用 deleteRemainingChildren 统一删除剩余 oldFiber
+
+### 3）第三步：统一创建 newFiber
+
+```js
+if (oldFiber === null) {
+  for (; newIdx < newChildren.length; newIdx++) {
+    const newFiber = createChild(
+      returnFiber,
+      newChildren[newIdx],
+      expirationTime,
+    );
+    // ...
+  }
+}
+```
+
+- 第三步适合如下的情况，当经历过第一步，oldFiber 为 null ， 证明 oldFiber 复用完毕，那么如果还有新的 children ，说明都是新的元素，只需要调用 createChild 创建新的 fiber 。
+
+### 4）第四步：针对发生移动和更复杂的情况
+
+```js
+const existingChildren = mapRemainingChildren(returnFiber, oldFiber);
+for (; newIdx < newChildren.length; newIdx++) {
+  const newFiber = updateFromMap(existingChildren, returnFiber);
+  /* 从mapRemainingChildren删掉已经复用oldFiber */
+}
+```
+
+- mapRemainingChildren 返回一个 map ，map 里存放剩余的老的 fiber 和对应的 key (或 index )的映射关系
+- 接下来遍历剩下没有处理的 Children ，通过 updateFromMap ，判断 mapRemainingChildren 中有没有可以复用 oldFiber ，如果有，那么复用，如果没有，新创建一个 newFiber
+- 复用的 oldFiber 会从 mapRemainingChildren 删掉
+
+### 5）第五步：删除剩余没有复用的 oldFiber
+
+```js
+if (shouldTrackSideEffects) {
+  /* 移除没有复用到的oldFiber */
+  existingChildren.forEach((child) => deleteChild(returnFiber, child));
+}
+```
+
+- 最后一步，对于没有复用的 oldFiber ，统一删除处理

@@ -903,6 +903,38 @@ const App = () => (
 
 - React.PureComponent 中的 shouldComponentUpdate() 仅作对象的浅层比较。如果对象中包含复杂的数据结构，则有可能因为无法检查深层的差别，产生错误的比对结果。仅在你的 props 和 state 较为简单时，才使用
 
+- 浅比较 state 和 props 是否相等
+
+- PureComponent 原理及其浅比较原则:
+
+  - 基于 PureComponent 继承的组件,原型链上会有 `isPureReactComponent` 属性
+  - isPureReactComponent 这个属性在更新组件 `updateClassInstance` 方法中使用的
+  - 这个函数在更新组件的时候被调用，在这个函数内部，有一个专门负责检查是否更新的函数 `checkShouldComponentUpdate`
+    - `isPureReactComponent` 就是判断当前组件是不是纯组件的，如果是 PureComponent 会浅比较 props 和 state 是否相等
+    - shouldComponentUpdate 的权重，会大于 PureComponent
+    - `shallowEqual` 浅比较流程：
+      - 第一步，首先会直接比较新老 props 或者新老 state 是否相等。如果相等那么不更新组件
+      - 第二步，判断新老 state 或者 props ，有不是对象，或者为 null 的，那么直接返回 false ，更新组件
+      - 第三步，通过 Object.keys 将新老 props 或者新老 state 的属性名 key 变成数组，判断数组的长度是否相等，如果不相等，证明有属性增加或者减少，那么更新组件
+      - 第四步，遍历老 props 或者老 state ，判断对应的新 props 或新 state ，有没有与之对应并且相等的（这个相等是浅比较），如果有一个不对应或者不相等，那么直接返回 false ，更新组件
+
+  ```js
+  function checkShouldComponentUpdate() {
+    if (typeof instance.shouldComponentUpdate === 'function') {
+      return instance.shouldComponentUpdate(
+        newProps,
+        newState,
+        nextContext,
+      ); /* shouldComponentUpdate 逻辑 */
+    }
+    if (ctor.prototype && ctor.prototype.isPureReactComponent) {
+      return (
+        !shallowEqual(oldProps, newProps) || !shallowEqual(oldState, newState)
+      );
+    }
+  }
+  ```
+
 ## 16.React.memo
 
 - 如果你的组件在`相同 props` 的情况下渲染`相同的结果`，那么你可以通过将其包装在 React.`memo` 中调用，以此通过记忆组件渲染结果的方式来`提高组件的性能`表现。这意味着在这种情况下，React 将跳过渲染组件的操作并直接复用最近一次渲染的结果
@@ -910,6 +942,11 @@ const App = () => (
 - 默认情况下其只会对复杂对象做`浅层对比`
 
 - React.memo 既利用了 shouldComponentUpdate，又不要求我们写一个 class
+
+### React.memo() 和 useMemo() 的主要区别
+
+- `React.memo()` 是一个`高阶组件`，我们可以使用它来包装我们不想重新渲染的组件，除非其中的 props 发生变化
+- `useMemo()` 是一个 `React Hook`，我们可以使用它在组件中`包装函数`。 我们可以使用它来确保该函数中的值仅在其依赖项之一发生变化时才重新计算
 
 ## 17.state
 
@@ -1418,3 +1455,82 @@ export default function Index() {
 - 运用起来`灵活`，可以运用 `js 特性`，更灵活地实现样式`继承`，`动态添加`样式等场景
 - 由于编译器对 js 模块化支持度更高，使得可以在项目中更快地找到 style.js 样式文件，以及快捷引入文件中的样式常量
 - `无须 webpack 额外配置` css，less 等文件类型
+
+## 21.缓存 React.element 对象
+
+```js
+/* 子组件 */
+function Children({ number }) {
+  console.log('子组件渲染');
+  return <div>let us learn React! {number} </div>;
+}
+/* 父组件 */
+export default class Index extends React.Component {
+  state = {
+    numberA: 0,
+    numberB: 0,
+  };
+  render() {
+    return (
+      <div>
+        <Children number={this.state.numberA} />
+        <button
+          onClick={() => this.setState({ numberA: this.state.numberA + 1 })}
+        >
+          改变numberA -{this.state.numberA}{' '}
+        </button>
+        <button
+          onClick={() => this.setState({ numberB: this.state.numberB + 1 })}
+        >
+          改变numberB -{this.state.numberB}
+        </button>
+      </div>
+    );
+  }
+}
+```
+
+- 问题：无论改变 numberA 还是改变 numberB ，子组件都会重新渲染，显然这不是想要的结果
+
+- 解决：
+
+  - useMemo
+
+  ```js
+  export default function Index() {
+    const [numberA, setNumberA] = React.useState(0);
+    const [numberB, setNumberB] = React.useState(0);
+    return (
+      <div>
+        {useMemo(
+          () => (
+            <Children number={numberA} />
+          ),
+          [numberA],
+        )}
+        <button onClick={() => setNumberA(numberA + 1)}>改变numberA</button>
+        <button onClick={() => setNumberB(numberB + 1)}>改变numberB</button>
+      </div>
+    );
+  }
+  ```
+
+  - 原理揭秘：
+    - 每次执行 render 本质上 createElement 会产生一个新的 props，这个 props 将作为对应 fiber 的 pendingProps
+    - 在此 fiber 更新调和阶段，React 会对比 fiber 上老 oldProps 和新的 newProp （ pendingProps ）是否相等，如果相等函数组件就会放弃子组件的调和更新，从而子组件不会重新渲染
+    - 如果上述把 element 对象缓存起来，上面 props 也就和 fiber 上 oldProps 指向相同的内存空间，也就是相等，从而跳过了本次更新
+
+## 22.npm 按需引入
+
+- 通过 `.babelrc` 实现按需引入
+
+```js
+[
+  'import',
+  {
+    libraryName: 'antd',
+    libraryDirectory: 'es',
+    style: true,
+  },
+];
+```
