@@ -505,11 +505,27 @@ const umiConfig = {
         children: [
           {
             title: 'react基础',
-            path: 'base',
+            path: '/frame/react',
+          },
+          {
+            title: 'hooks',
+            path: '/frame/react/hooks',
+          },
+          {
+            title: 'react进阶',
+            path: '/frame/react/high',
           },
           {
             title: 'react-router',
-            path: 'hooks',
+            path: '/frame/react/router',
+          },
+          {
+            title: '状态管理',
+            path: '/frame/react/state',
+          },
+          {
+            title: 'react-ssr',
+            path: '/frame/react/ssr',
           },
         ],
       },
