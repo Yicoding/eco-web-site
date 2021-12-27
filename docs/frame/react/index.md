@@ -640,10 +640,13 @@ class Form extends Component {
   - `componentWillUnmount`
 
 - 加载顺序：
+
   - 挂载时：constructor() -> getDerivedStateFromProps() -> render() -> componentDidMount()
   - 更新时：static getDerivedStateFromProps() -> shouldComponentUpdate() -> render() -> getSnapshotBeforeUpdate() -> componentDidUpdate()
   - 卸载时：componentWillUnmount()
   - 错误处理：当渲染过程，生命周期，或子组件的构造函数中抛出错误时 getDerivedStateFromError() -> componentDidCatch()
+
+- 如果存在 `getDerivedStateFromProps` 和 `getSnapshotBeforeUpdate` 就不会执行生命周期 `componentWillMount`
 
 ### 3）废弃原因
 
@@ -907,3 +910,511 @@ const App = () => (
 - 默认情况下其只会对复杂对象做`浅层对比`
 
 - React.memo 既利用了 shouldComponentUpdate，又不要求我们写一个 class
+
+## 17.state
+
+### 1）setState 用法
+
+```js
+setState(obj, callback);
+```
+
+- 第一个参数：当 obj 为一个对象，则为即将合并的 state ；如果 obj 是一个函数，那么当前组件的 state 和 props 将作为参数，返回值用于合并新的 state
+
+- 第二个参数 callback ：callback 为一个函数，函数执行上下文中可以获取当前 setState 更新后的最新 state 的值，可以作为依赖 state 变化的副作用函数，可以用来做一些基于 DOM 的操作
+
+```js
+/* 第一个参数为function类型 */
+this.setState((state, props) => {
+  return { number: 1 };
+});
+/* 第一个参数为object类型 */
+this.setState({ number: 1 }, () => {
+  console.log(this.state.number); // 获取最新的number
+});
+```
+
+### 2）触发一次 setState，React 底层做的事情
+
+- 首先，setState 会`产生`当前更新的`优先级`（老版本用 `expirationTime` ，新版本用 `lane` ）
+- 接下来 React 会从 fiber Root 根部 fiber 向下调和子节点，调和阶段将对比发生更新的地方，更新对比 expirationTime ，找到发生更新的组件，合并 state，然后触发 render 函数，得到新的 UI 视图层，完成 render 阶段
+- 接下来到 commit 阶段，commit 阶段，替换真实 DOM ，完成此次更新流程
+- 此时仍然在 commit 阶段，会执行 setState 中 callback 函数,如上的`()=>{ console.log(this.state.number) }`，到此为止完成了一次 setState 全过程
+
+![image](images/frame/1.png)
+
+### 3）setState 和 useState 异同
+
+**1.相同点**
+
+- 底层都调用了 `scheduleUpdateOnFiber` 方法，而且事件驱动情况下都有批量更新规则
+
+**2.不同点**
+
+- 在不是 pureComponent 组件模式下， `setState不会浅比较`两次 state 的值，只要调用 setState，在没有其他优化手段的前提下，就`会执行更新`。但是 `useState` 中的 dispatchAction 会默认`比较两次 state 是否相同`，然后决定是否更新组件
+
+- `setState` 有专门监听 state 变化的回调函数 `callback`，可以获取最新 state；但是在`函数组件`中，只能通过 `useEffect` 来执行 `state` 变化引起的副作用
+
+- `setState` 在底层处理逻辑上主要是和老 state 进行`合并处理`，而 `useState` 更倾向于`重新赋值`
+
+## 18.ref
+
+### 1）创建和使用
+
+**1.类组件 React.createRef**
+
+```js
+export function createRef() {
+  const refObject = {
+    current: null,
+  };
+  return refObject;
+}
+```
+
+- `createRef` 创建了一个`对象`，对象上的 `current` 属性，用于保存通过 ref 获取的 DOM 元素，组件实例等
+
+- `不要在函数组件中使用 createRef`，否则会造成 Ref 对象内容丢失等情况
+
+**2.函数组件 useRef**
+
+```js
+export default function Index() {
+  const currentDom = React.useRef(null);
+  React.useEffect(() => {
+    console.log(currentDom.current); // div
+  }, []);
+  return <div ref={currentDom}>ref对象模式获取元素或组件</div>;
+}
+```
+
+### 2）ref 高阶用法
+
+- 1.forwardRef 转发 Ref
+
+- 2.ref 实现组件通信
+
+```js
+// 子组件
+function Son(props, ref) {
+  const inputRef = useRef(null);
+  const [inputValue, setInputValue] = useState('');
+  useImperativeHandle(
+    ref,
+    () => {
+      const handleRefs = {
+        onFocus() {
+          /* 声明方法用于聚焦input框 */
+          inputRef.current.focus();
+        },
+        onChangeValue(value) {
+          /* 声明方法用于改变input的值 */
+          setInputValue(value);
+        },
+      };
+      return handleRefs;
+    },
+    [],
+  );
+  return (
+    <div>
+      <input placeholder="请输入内容" ref={inputRef} value={inputValue} />
+    </div>
+  );
+}
+
+const ForwarSon = forwardRef(Son);
+// 父组件
+class Index extends React.Component {
+  cur = null;
+  handerClick() {
+    const { onFocus, onChangeValue } = this.cur;
+    onFocus(); // 让子组件的输入框获取焦点
+    onChangeValue('let us learn React!'); // 让子组件input
+  }
+  render() {
+    return (
+      <div style={{ marginTop: '50px' }}>
+        <ForwarSon ref={(cur) => (this.cur = cur)} />
+        <button onClick={this.handerClick.bind(this)}>操控子组件</button>
+      </div>
+    );
+  }
+}
+```
+
+- 3.函数组件缓存数据
+
+## 19.context
+
+### 1）createContext
+
+```js
+const ThemeContext = React.createContext(null); //
+const ThemeProvider = ThemeContext.Provider; //提供者
+const ThemeConsumer = ThemeContext.Consumer; // 订阅消费者
+```
+
+- `createContext` 接受一个参数，作为`初始化` context 的内容，返回一个 context 对象
+- Context 对象上的 `Provider` 作为`提供者`
+- Context 对象上的 `Consumer` 作为`消费者`
+
+### 2）Provider
+
+```js
+const ThemeProvider = ThemeContext.Provider; //提供者
+export default function ProviderDemo() {
+  const [contextValue, setContextValue] = React.useState({
+    color: '#ccc',
+    background: 'pink',
+  });
+  return (
+    <div>
+      <ThemeProvider value={contextValue}>
+        <Son />
+      </ThemeProvider>
+    </div>
+  );
+}
+```
+
+- provider 作用有两个：
+
+  - value 属性传递 context，供给 Consumer 使用
+  - value 属性改变，ThemeProvider 会让消费 Provider value 的组件重新渲染
+
+### 3）Consumer
+
+**1.类组件 contextType 方式**
+
+```js
+const ThemeContext = React.createContext(null);
+// 类组件 - contextType 方式
+class ConsumerDemo extends React.Component {
+  render() {
+    const { color, background } = this.context;
+    return <div style={{ color, background }}>消费者</div>;
+  }
+}
+ConsumerDemo.contextType = ThemeContext;
+
+const Son = () => <ConsumerDemo />;
+```
+
+- 组件的静态属性上的 `contextType` 属性，`指向`需要获取的 `context`（ demo 中的 ThemeContext ），就可以方便获取到最近一层 Provider 提供的 contextValue 值
+
+**2.函数组件 useContext 方式**
+
+```js
+const ThemeContext = React.createContext(null);
+// 函数组件 - useContext方式
+function ConsumerDemo() {
+  const contextValue = React.useContext(ThemeContext); /*  */
+  const { color, background } = contextValue;
+  return <div style={{ color, background }}>消费者</div>;
+}
+const Son = () => <ConsumerDemo />;
+```
+
+- `useContext` 接受一个参数，就是想要获取的 `context` ，返回一个 `value` 值，就是最近的 provider 提供 contextValue 值
+
+**3.订阅者 Consumer 方式**
+
+```js
+const ThemeConsumer = ThemeContext.Consumer; // 订阅消费者
+
+function ConsumerDemo(props) {
+  const { color, background } = props;
+  return <div style={{ color, background }}>消费者</div>;
+}
+const Son = () => (
+  <ThemeConsumer>
+    {/* 将 context 内容转化成 props  */}
+    {(contextValue) => <ConsumerDemo {...contextValue} />}
+  </ThemeConsumer>
+);
+```
+
+- Consumer 订阅者采取 `render props` 方式，接受最近一层 provider 中 value 属性，作为 render props 函数的参数，可以将参数取出来，作为 props 混入 ConsumerDemo 组件
+
+### 4）context 对象
+
+```js
+export function createContext(defaultValue, calculateChangedBits) {
+  /* context 对象本质  */
+  const context = {
+    $$typeof: REACT_CONTEXT_TYPE /* 本质上就是 Consumer element 类型 */,
+    _calculateChangedBits: calculateChangedBits,
+    _currentValue: defaultValue,
+    _threadCount: 0,
+    Provider: null,
+    Consumer: null,
+  };
+  /* 本质上就是 Provider element 类型。  */
+  context.Provider = {
+    $$typeof: REACT_PROVIDER_TYPE,
+    _context: context,
+  };
+  context.Consumer = context;
+}
+```
+
+- `Provider` 本质上是一个 element 对象 $$typeof -> REACT_PROVIDER_TYPE
+- `Consumer` 本质上也是一个 element 对象 $$typeof -> REACT_CONTEXT_TYPE
+- `_currentValue` 这个用来`保存传递`给 Provider 的 `value`
+
+## 20.模块化 css
+
+### 1）作用
+
+- 防止全局污染，样式被覆盖
+
+- 解决命名混乱
+
+- css 代码冗余，体积庞大
+
+### 2）css 模块化思路
+
+- 第一种 `css module` ，依赖于 webpack 构建和 css-loader 等 loader 处理，将 css 交给 js 来动态加载
+
+- 第二种就是直接放弃 css ，`css in js`用 js 对象方式写 css ，然后作为 style 方式赋予给 React 组件的 DOM 元素，这种写法将不需要 .css .less .scss 等文件，取而代之的是每一个组件都有一个写对应样式的 js 文件
+
+### 3）css module
+
+- 1.css-loader 配置
+
+  - 自定义规则命名
+
+```js
+{
+  test: /\.css$/ /* 对于 css 文件的处理 */,
+  use: [
+    {
+      loader: 'css-loader',
+      options: {
+        modules: {
+          localIdentName:
+            '[path][name]__[local]--[hash:base64:5]' /* 命名规则  [path][name]__[local] 开发环境 - 便于调试   */,
+        },
+      },
+    },
+  ],
+};
+```
+
+- 2.css 文件
+
+```css
+.text {
+  color: blue;
+}
+```
+
+- 3.js 文件
+
+```js
+import style from './style.css';
+export default () => (
+  <div>
+    <div className={style.text}>验证 css modules </div>
+  </div>
+);
+```
+
+### 4）全局变量
+
+- css
+
+```less
+.text {
+  color: blue;
+}
+:global(.text_bg) {
+  background-color: pink;
+}
+```
+
+- js
+
+```js
+import style from './style.css';
+export default () => (
+  <div>
+    <div className={style.text + ' text_bg'}>验证 CSS Modules </div>
+  </div>
+);
+```
+
+### 5）组合样式
+
+- CSS Modules 提供了一种 `composes` 组合方式
+
+- css
+
+```less
+.base {
+  /* 基础样式 */
+  color: blue;
+}
+.text {
+  /* 继承基础样式 ，增加额外的样式 backgroundColor */
+  composes: base;
+  background-color: pink;
+}
+```
+
+- js
+
+```js
+import style from './style.css';
+export default () => (
+  <div>
+    <div className={style.text}>验证 css modules </div>
+  </div>
+);
+```
+
+### 6）配置 less 和 sass
+
+```js
+{
+  test: /\.less$/,
+  use: [
+    {
+      loader: 'css-loader',
+      options: {
+        modules: {
+          localIdentName: '[path][name]---[local]---[hash:base64:5]',
+        },
+      },
+    },
+    {
+      // 可能是其他 loader, 不过不重要。
+    },
+    'less-loader',
+  ],
+};
+```
+
+### 7）组合方案
+
+- 定对于全局样式或者是公共组件样式，可以用 .css 文件，不需要做 CSS Modules 处理，这样就不需要写 :global 等繁琐语法
+
+- 对于项目中开发的页面和业务组件，统一用 scss 或者 less 等做 CSS Module
+
+```js
+import React from 'react';
+
+import Style from './index.less'; /*  less css module */
+
+export default () => (
+  <div>
+    {/* 公共样式 */}
+    <button className="searchbtn">公共按钮组件</button>
+    <div className={Style.text}>验证 less + css modules </div>
+  </div>
+);
+```
+
+### 8）动态添加 class
+
+- 组件中使用 `classnames` 库
+
+### 9）CSS Modules 优点
+
+- CSS Modules 的类名都有自己的`私有域`，可以`避免`类名`重复`/`覆盖`，`全局污染`问题
+- 引入 css 更加灵活，css 模块之间可以`互相组合`
+- class 类名生成规则配置灵活，方便`压缩` class 名
+
+### 10）CSS IN JS
+
+- 用 js 对象形式直接写 style
+
+```js
+// 定义
+const boxStyle = {
+  backgroundColor: 'blue',
+};
+const textStyle = {
+  color: 'orange',
+};
+export default {
+  boxStyle,
+  textStyle
+}
+
+// 使用
+import React from 'react';
+import Style from './style';
+
+export default function Index() {
+  return (
+    <div style={Style.boxStyle}>
+      <span style={Style.textStyle}>hi , i am CSS IN JS!</span>
+    </div>
+  );
+}
+```
+
+- 灵活运用
+
+```js
+const baseStyle = {
+  /* 基础样式 */
+};
+
+const containerStyle = {
+  ...baseStyle, // 继承  baseStyle 样式
+  color: '#ccc', // 添加的额外样式
+};
+```
+
+### 11）style-components
+
+```js
+import styled from 'styled-components';
+
+const Button = styled.button`
+  background: ${(props) => (props.theme ? props.theme : '#6a8bad')};
+  color: #fff;
+  min-width: 96px;
+  height: 36px;
+  border: none;
+  border-radius: 18px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  margin-left: 20px !important;
+`;
+
+export default function Index() {
+  return (
+    <div>
+      <Button theme={'#fc4838'}>props主题按钮</Button>
+    </div>
+  );
+}
+```
+
+- 继承样式
+
+```js
+const NewButton = styled(Button)`
+  background: orange;
+  color: pink;
+`;
+export default function Index() {
+  return (
+    <div>
+      <NewButton> 继承按钮</NewButton>
+    </div>
+  );
+}
+```
+
+### 12）CSS IN JS 特点
+
+- CSS IN JS 本质上`放弃了 css` ，变成了 css in line 形式，所以`根本上解决了全局污染`，`样式混乱`等问题
+- 运用起来`灵活`，可以运用 `js 特性`，更灵活地实现样式`继承`，`动态添加`样式等场景
+- 由于编译器对 js 模块化支持度更高，使得可以在项目中更快地找到 style.js 样式文件，以及快捷引入文件中的样式常量
+- `无须 webpack 额外配置` css，less 等文件类型
