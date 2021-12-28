@@ -170,24 +170,26 @@ function updateReducer() {
 ```js
 // 手写useState，返回数组
 // 实际实现是使用单项链表，不是数组
-let state = [];
-let index = 0;
+const allState = [];
+let stateIndex = 0;
 function useState(initialState) {
-  const currentIndex = index;
-  state[currentIndex] = state[currentIndex] || initialState; // 下一次render时，可以保存之前的值
+  const currentIndex = stateIndex;
+  allState[currentIndex] = allState[currentIndex] || initialState; // 下一次render时，可以保存之前的值
   function setState(newState) {
-    state[currentIndex] = newState;
+    // 浅比较值相等就不更新
+    if (allState[currentIndex] === newState) return;
+    allState[currentIndex] = newState;
     render();
   }
-  index++; // 每次更新完state值后，index值+1
-  return [state[currentIndex], setState];
+  stateIndex++; // 每次更新完state值后，index值+1
+  return [allState[currentIndex], setState];
 }
 
 // 替代原app.js中的render方法
 function render() {
   ReactDOM.render(<App />, document.getElementById('root'));
-  // 当渲染完成时，清空， 保证 hooks 顺序一致性
-  index = 0; // 重要的一步，必须在渲染前后将index值重置为0，不然index会一种增加1
+  // 当渲染完成时，清空， 保证 每次渲染时，hooks 顺序一致性
+  stateIndex = 0;
 }
 ```
 
@@ -195,36 +197,38 @@ function render() {
 
 - 判断 deps 项有没有发生变化，如果没有发生变化，更新副作用链表就可以了
 - 如果发生变化，更新链表同时，打执行副作用的标签：fiber => fiberEffectTag，hook => HookHasEffect
-- 在 commit 阶段就会根据这些标签，重新执行副作用。
+- 在 commit 阶段就会根据这些标签，重新执行副作用
 
 ### 模拟实现
 
 ```js
 // 手写useEffect
-const allDeps = []; //二维数组
-let effectCursor = 0;
-function useEffect(callback, depArray) {
-  if (!depArray) {
-    callback();
-    allDeps[effectCursor] = depArray;
-    effectCursor++;
-    return;
-  }
+const allDeps = []; // 二维数组
+let effectIndex = 0;
 
+function useEffect(cb, deps) {
+  if (Object.prototype.toString.call(cb) !== '[object Function]') {
+    throw new Error('第一个参数必须为函数');
+  }
+  if (deps && Object.prototype.toString.call(deps) !== '[object Array]') {
+    throw new Error('第二个参数必须为数组');
+  }
+  const lastDeps = allDeps[effectIndex];
   // 本次依赖项和上一次存储依赖项数组对比，是否有变化
-  const deps = allDeps[effectCursor];
-  const hasChanged = deps ? depArray.some((el, i) => el !== deps[i]) : true;
-
+  const hasChanged =
+    !lastDeps || !deps || deps.some((dep, i) => dep !== lastDeps[i]);
   if (hasChanged) {
-    callback();
-    allDeps[effectCursor] = depArray;
+    cb();
+    lastDeps[effectIndex] = deps;
   }
-  effectCursor++;
+  effectIndex++;
 }
 
 // 替代原app.js中的render方法
 function render() {
   ReactDOM.render(<App />, document.getElementById('root'));
+  // 当渲染完成时，清空， 保证 每次渲染时，hooks 顺序一致性
+  effectIndex = 0;
 }
 ```
 
@@ -249,3 +253,17 @@ const cacheSomething = useMemo(create, deps);
 - 可以`缓存` element `对象`，从而达到按条件渲染组件，`优化性能`的作用
 - 如果组件中不期望每次 render 都重新`计算`一些`值`,可以利用 useMemo 把它`缓存`起来
 - 可以把`函数和属性缓存`起来，作为 PureComponent 的绑定方法，或者配合其他 Hooks 一起使用
+
+## 5.memo、useMemo 和 useCallback
+
+### 1）作用
+
+- 只做性能优化
+
+### 2）区别
+
+- 在子组件不需要父组件的值和函数的情况下，只需要使用 `memo` 函数包裹子组件即可
+- 如果有函数传递给子组件，使用 `useCallback`
+- 如果有值传递给子组件，使用 `useMemo`
+- useEffect、useMemo、useCallback 都是自带闭包的
+  - 也就是说，每一次组件的渲染，其都会捕获当前组件函数上下文中的状态(state, props)，所以每一次这三种 hooks 的执行，反映的也都是当前的状态，你无法使用它们来捕获上一次的状态。对于需要捕获上一次状态值的情况，我们应该使用 ref 来访问

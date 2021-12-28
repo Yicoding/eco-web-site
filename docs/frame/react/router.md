@@ -14,7 +14,7 @@ toc: menu
 
 - `history：` history 是整个 React-router 的核心，里面包括两种路由模式下改变路由的方法，和监听路由变化方法等
 - `react-router`：React-router 在 history 核心基础上，增加了 `Router` 、`Switch` 、`Route` 等组件来处理视图渲染
-- r`eact-router-dom`： 在 react-router 基础上，增加了一些 UI 层面的拓展比如 `Link` 、`NavLink` 以及两种模式的根部路由 `BrowserRouter` 、`HashRouter`
+- `react-router-dom`： 在 react-router 基础上，增加了一些 UI 层面的拓展比如 `Link` 、`NavLink` 以及两种模式的根部路由 `BrowserRouter` 、`HashRouter`
 
 ## 3.两种路由主要方式
 
@@ -106,17 +106,15 @@ window.addEventListener('hashchange', function (e) {
 
 - hash 路由模式下，监听路由变化用的是 `hashchange`
 
-## 7.React-Router 基本构成
-
-### 1）history，location，match
+## 7.history、location、match
 
 - `history` 对象：history 对象保存改变路由方法 `push` ，`replace`，和监听路由方法 `listen` 等
 - `location` 对象：可以理解为当前状态下的路由信息，包括 `pathname` ，`state` 等
 - `match` 对象：这个用来证明当前路由的匹配信息的对象。存放当前路由 path 等信息
 
-### 2）路由组件
+## 8.路由组件
 
-**①Router**
+### 1）Router
 
 - Router 是整个应用路由的`传递者`和`派发更新者`
 
@@ -159,7 +157,7 @@ class Router extends React.Component {
 - 首先 React-Router 是通过 `context` 上下文方式传递的路由信息。context 改变，会使消费 context 组件更新，当开发者触发路由改变，能够重新渲染匹配组件
 - `props.history` 是通过 BrowserRouter 或 HashRouter 创建的 history 对象，并传递过来的，当`路由改变`，会触发 `listen` 方法，传递新生成的 location ，然后通过 setState 来改变 context 中的 value ，所以改变路由，`本质`上是 `location 改变带来的更新作用`
 
-**②Route**
+### 2）Route
 
 - Route 是整个路由核心部分: `匹配路由`，`路由匹配`，`渲染组件`
 
@@ -168,7 +166,14 @@ class Router extends React.Component {
   - 如果`匹配`，`渲染`子代路由
   - 利用 context 逐层传递的特点，将自己的路由信息，向子代路由传递下去,实现了嵌套路由
 
-- 四种 Route 编写格式:
+- `path` 属性：Route 接受 path 属性，用于匹配正确的理由，渲染组件
+
+**四种 Route 编写格式:**
+
+- `Component 形式`：将组件直接传递给 Route 的 component 属性，Route 可以将路由信息隐式注入到页面组件的 props 中，但是无法传递父组件中的信息，比如如上 mes
+- `render 形式`：Route 组件的 render 属性，可以接受一个渲染函数，函数参数就是路由信息，可以传递给页面组件，还可以混入父组件信息
+- `children 形式`：直接作为 children 属性来渲染子组件，但是这样无法直接向子组件传递路由信息，但是可以混入父组件信息
+- `renderProps 形式`：可以将 childen 作为渲染函数执行，可以传递路由信息，也可以传递父组件信息
 
 ```js
 function Index() {
@@ -200,4 +205,262 @@ function Index() {
     </div>
   );
 }
+```
+
+### 3）exact
+
+- `route` 进行`精确匹配`
+
+- `pathname` 必须`和` Route 的 `path 完全匹配`，才能展示该路由信息
+
+  ```js
+  <Route path="/router/component" exact component={RouteComponent} />
+  ```
+
+  - 表示该路由页面只有 `/router/component` 这个格式`才能渲染`，如果 `/router/component/a` 那么会被判定不匹配，从而导致`渲染失败`
+
+  - 只要当前路由下有`嵌套子路由`，就`不要`加 `exact`
+
+- 优雅写法(配置形式):
+  - `react-router-config` 库中提供的 `renderRoutes` ，更优雅的渲染 Route
+
+```js
+import { renderRoutes } from 'react-router-config';
+
+const RouteList = [
+  {
+    name: '首页',
+    path: '/router/home',
+    exact: true,
+    component: Home,
+  },
+  {
+    name: '列表页',
+    path: '/router/list',
+    render: () => <List />,
+  },
+  {
+    name: '详情页',
+    path: '/router/detail',
+    component: detail,
+  },
+];
+function Index() {
+  return <div>{renderRoutes(RouteList)}</div>;
+}
+```
+
+### 4）Switch
+
+```js
+<div>
+  <Route path="/home" component={Home} />
+  <Route path="/list" component={List} />
+  <Route path="/my" component={My} />
+</div>
+```
+
+- 如果在页面中这么写，三个路由`都会被挂载`，但是每个页面路由展示与否，是通过 Route 内部 `location` 信息匹配的(性能浪费)
+
+- `Switch` 作用是先通过匹配`选出一个`正确路由 `Route` 进行`渲染`
+- `Switch` 作用就是`匹配唯一正确的路由并渲染`
+
+```js
+<Switch>
+  <Route path="/home" component={Home} />
+  <Route path="/list" component={List} />
+  <Route path="/my" component={My} />
+</Switch>
+```
+
+### 5）Redirect
+
+- `重定向`组件，`Redirect` 可以在`路由不匹配情况`下跳转指定某一路由，适合`路由不匹配`或`权限路由`的情况
+
+- `Switch` 包裹的 `Redirect` 要放在`最下面`，`否则`会被 Switch 优先渲染 Redirect ，导致路由页面`无法展示`
+
+- 1.路由不匹配
+
+```js
+<Switch>
+  <Route path="/router/home" component={Home} />
+  <Route path="/router/list" component={List} />
+  <Redirect from={'/router/*'} to={'/router/home'} />
+</Switch>
+```
+
+- 2.权限路由
+
+```js
+noPermission ? (
+  <Redirect from={'/router/list'} to={'/router/home'} />
+) : (
+  <Route path="/router/list" component={List} />
+);
+```
+
+## 9.从路由改变到页面跳转流程图
+
+![image](images/frame/6.png)
+
+## 10.路由状态获取
+
+- 都是从保存的上下文中获取的路由信息，所以要保证想要获取路由信息的页面，都在根部 Router 内部
+
+### 1）路由组件 props
+
+- 可以通过 props 方式向 Children 子组件中传递路由状态信息（ histroy ，loaction ）等
+
+```js
+class Home extends React.Component {
+  render() {
+    return (
+      <div>
+        <Children {...this.props} />
+      </div>
+    );
+  }
+}
+```
+
+### 2）withRouter
+
+- 对于距离路由组件比较远的深层次组件，通常可以用 react-router 提供的 `withRouter 高阶组件`方式获取 histroy ，loaction 等信息
+
+```js
+import { withRouter } from 'react-router-dom';
+@withRouter
+class Home extends React.Component {
+  componentDidMount() {
+    console.log(this.props.history);
+  }
+  render() {
+    return <div>{/* ....*/}</div>;
+  }
+}
+```
+
+### 3）useHistory 和 useLocation
+
+- 对于`函数组件`，可以用 React-router 提供的自定义 `hooks` 中的 `useHistory` 获取 `history` 对象，用 `useLocation` 获取 `location` 对象
+
+```js
+import { useHistory, useLocation } from 'react-router-dom';
+function Home() {
+  const history = useHistory(); /* 获取history信息 */
+  const useLocation = useLocation(); /* 获取location信息 */
+}
+```
+
+## 11.路由带参数跳转
+
+### 1）路由跳转
+
+- 路由跳转有`声明式路由`和`函数式路由`两种
+
+- `声明式路由`：
+
+  - `<NavLink to='/home' />` ，利用 react-router-dom 里面的 `Link` 或者 `NavLink`
+
+- `函数式路由`：
+
+  - `histor.push('/home')`
+
+### 2）参数传递
+
+**1.url 拼接**
+
+- 不推荐
+
+```js
+const name = 'Bob';
+const mes = 'let us learn React!';
+history.push(`/home?name=${name}&mes=${mes}`);
+```
+
+**2.state 路由状态**
+
+- `传入`
+
+```js
+const name = 'Bob';
+const mes = 'let us learn React!';
+history.push({
+  pathname: '/home',
+  state: {
+    name,
+    mes,
+  },
+});
+```
+
+- `获取`
+
+```js
+const { state = {} } = this.prop.location;
+const { name, mes } = state;
+```
+
+### 3）动态路径参数路由
+
+- 路由中参数可以作为`路径`
+
+```js
+<Route path="/post/:id" />
+```
+
+- `:id` 就是动态的`路径参数`
+
+- 跳转：
+
+```js
+history.push('/post/' + id);
+```
+
+## 12.嵌套路由
+
+- 路由组件下面，还存在`子路由`的情况
+
+- 嵌套路由中的子路由一定要跟随父路由
+
+```js
+// 父路由
+function Index() {
+  return (
+    <Switch>
+      <Route path="/home" component={Home} />
+      <Route path="/list" component={List} />
+    </Switch>
+  );
+}
+
+// 嵌套的路由
+function Home() {
+  return (
+    <div>
+      <Route path="/home/test" component={Test} />
+      <Route path="/home/test1" component={Test1} />
+    </div>
+  );
+}
+```
+
+## 13.路由拓展
+
+- 可以对路由进行一些功能性的拓展
+- 比如可以实现自`定义路由`，或者用 `HOC` 做一些`拦截`、`监听`等操作
+
+```js
+// 自定义路由
+function CustomRouter(props) {
+  const permissionList = useContext(permissionContext); /* 获取权限列表 */
+  const haspermission = matchPermission(
+    permissionList,
+    props.path,
+  ); /* 检查是否具有权限 */
+  return haspermission ? <Route {...props} /> : <Redirect to="/noPermission" />;
+}
+
+// 使用
+<CustomRouter path="/list" component={List} />;
 ```

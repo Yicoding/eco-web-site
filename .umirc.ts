@@ -504,27 +504,31 @@ const umiConfig = {
       {
         children: [
           {
-            title: 'react基础',
+            title: '1.react基础',
             path: '/frame/react',
           },
           {
-            title: 'hooks',
+            title: '2.hooks',
             path: '/frame/react/hooks',
           },
           {
-            title: 'react进阶',
+            title: '3.react进阶',
             path: '/frame/react/high',
           },
           {
-            title: 'react-router',
+            title: '4.react-router',
             path: '/frame/react/router',
           },
           {
-            title: '状态管理',
-            path: '/frame/react/state',
+            title: '5.状态管理redux',
+            path: '/frame/react/redux',
           },
           {
-            title: 'react-ssr',
+            title: '6.状态管理mobx',
+            path: '/frame/react/mobx',
+          },
+          {
+            title: '7.react-ssr',
             path: '/frame/react/ssr',
           },
         ],
@@ -535,12 +539,8 @@ const umiConfig = {
       {
         children: [
           {
-            title: 'vue基础',
-            path: 'base',
-          },
-          {
-            title: 'vue-router',
-            path: 'hooks',
+            title: 'vue运行机制',
+            path: '/frame/vue',
           },
         ],
       },
