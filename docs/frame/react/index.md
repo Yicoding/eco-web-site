@@ -1534,3 +1534,9 @@ export default class Index extends React.Component {
   },
 ];
 ```
+
+## 23.副作用
+
+- 在 React 组件中执行过`数据获取`、`订阅`或者手动`修改`过 `DOM`
+
+- 我们统一把`这些操作称为“副作用”`，或者简称为“作用”

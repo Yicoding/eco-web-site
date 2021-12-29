@@ -4,38 +4,47 @@ toc: menu
 
 # hooks
 
-## 1.概述
+## 1.定义
 
-### 1）定义
+- Hook 是 React `16.8` 的新增特性。它可以让你在`不编写 class` 的情况下`使用 state` 以及`其他`的 React `特性`，通常以 use 开头
 
-- Hook 是 React 16.8 的新增特性。它可以让你在不编写 class 的情况下使用 state 以及其他的 React 特性
-- `Hook` 是一个特殊的`函数`，它可以让你`“钩入”` React 的`特性`
+- `Hook` 是一个特殊的`函数`，它可以让你`“钩入”` state 及生命周期等 `特性`
 
-- Hook 是 React 16.8 的新增特性。React Hook 从具象上来说就为函数组件（纯函数）提供副作用能力的 React API，从抽象意义上来说是确定状态源的解决方案。其实就是可以让你在不编写 class 的情况下使用 state 以及其他的 React 特性，通常以 use 开头
+- 从`具象上`来说就是`为函数组件`（纯函数）`提供副作用能力`的 React `API`
 
-### 2）使用规则
+- 从`抽象意义上`来说是`确定状态源`的解决方案
 
-- 只能在函数`最外层`调用 Hook
-  - `不要`在`循环`、`条件判断`或者`子函数`中调用
-  - 原因：状态实现是使用单项列表，在循环和条件中调用，会使状态偏移
-- 只能在 React 的`函数组件`中调用 Hook
-  - 不要在其他 JavaScript 函数中调用
-  - 注意 hooks 顺序一致性
+## 2.使用规则
 
-### 3）使用原因
+### 1）只能在函数`最外层`调用 Hook
+
+- `不要`在`循环`、`条件判断`或者`子函数`中调用
+
+- `原因`：状态实现是使用单项列表，在循环和条件中调用，会使状态偏移
+
+### 2）只能在 React 的`函数组件`中调用 Hook
+
+- 不要在其他 JavaScript 函数中调用
+
+### 3）注意 hooks `顺序一致性`
+
+## 3.使用原因
 
 - 解决 class 组件的问题
 
-**1.在组件之间复用状态逻辑很难**
+### 1）在组件之间复用状态逻辑很难
 
 - 1.类组件之间的状态会随着功能增强而变得越来越臃肿，代码维护成本也比较高，而且不利于后期 tree shaking
 
 - 2.class 解决方案： render props 和 高阶组件
+
   - 这类方案需要重新组织你的组件结构，这可能会很麻烦，使你的代码难以理解
+
   - 由 providers，consumers，高阶组件，render props 等其他抽象层组成的组件会形成“嵌套地狱”
+
 - 3.`Hook 使你在无需修改组件结构的情况下复用状态逻辑`
 
-**2.复杂组件变得难以理解**
+### 2）复杂组件变得难以理解
 
 - 1.class 组件逐渐会被状态逻辑和副作用充斥
 
@@ -43,37 +52,100 @@ toc: menu
 
 - 2.Hook 将组件中相互关联的部分拆分成更小的函数，而并非强制按照生命周期划分
 
-**3.难以理解的 class**
+### 3）class 难以理解
 
 - 必须去理解 JavaScript 中 this 的工作方式
+
 - 还不能忘记绑定事件处理器
+
 - 没有稳定的语法提案，这些代码非常冗余
+
 - 对于函数组件与 class 组件的差异也存在分歧，甚至还要区分两种组件的使用场景
+
 - class 不能很好的压缩，并且会使热重载出现不稳定的情况
+
 - Hook 使你在非 class 的情况下可以使用更多的 React 特性
 
-### 4）优势
+## 4.使用 hook 本质原因
+
+- 让函数组件也能做类组件的事，有自己的状态，可以处理一些副作用，能获取 ref ，也能做数据缓存
+
+- 解决逻辑复用难的问题
+
+- 放弃面向对象编程，拥抱函数式编程
+
+## 5.优势
 
 - 避免地狱式嵌套，可读性提高：hoc 组件套组件
+
 - 比 class 更容易理解
+
 - 使函数组件存在状态
+
 - 解决 Hoc 和 render props 的缺点：数据来源无法追述
 
 - 编写函数比编写类更容易理解
 
-**QA：场景优势**
+## 6.使用场景优势
 
 - 利用业务逻辑的封装和拆分，可以非常自由的组合各种定义 hooks（自己封装的用到的 hooks 的逻辑）
+
 - 可以在无需修改组件结构的情况下，复用状态逻辑
+
 - 定时器、监听等都被聚合到同一块代码下
 
-### 5）使用 hooks 本质原因
+## 7.useState()
 
-- 1.让函数组件也能做类组件的事，有自己的状态，可以处理一些副作用，能获取 ref ，也能做数据缓存
-- 2.解决逻辑复用难的问题
-- 3.放弃面向对象编程，拥抱函数式编程
+### 1）定义
 
-## 2.useState()
+- 通过在函数组件里调用它来`给组件添加`一些内部 `state`
+
+- React 会在`重复渲染`时`保留`这个 `state`
+
+### 2）使用
+
+- 只接受一个参数：state 的初始值
+
+- 返回一个只有两个元素的数组：
+
+  - 第一个元素是 state 的值
+
+  - 第二个元素是更新 state 的函数
+
+    ```js
+    const [count, setCount] = useState(0);
+
+    // 相当于
+    const result = useState(0);
+    const count = result[0];
+    const setCount = result[1];
+    ```
+
+- 每次组件被渲染时，useState 调用都会执行
+
+- 区分第一次调用（组件被 mount 时）和后续调用（重复渲染时）
+
+  - 只有第一次调用才使用初始值，后续调用返回“记住”的 state 值
+
+  - React 是完全根据 useState 的调用顺序来“记住”状态归属的
+
+    - 将顺序记录在内存中，每次调用对应内存记录的上一个位置
+
+    ```js
+    // 错误用法
+    const Counter = () => {
+      const [count, setCount] = useState(0);
+      if (count % 2 === 0) {
+        const [foo, updateFoo] = useState('foo');
+      }
+      const [bar, updateBar] = useState('bar');
+      // ...
+    };
+    ```
+
+    - 因为条件判断，让每次渲染中 useState 的调用次序不一致了，于是 React 就错乱了
+
+### 3）原理剖析
 
 - 本质上都是触发更新的函数是 `dispatchAction`
 
@@ -165,7 +237,7 @@ function updateReducer() {
 - 当再次执行 useState 的时候，会触发更新 hooks 逻辑，本质上调用的就是 updateReducer，如上会把待更新的队列 pendingQueue 拿出来，合并到 baseQueue，循环进行更新
 - 循环更新的流程，就是执行每一个 num => num + 1 ，得到最新的 state 。接下来就可以从 useState 中得到最新的值
 
-### 模拟实现
+### 4）模拟实现
 
 ```js
 // 手写useState，返回数组
@@ -193,13 +265,25 @@ function render() {
 }
 ```
 
-## 3.useEffect()
+## 8.useEffect()
+
+### 1）定义
+
+- useEffect 就是一个 Effect Hook，`给函数组件增加`了`操作副作用`的`能力`
+
+- 聚合了 `componentDidMount`、`componentDidUpdate` 和 `componentWillUnmount` 的用途
+
+  - 本质上，依然是调用生命周期的这几个函数
+
+- useEffect 的`参数是`一个`函数`，组件每次渲染之后，都会调用这个函数参数
+
+### 2）原理剖析
 
 - 判断 deps 项有没有发生变化，如果没有发生变化，更新副作用链表就可以了
 - 如果发生变化，更新链表同时，打执行副作用的标签：fiber => fiberEffectTag，hook => HookHasEffect
 - 在 commit 阶段就会根据这些标签，重新执行副作用
 
-### 模拟实现
+### 3）模拟实现
 
 ```js
 // 手写useEffect
@@ -232,7 +316,7 @@ function render() {
 }
 ```
 
-## 4.useMemo()
+## 9.useMemo()
 
 ### 1）useMemo 用法
 
@@ -254,7 +338,7 @@ const cacheSomething = useMemo(create, deps);
 - 如果组件中不期望每次 render 都重新`计算`一些`值`,可以利用 useMemo 把它`缓存`起来
 - 可以把`函数和属性缓存`起来，作为 PureComponent 的绑定方法，或者配合其他 Hooks 一起使用
 
-## 5.memo、useMemo 和 useCallback
+## 10.memo、useMemo 和 useCallback
 
 ### 1）作用
 
