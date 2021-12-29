@@ -4,7 +4,9 @@ toc: menu
 
 # TCP
 
-- TCP 是一个`面向连接`的、`可靠`的、`基于字节流`的`传输层协议`
+- TCP 是一个`可靠`的（reliable）、`面向连接`的（connection-oriented）、`基于字节流`（byte-stream）、`全双工`的（full-duplex）协议
+
+![image](images/tcp/1.png)
 
 ## 1.UDP 与 TCP 的区别是什么？
 

@@ -36,6 +36,10 @@ toc: menu
   }
   ```
 
+- `非浏览器模式`：在非浏览器环境，使用抽象路由实现导航的记录功能
+  - react-router 的 `memoryHistory`
+  - vue-router 的 abstract 封装
+
 ## 4.BrowserRouter / HashRouter 原理
 
 - React-Router-dom 根据 history 提供的 createBrowserHistory 或者 createHashHistory `创建`出不同的 `history 对象`
@@ -53,6 +57,16 @@ toc: menu
 - 通过 createBrowserHistory 创建一个 history 对象，并`传递给 Router` 组件
 
 ## 5.BrowserHistory 路由原理
+
+- 特点
+
+  - url `无#`，美观，服务器可接收到路径和参数变化，`需服务器适配`
+  - 基于`浏览器`的 `history` 对象实现，主要为 history.`pushState` 和 history.`replaceState` 来进行路由控制。通过这两个方法，可以实现改变 url 且`不向服务器发送请求`
+
+- 修改
+
+  - 点击后退/前进触发 popstate 事件，监听进行页面更新
+  - 调用 history.pushState 或 history.replaceState 触发相应的函数后，在后面手动添加回调更新页面
 
 ### 1）改变路由
 
@@ -91,9 +105,14 @@ window.addEventListener('popstate', function (e) {
 
 - 哈希路由原理和 history 相似
 
+- 特点：
+  - url 中带有一个`#`符号，但是#只是浏览器端/客户端的状态，`不会传递给服务端`
+  - `hash 值的更改，不会导致页面的刷新`
+  - hash 值的更改，会在浏览器的访问`历史中添加一条记录`。所以我们才可以通过浏览器的`返回、前进按钮来控制 hash 的切换`
+
 ### 1）改变路由 window.location.hash
 
-- 通过 window.location.hash 属性获取和设置 hash 值
+- 通过 window.location.hash 属性获取和设置 hash 值: location.hash='#aaa'
 - 切换路由，本质上是改变 window.location.hash
 
 ### 2）监听路由 onhashchange
@@ -464,3 +483,81 @@ function CustomRouter(props) {
 // 使用
 <CustomRouter path="/list" component={List} />;
 ```
+
+## 14.react-router-dom 使用
+
+- `Link`：封装的专属 a 标签，用于路由跳转，类似于 router-link
+  - `to`：字符串或者位置对象（包含路径名，search，hash 和 state 的组合）
+- `Switch`：匹配多个路由选择其一组件，从前往后，匹配成功，将 route 克隆返回
+- `Route`：路由组件，类似于 router-view
+  - `path`：字符串，描述路由匹配的路径名类型
+  - `component`：一个 React 组件。当带有 component  参数的的路由匹配时，路由将返回一个新元素，其类型是一个 React component （使用 React.createElement 创建）
+  - `render`：一个返回 React 元素的函数，它将在 path 匹配时被调用。这与 component 类似，应用于内联渲染和更多参数传递
+  - `children`：一个返回 React 元素的函数，无论路由的路径是否与当前位置相匹配，都将始终被渲染
+  - `exact`属性：指定 path 是否需要绝对匹配才会跳转
+- `BrowserRouter`：histroy 路由组件
+- `HashRouter`：hash 路由组件
+- `withRouter`：高阶函数，使用后可使用注入的 context 对象上的属性
+
+## 15.路由守卫
+
+- react-router-dom 使用 `Prompt` 和 `getUserConfirmation` 函数实现路由守卫
+
+```js
+// Home组件
+import React from 'react';
+import { Prompt } from 'react-router';
+export default function Home({ location, history }) {
+  const [message, setMessage] = useState('');
+  return (
+    <>
+      <div
+        onClick={() =>
+          history.push({
+            pathname: '/about',
+            state: { state: 12 },
+          })
+        }
+      >
+        Home
+        {/* 确定继续跳转路由，取消不跳转 */}
+        <Prompt message={'是否跳转'} when={!!message} />
+      </div>
+      <span onClick={() => setMessage(Math.random())}>修改了{message}</span>
+    </>
+  );
+}
+
+// App.js组件
+// 使用子定义函数处理实现路由守卫，定义后，不会弹alert框
+// getUserConfirmation函数使用在history.js中
+const getUserConfirmation = (msg, callback) => {
+  console.log(msg); // Home中Prompt的message值
+  callback(true); // 跳转路由
+};
+ReactDOM.render(
+  <BrowserRouter getUserConfirmation={getUserConfirmation}>
+    <App>
+      <Switch>
+        <Route path="/home" component={Home} />
+        <Route path="/about" component={About} />
+        <Route path="*" component={NoMatch} />
+      </Switch>
+    </App>
+  </BrowserRouter>,
+  document.getElementById('root'),
+);
+```
+
+## 16.v6 版本
+
+- 废弃 `Switch` 组件，由 `Routes` 代替（使用了智能匹配路径算法）
+- 废弃 `Redirect` 组件，由 `Navigate` 代替
+- 废弃 `useHistory` 方法，由 `useNavigate` 代替
+- `Route` 组件移除原有 `component` 及 `render` 属性，统一通过 `element` 属性传递：`<Route element={<Home />}>`
+- `Route` 组件支持嵌套写法（v3 版本用法回归）
+- `Route` 组件的 `path` 规则变更，`不再支持类正则写法`
+- 消除了 `v5` 版本中`带后斜杠`的路径时，Link 组件的跳转模糊的问题
+- `Link` 组件支持自动携带当前父路由，以及相对路径写法`../home`
+- 新增 `useRoutes` 方法，代替之前的`react-router-config`写法，同样支持嵌套
+- 其他一些 API `名称变更`

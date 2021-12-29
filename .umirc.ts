@@ -82,14 +82,6 @@ const umiConfig = {
           title: '小程序',
           path: '/frame/applet',
         },
-        {
-          title: 'react-native',
-          path: '/frame/koa',
-        },
-        {
-          title: 'electron',
-          path: '/frame/koa',
-        },
       ],
     },
     {
@@ -508,12 +500,12 @@ const umiConfig = {
             path: '/frame/react',
           },
           {
-            title: '2.hooks',
-            path: '/frame/react/hooks',
+            title: '2.react进阶',
+            path: '/frame/react/high',
           },
           {
-            title: '3.react进阶',
-            path: '/frame/react/high',
+            title: '3.hooks',
+            path: '/frame/react/hooks',
           },
           {
             title: '4.react-router',
@@ -539,15 +531,41 @@ const umiConfig = {
       {
         children: [
           {
-            title: 'vue运行机制',
+            title: '1.vue基础',
+            path: '/frame/vue',
+          },
+          {
+            title: '2.vue进阶',
+            path: '/frame/vue',
+          },
+          {
+            title: '3.vuex',
+            path: '/frame/vue',
+          },
+          {
+            title: '4.运行机制',
+            path: '/frame/vue',
+          },
+          {
+            title: '5.生命周期',
+            path: '/frame/vue',
+          },
+          {
+            title: '6.响应式原理',
+            path: '/frame/vue',
+          },
+          {
+            title: '7.diff原理',
+            path: '/frame/vue',
+          },
+          {
+            title: '8.编译原理',
             path: '/frame/vue',
           },
         ],
       },
     ],
     '/frame/applet': [],
-    '/frame/react-native': [],
-    '/frame/electron': [],
     /***************** nav: 框架 *******************/
     /***************** nav: 工程化 *******************/
     // 模块化
