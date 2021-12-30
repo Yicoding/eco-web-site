@@ -69,8 +69,49 @@ modules.export = {
 import Home from '@/pages/home';
 ```
 
-## 4.路由
+## 4.路由配置 v6 版
+
+### 1）安装依赖包
 
 ```bash
 yarn add react-router-dom
+```
+
+### 2）封装路由
+
+```js
+// routers/index.tsx
+import { HashRouter, Route, Routes } from 'react-router-dom';
+
+import Root from '@/pages/root';
+import Home from '@/pages/home';
+import Detail from '@/pages/detail';
+
+const Routers = () => (
+  <HashRouter>
+    <Routes>
+      <Route path="/" element={<Root />} />
+      <Route path="/home" element={<Home />} />
+      <Route path="/detail" element={<Detail />} />
+    </Routes>
+  </HashRouter>
+);
+
+export default Routers;
+```
+
+### 3）使用
+
+```js
+import Routers from './routers';
+
+function App() {
+  return (
+    <div className="App">
+      <Routers />
+    </div>
+  );
+}
+
+export default App;
 ```

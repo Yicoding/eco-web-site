@@ -427,6 +427,64 @@ function Child() {
 }
 ```
 
+## 10.useReducer
+
+### 1）定义
+
+- useState 的替代方案。它接收一个形如 (state, action) => newState 的 reducer，并返回当前的 state 以及与其配套的 dispatch 方法
+
+### 2）用法
+
+```js
+const [state, dispatch] = useReducer(reducer, initialArg, init);
+```
+
+### 3）使用
+
+```ts
+import React, { useReducer } from 'react';
+import { Button, Space } from 'antd-mobile';
+
+interface InitialState {
+  count: number;
+}
+
+const initialState: InitialState = { count: 0 };
+
+interface actionType {
+  type: 'add' | 'reduce';
+}
+
+function reducer(state: InitialState, action: actionType) {
+  switch (action.type) {
+    case 'add':
+      return { count: state.count + 1 };
+    case 'reduce':
+      return { count: state.count - 1 };
+    default:
+      throw new Error();
+  }
+}
+
+function Home() {
+  const [state, dispatch] = useReducer(reducer, initialState);
+
+  return (
+    <div>
+      <Space>
+        Count: {state.count}
+        <Button onClick={() => dispatch({ type: 'reduce' })}>reduce</Button>
+        <Button onClick={() => dispatch({ type: 'add' })}>add</Button>
+      </Space>
+    </div>
+  );
+}
+
+export default Home;
+```
+
+## 11.useCallback
+
 ## 10.useMemo()
 
 ### 1）useMemo 用法
