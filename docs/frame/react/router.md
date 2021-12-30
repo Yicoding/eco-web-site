@@ -561,3 +561,26 @@ ReactDOM.render(
 - `Link` 组件支持自动携带当前父路由，以及相对路径写法`../home`
 - 新增 `useRoutes` 方法，代替之前的`react-router-config`写法，同样支持嵌套
 - 其他一些 API `名称变更`
+
+## 17.使用 react-router-dom v6 版
+
+```js
+import React from 'react';
+import { HashRouter, Route, Routes } from 'react-router-dom';
+
+import Root from './pages/root';
+import Home from './pages/home';
+import Detail from './pages/detail';
+
+const Routers = () => (
+  <HashRouter>
+    <Routes>
+      <Route path="/" element={<Root />} />
+      <Route path="/home" element={<Home />} />
+      <Route path="/detail" element={<Detail />} />
+    </Routes>
+  </HashRouter>
+);
+
+export default Routers;
+```

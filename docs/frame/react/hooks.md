@@ -4,6 +4,10 @@ toc: menu
 
 # hooks
 
+- 只有 state 改变时， function 组件才会触发 render
+
+- 无论 dom 中是否使用 state，state 改变，都会触发 render
+
 ## 1.定义
 
 - Hook 是 React `16.8` 的新增特性。它可以让你在`不编写 class` 的情况下`使用 state` 以及`其他`的 React `特性`，通常以 use 开头
@@ -16,15 +20,15 @@ toc: menu
 
 ## 2.使用规则
 
-### 1）只能在函数`最外层`调用 Hook
+### 1）只在`最顶层`使用 Hook
 
-- `不要`在`循环`、`条件判断`或者`子函数`中调用
+- `不要`在`循环`、`条件判断`或`嵌套函数`中调用 Hook
 
 - `原因`：状态实现是使用单项列表，在循环和条件中调用，会使状态偏移
 
-### 2）只能在 React 的`函数组件`中调用 Hook
+### 2）只在 `React 函数`中调用 Hook
 
-- 不要在其他 JavaScript 函数中调用
+- 不要在普通的 JavaScript 函数中调用 Hook
 
 ### 3）注意 hooks `顺序一致性`
 
@@ -121,6 +125,8 @@ toc: menu
     const setCount = result[1];
     ```
 
+- setCount 会浅比较前后的值，不同时才会赋值 render
+
 - 每次组件被渲染时，useState 调用都会执行
 
 - 区分第一次调用（组件被 mount 时）和后续调用（重复渲染时）
@@ -145,7 +151,32 @@ toc: menu
 
     - 因为条件判断，让每次渲染中 useState 的调用次序不一致了，于是 React 就错乱了
 
-### 3）原理剖析
+### 3）第二个元素 setCount 的用法
+
+**1.接收一个值**
+
+```js
+setCount(+new Date());
+```
+
+**2.接收一个函数**
+
+```js
+setCount((val) => val + 1);
+```
+
+**3.在函数中判断**
+
+```js
+setCount((val) => {
+  if (val < 10) {
+    return val + 1;
+  }
+  return val;
+});
+```
+
+### 4）原理剖析
 
 - 本质上都是触发更新的函数是 `dispatchAction`
 
@@ -237,7 +268,7 @@ function updateReducer() {
 - 当再次执行 useState 的时候，会触发更新 hooks 逻辑，本质上调用的就是 updateReducer，如上会把待更新的队列 pendingQueue 拿出来，合并到 baseQueue，循环进行更新
 - 循环更新的流程，就是执行每一个 num => num + 1 ，得到最新的 state 。接下来就可以从 useState 中得到最新的值
 
-### 4）模拟实现
+### 5）模拟实现
 
 ```js
 // 手写useState，返回数组
@@ -277,13 +308,55 @@ function render() {
 
 - useEffect 的`参数是`一个`函数`，组件每次渲染之后，都会调用这个函数参数
 
-### 2）原理剖析
+### 2）使用
+
+**1.模拟 componentDidMount 和 componentDidUpdate**
+
+- 第二个参数不传
+
+```js
+useEffect(() => {});
+```
+
+**2.模拟 componentDidMount**
+
+- 第二个参数为空数组
+
+```js
+useEffect(() => {}, []);
+```
+
+**3.模拟 componentWillUnmount**
+
+- 清除副作用，return 中执行清除副作用的代码
+
+```js
+useEffect(() => {
+  return () => {
+    clearInterval(timee.current);
+  };
+}, []);
+```
+
+**4.监听 state 值改变**
+
+- 类似 vue 中的 watch
+
+- 依赖第二参数数组中的值改变
+
+```js
+useEffect(() => {
+  document.title = `You clicked ${count} times`;
+}, [count]); // 仅在 count 更改时更新
+```
+
+### 3）原理剖析
 
 - 判断 deps 项有没有发生变化，如果没有发生变化，更新副作用链表就可以了
 - 如果发生变化，更新链表同时，打执行副作用的标签：fiber => fiberEffectTag，hook => HookHasEffect
 - 在 commit 阶段就会根据这些标签，重新执行副作用
 
-### 3）模拟实现
+### 4）模拟实现
 
 ```js
 // 手写useEffect
@@ -316,7 +389,45 @@ function render() {
 }
 ```
 
-## 9.useMemo()
+## 9.useContext()
+
+### 1）定义
+
+- `接收`一个 `context` 对象（React.createContext 的返回值）并`返回`该 `context` 的`当前值`
+
+```js
+const value = useContext(MyContext); // 正确
+
+useContext(MyContext.Consumer); // 错误
+useContext(MyContext.Provider); // 错误
+```
+
+- 调用了 useContext 的组件总会在 `context` 值`变化`时`重新渲染`
+
+  - 如果重渲染组件的开销较大，可以 使用 `memoization` 优化。
+
+### 2）用法
+
+```js
+const theme = {
+  color: 'red',
+  background: 'blue',
+};
+
+const ThemeContext = React.createContext(theme);
+
+function App() {
+  return <ThemeContext.Provider value={theme}></ThemeContext.Provider>;
+}
+
+function Child() {
+  const theme = useContext(ThemeContext);
+
+  return <div>color: {theme.value.color}</div>;
+}
+```
+
+## 10.useMemo()
 
 ### 1）useMemo 用法
 
@@ -338,7 +449,7 @@ const cacheSomething = useMemo(create, deps);
 - 如果组件中不期望每次 render 都重新`计算`一些`值`,可以利用 useMemo 把它`缓存`起来
 - 可以把`函数和属性缓存`起来，作为 PureComponent 的绑定方法，或者配合其他 Hooks 一起使用
 
-## 10.memo、useMemo 和 useCallback
+## 11.memo、useMemo 和 useCallback
 
 ### 1）作用
 

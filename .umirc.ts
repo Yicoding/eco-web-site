@@ -523,6 +523,10 @@ const umiConfig = {
             title: '7.react-ssr',
             path: '/frame/react/ssr',
           },
+          {
+            title: '8.Create React App',
+            path: '/frame/react/cra',
+          },
         ],
       },
     ],

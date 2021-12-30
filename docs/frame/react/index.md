@@ -1540,3 +1540,177 @@ export default class Index extends React.Component {
 - 在 React 组件中执行过`数据获取`、`订阅`或者手动`修改`过 `DOM`
 
 - 我们统一把`这些操作称为“副作用”`，或者简称为“作用”
+
+## 24.render props
+
+## 25.Context
+
+- Context 提供了一种在组件之间共享此类值的方式，而不必显式地通过组件树的逐层传递 props
+
+### 1）创建 context - class 方式
+
+- 使用 `createContext` 创建 Context 对象
+
+```js
+// store.js
+import { createContext } from 'react';
+
+const ThemeContext = createContext();
+
+export const { Provider, Consumer } = ThemeContext;
+
+export default ThemeContext;
+```
+
+### 2）引入
+
+- Context.Provider 发布
+
+```js
+// App.js
+import { useState } from 'react';
+import { Provider } from '@/store';
+import Routers from '@/routers';
+
+function App() {
+  const [theme, setTheme] = useState('light');
+
+  const initValue = {
+    theme,
+    setTheme,
+  };
+
+  return (
+    <div className="App">
+      <Provider value={initValue}>
+        <Routers />
+      </Provider>
+    </div>
+  );
+}
+
+export default App;
+```
+
+### 3）class 组件中使用
+
+- class 中使用 `contextType` 订阅
+
+```js
+// home.js
+import React from 'react';
+import ThemeContext from '@/store';
+
+class Home extends React.Component {
+  static contextType = ThemeContext;
+
+  onChange = () => {
+    this.context.setTheme('dark');
+  };
+
+  render() {
+    return (
+      <div>
+        home theme: {this.context.theme}
+        <br />
+        <button onClick={this.onChange}>切换theme</button>
+      </div>
+    );
+  }
+}
+```
+
+### 4）函数组件中使用
+
+- `Consumer` 允许在函数式组件中订阅 context
+
+```js
+import React from 'react';
+import { Consumer } from '@/store';
+
+function Detail() {
+  return (
+    <div>
+      <Consumer>
+        {({ theme, setTheme }) => (
+          <div>
+            detail theme: {theme}
+            <br />
+            <button onClick={() => setTheme('light')}>切换theme</button>
+          </div>
+        )}
+      </Consumer>
+    </div>
+  );
+}
+```
+
+### 5）hooks 方法使用
+
+- `useContext` 接收一个 context 对象（React.createContext 的返回值）并返回该 context 的当前值
+
+```js
+import React, { useContext } from 'react';
+import ThemeContext from '@/store';
+
+function Hooks() {
+  const themeInfo = useContext(ThemeContext);
+
+  return (
+    <div>
+      默认 theme: {themeInfo.theme}
+      <br />
+      <button onClick={() => themeInfo.setTheme('light')}>切换theme</button>
+    </div>
+  );
+}
+```
+
+### 6）消费多个 context
+
+```js
+// Theme context，默认的 theme 是 “light” 值
+const ThemeContext = React.createContext('light');
+
+// 用户登录 context
+const UserContext = React.createContext({
+  name: 'Guest',
+});
+
+class App extends React.Component {
+  render() {
+    const { signedInUser, theme } = this.props;
+
+    // 提供初始 context 值的 App 组件
+    return (
+      <ThemeContext.Provider value={theme}>
+        <UserContext.Provider value={signedInUser}>
+          <Layout />
+        </UserContext.Provider>
+      </ThemeContext.Provider>
+    );
+  }
+}
+
+function Layout() {
+  return (
+    <div>
+      <Sidebar />
+      <Content />
+    </div>
+  );
+}
+
+// 一个组件可能会消费多个 context
+function Content() {
+  return (
+    <ThemeContext.Consumer>
+      {(theme) => (
+        <UserContext.Consumer>
+          {(user) => <ProfilePage user={user} theme={theme} />}
+        </UserContext.Consumer>
+      )}
+    </ThemeContext.Consumer>
+  );
+}
+```

@@ -604,3 +604,135 @@ function runReactions() {
 - 3.Redux 整体数据流向简单，Mobx 依赖于 `Proxy`， `Object.defineProperty` 等，`劫持`属性 get ，set ，数据变化多样性
 - 4.`Redux` 可`拓展性`比较`强`，可以通过`中间件`自定义增强 dispatch
 - 5.在 `Redux` 中，基本`有一个 store` ，统一管理 store 下的状态，在 `mobx` 中可以有`多个模块`，可以理解每一个模块都是一个 store ，相互之间是独立的
+
+## 11.Mobx 实战
+
+### 1）安装依赖
+
+```js
+yarn add mobx mobx-react mobx-state-tree
+```
+
+### 2）封装 store
+
+```ts
+// homeStore.ts
+import { types } from 'mobx-state-tree';
+import { toJS } from 'mobx';
+
+import { webapi } from '@/services/webapi';
+
+const merchantIdItem = types.model('merchantIdItem', {
+  isOpen: types.optional(types.boolean, false),
+  merchantId: types.maybeNull(types.string),
+  name: types.maybeNull(types.string),
+  phone: types.maybeNull(types.string),
+  todoNum: types.maybeNull(types.string),
+});
+
+const HomeStore = types
+  .model('HomeStore', {
+    merchantList: types.optional(types.array(merchantIdItem), []),
+  })
+  .views((self: any) => {
+    return {
+      get dataList() {
+        return toJS(self.merchantList);
+      },
+    };
+  })
+  .volatile(() => {
+    return {
+      index: -1,
+    };
+  })
+  .actions((self: any) => {
+    return {
+      setObject(data: any) {
+        Object.keys(data).forEach((key) => {
+          self[key] = data[key];
+        });
+        return self;
+      },
+      setObjectAsync(data: any) {
+        return new Promise((resolve) => {
+          Object.keys(data).forEach((key) => {
+            self[key] = data[key];
+          });
+          resolve(true);
+        });
+      },
+      query() {
+        self.setObject({ needUpdate: false });
+        return webapi({
+          preloader: true,
+        })
+          .then(() => {})
+          .catch(() => {});
+      },
+    };
+  });
+
+export default HomeStore;
+```
+
+```ts
+import { types } from 'mobx-state-tree';
+import HomeStore from './homeStore';
+import RetrievalStore from './retrievalStore';
+
+const Stores = types
+  .model('Stores', {
+    home: types.optional(HomeStore, {}),
+    retrieval: types.optional(RetrievalStore, {}),
+  })
+  .views(() => {
+    return {};
+  });
+
+export default Stores;
+```
+
+### 3）注入 store
+
+```js
+// App.js
+import { Provider } from 'mobx-react';
+import Store from '@/store';
+
+const store = Store.create({});
+
+function App() {
+  return <Provider store={store}></Provider>;
+}
+```
+
+### 4）封装获取 store 的方法-自定义 hook
+
+```ts
+// useStore.ts
+import * as React from 'react';
+import { MobXProviderContext } from 'mobx-react';
+import type { Instance } from 'mobx-state-tree';
+import type Stores from '@/store';
+
+export default function useStore() {
+  return React.useContext<Record<'store', Instance<typeof Stores>>>(
+    MobXProviderContext,
+  );
+}
+```
+
+### 5）页面使用
+
+```ts
+// home.tsx
+import { observer } from 'mobx-react';
+import useStore from '@/hooks/useStore';
+
+const Home: React.FC = observer(() => {
+  const {
+    store: { home },
+  } = useStore();
+});
+```
