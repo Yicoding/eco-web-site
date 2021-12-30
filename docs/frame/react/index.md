@@ -620,16 +620,18 @@ class Form extends Component {
 
 ### 2）新版本
 
+![image](images/frame/17.png)
+
 - 挂载
 
   - constructor
-  - `getDerivedStateFromProps`：在调用 render 方法之前调用，并且在初始挂载及后续更新时都会被调用。它应返回一个对象来更新 state，如果返回 null 则不更新任何内容。条件： state 的值在任何时候都取决于 props
+  - static `getDerivedStateFromProps`：在调用 render 方法之前调用，并且在初始挂载及后续更新时都会被调用。它应返回一个对象来更新 state，如果返回 null 则不更新任何内容。条件： state 的值在任何时候都取决于 props
   - render
   - `componentDidMount`
 
 - 更新
 
-  - `getDerivedStateFromProps`
+  - static `getDerivedStateFromProps`
   - `shouldComponentUpdate`
   - render
   - `getSnapshotBeforeUpdate`： 在最近一次渲染输出（提交到 DOM 节点）之前调用。它使得组件能在发生更改之前从 DOM 中捕获一些信息（例如，滚动位置）。此生命周期的任何返回值将作为参数传递给 componentDidUpdate()
@@ -638,6 +640,11 @@ class Form extends Component {
 - 卸载
 
   - `componentWillUnmount`
+
+- 错误处理
+
+  - static `getDerivedStateFromError`
+  - `componentDidCatch`
 
 - 加载顺序：
 
@@ -1543,7 +1550,103 @@ export default class Index extends React.Component {
 
 ## 24.render props
 
-## 25.Context
+- 类似 vue 中的 slot 插槽
+
+### 1）定义
+
+- 就是组件上名为 render 的 prop，该属性可以动态决定要渲染的内容
+
+- 具有 render prop 的组件接受一个返回 React 元素的函数，并在组件内部通过调用此函数来实现自己的渲染逻辑
+
+- render prop 是一个用于告知组件需要渲染什么内容的函数 prop
+
+### 2）作用
+
+- 为了组件的复用，把无关视图的逻辑抽象出来
+
+### 3）使用
+
+```js
+class DataProvider extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { x: 0, y: 0 };
+  }
+  render() {
+    return <div>{this.props.render(this.state)}</div>;
+  }
+}
+
+<DataProvider render={(data) => <h1>Hello {data.x}</h1>} />;
+```
+
+### 4）当子组件使用了 PureComponent 时
+
+- 因为浅比较 props 的时候总会得到 false，并且在这种情况下每一个 render 对于 render prop 将会生成一个新的值，导致`抵消了`子组件使用 `PureComponent` 带来的优势
+
+```js
+// 父组件
+class MouseTracker extends React.Component {
+  // 定义为实例方法，`this.renderTheCat`始终
+  // 当我们在渲染中使用它时，它指的是相同的函数
+  renderTheCat = (mouse) => {
+    return <Cat mouse={mouse} />;
+  };
+
+  render() {
+    return (
+      <div>
+        <Mouse render={this.renderTheCat} />
+      </div>
+    );
+  }
+}
+```
+
+## 25.children
+
+### 1）定义
+
+- 每个组件都可以获取到 props.children。它包含组件的开始标签和结束标签之间的内容
+
+### 2）使用
+
+```js
+function Welcome(props) {
+  return <p>{props.children}</p>;
+}
+```
+
+### 3）传参
+
+```js
+<Mouse
+  children={(mouse) => (
+    <p>
+      鼠标的位置是 {mouse.x}，{mouse.y}
+    </p>
+  )}
+/>
+```
+
+### 4）children prop
+
+```js
+<Mouse>
+  {(mouse) => (
+    <p>
+      鼠标的位置是 {mouse.x}，{mouse.y}
+    </p>
+  )}
+</Mouse>;
+
+// 声明 children 的类型应为一个函数
+Mouse.propTypes = {
+  children: PropTypes.func.isRequired,
+};
+```
+
+## 26.Context
 
 - Context 提供了一种在组件之间共享此类值的方式，而不必显式地通过组件树的逐层传递 props
 
@@ -1713,4 +1816,51 @@ function Content() {
     </ThemeContext.Consumer>
   );
 }
+```
+
+## 27.refs
+
+### 1）定义
+
+- `Refs` 提供了一种方式，`允许`我们`访问 DOM 节点`或在 render 方法中创建的 `React 元素`
+
+- React 会在组件`挂载时`给 `current` 属性传入 `DOM` 元素，并在组件`卸载时`传入 `null` 值
+  - ref 会在 `componentDidMount` 或 `componentDidUpdate` 生命周期钩子触发前`更新`
+
+### 2）场景
+
+- 管理焦点，文本选择或媒体播放
+
+- 触发强制动画
+
+- 集成第三方 DOM 库
+
+- ref 转发
+
+### 3）class 组件使用
+
+- 直接使用
+
+```js
+// parent
+class Parent extends React.Component {
+  ref = React.createRef();
+
+  render() {
+    return <Mouse ref={this.ref} />;
+  }
+}
+
+// class组件
+class Mouse extends React.Component {}
+```
+
+### 4）函数组件
+
+- 默认情况下，`不能`在`函数组件`上`使用` ref 属性，因为它们`没有实例`
+
+- 使用 `forwardRef`（可与 useImperativeHandle 结合使用）
+
+```js
+const Mouse = forwardRef((props, ref) => {});
 ```
