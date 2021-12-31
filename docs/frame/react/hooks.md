@@ -100,6 +100,8 @@ toc: menu
 
 ## 7.useState()
 
+- 赋值相同的值，`不会`触发 render
+
 ### 1）定义
 
 - 通过在函数组件里调用它来`给组件添加`一些内部 `state`
@@ -151,6 +153,24 @@ toc: menu
 
     - 因为条件判断，让每次渲染中 useState 的调用次序不一致了，于是 React 就错乱了
 
+- 初始值为函数时：
+
+```js
+// 错误
+function Table(props) {
+  // ⚠️ createRows() 每次渲染都会被调用
+  const [rows, setRows] = useState(createRows(props.count));
+  // ...
+}
+
+// 正确
+function Table(props) {
+  // ✅ createRows() 只会被调用一次
+  const [rows, setRows] = useState(() => createRows(props.count));
+  // ...
+}
+```
+
 ### 3）第二个元素 setCount 的用法
 
 **1.接收一个值**
@@ -174,6 +194,12 @@ setCount((val) => {
   }
   return val;
 });
+```
+
+**4.多个 state 变量时**
+
+```js
+setState((state) => ({ ...state, left: e.pageX, top: e.pageY }));
 ```
 
 ### 4）原理剖析
@@ -391,6 +417,8 @@ function render() {
 
 ## 9.useContext()
 
+- 赋值相同的值，`不会`触发 render
+
 ### 1）定义
 
 - `接收`一个 `context` 对象（React.createContext 的返回值）并`返回`该 `context` 的`当前值`
@@ -485,7 +513,19 @@ export default Home;
 
 ## 11.useCallback
 
-## 10.useMemo()
+### 1）定义
+
+- 返回一个 `memoized` 回调函数
+
+- 把内联回调函数及依赖项数组作为参数传入 useCallback，它将返回该回调函数的 memoized 版本，该回调函数仅在某个依赖项改变时才会更新
+
+- `useCallback(fn, deps)` 相当于 `useMemo(() => fn, deps)`
+
+### 2）使用场景
+
+- 把回调函数传递给经过优化的并使用引用相等性去避免非必要渲染（例如 shouldComponentUpdate）的子组件时
+
+## 11.useMemo()
 
 ### 1）useMemo 用法
 
@@ -507,7 +547,23 @@ const cacheSomething = useMemo(create, deps);
 - 如果组件中不期望每次 render 都重新`计算`一些`值`,可以利用 useMemo 把它`缓存`起来
 - 可以把`函数和属性缓存`起来，作为 PureComponent 的绑定方法，或者配合其他 Hooks 一起使用
 
-## 11.memo、useMemo 和 useCallback
+## 12.memo
+
+- React.memo 为高阶组件
+
+- 用来包裹组件，防止子组件重复渲染
+
+- React.memo 等效于 PureComponent
+  - `只`比较 `props`
+  - `不`比较 `state`
+
+```js
+const MyComponent = React.memo(function MyComponent(props) {
+  /* 使用 props 渲染 */
+});
+```
+
+## 13.memo、useMemo 和 useCallback
 
 ### 1）作用
 
@@ -515,8 +571,35 @@ const cacheSomething = useMemo(create, deps);
 
 ### 2）区别
 
-- 在子组件不需要父组件的值和函数的情况下，只需要使用 `memo` 函数包裹子组件即可
-- 如果有函数传递给子组件，使用 `useCallback`
-- 如果有值传递给子组件，使用 `useMemo`
+- 在子组件`不需要`父组件的`值和函数`的情况下，只需要使用 `memo` 函数包裹子组件即可
+
+- 如果有`函数传递`给子组件，使用 `useCallback`，useCallback 是来`优化子组件`的，防止子组件的重复渲染
+
+- 如果有`值传递`给子组件，使用 `useMemo`，useMemo 可以`优化当前组件`也可以优化子组件
+
 - useEffect、useMemo、useCallback 都是自带闭包的
+
   - 也就是说，每一次组件的渲染，其都会捕获当前组件函数上下文中的状态(state, props)，所以每一次这三种 hooks 的执行，反映的也都是当前的状态，你无法使用它们来捕获上一次的状态。对于需要捕获上一次状态值的情况，我们应该使用 ref 来访问
+
+## 14.useEffect 和 useLayoutEffect
+
+### 1）useEffect
+
+- 赋值给 useEffect 的函数会在组件渲染到屏幕之后执行
+
+- `浏览器回流、重绘之后执行`
+
+### 2）useLayoutEffect
+
+- 会在所有的 DOM 变更之后同步调用
+
+- 可以使用它来读取 DOM 布局并同步触发重渲染
+
+- 在浏览器执行绘制之前，useLayoutEffect 内部的更新计划将被同步刷新
+
+- `浏览器回流、重绘之前执行`
+
+### 3）注意点
+
+- 修改 dom 操作需要放在 useLayoutEffect 中，
+- 这样做出的修改会和 react 做出的更改一起被一次性渲染到屏幕上，依旧只有一次回流、重绘的代价
