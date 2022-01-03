@@ -42,6 +42,10 @@ const umiConfig = {
           path: '/base/css',
         },
         {
+          title: '文档dom',
+          path: '/base/dom',
+        },
+        {
           title: 'html',
           path: '/base/html',
         },
@@ -140,6 +144,10 @@ const umiConfig = {
         {
           title: '面试题',
           path: '/other/interview',
+        },
+        {
+          title: 'Virtual DOM 和 DOM-diff',
+          path: '/other/diff',
         },
         {
           title: '前端性能优化',
@@ -351,6 +359,16 @@ const umiConfig = {
           {
             title: '4.CSS变量和CSS Modules',
             path: '/base/css/module',
+          },
+        ],
+      },
+    ],
+    '/base/dom': [
+      {
+        children: [
+          {
+            title: '文档dom',
+            path: '/base/dom',
           },
         ],
       },
@@ -569,7 +587,20 @@ const umiConfig = {
         ],
       },
     ],
-    '/frame/applet': [],
+    '/frame/applet': [
+      {
+        children: [
+          {
+            title: '1.小程序基础',
+            path: '/frame/applet',
+          },
+          {
+            title: '2.小程序双线程架构',
+            path: '/frame/applet/double',
+          },
+        ],
+      },
+    ],
     /***************** nav: 框架 *******************/
     /***************** nav: 工程化 *******************/
     // 模块化
@@ -833,6 +864,7 @@ const umiConfig = {
     '/other/problem': [{ children: ['/other/problem'] }],
     '/other/pay': [{ children: ['/other/pay'] }],
     '/other/wechat': [{ children: ['/other/wechat'] }],
+    '/other/diff': [{ children: ['/other/diff'] }],
     '/other/cache': [
       {
         children: [
