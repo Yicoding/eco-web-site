@@ -167,3 +167,37 @@ this.setData({
 - 优化视图节点
 
 - 使用自定义组件
+
+## 4.图片
+
+- 压缩，推荐 tinypng.com/
+
+- Image 组件支持通过配置 lazy-load 参数来实现懒加载懒加载
+
+- 利用 cdn 服务商（阿里云 OSS）提供的能力获取适当的图片,支持格式转换、质量变换、尺寸处理
+
+- 使用 webp 格式的图片
+
+## 5.多线程 Worker
+
+- 一些异步处理的任务，可以放置于 Worker 中运行，待运行结束后，再把结果返回到小程序主线程
+
+- Worker 运行于一个单独的全局上下文与线程中，不能直接调用主线程的方法
+
+- 双方使用 Worker.postMessage() 来发送数据
+
+- Worker.onMessage() 来接收数据
+
+- 传输的数据并不是直接共享，而是被复制的
+
+```js
+const worker = wx.createWorker('workers/request/index.js'); // 文件名指定 worker 的入口文件路径，绝对路径
+
+worker.postMessage({
+  msg: 'hello worker',
+});
+
+worker.onMessage(function (res) {
+  console.log(res);
+});
+```

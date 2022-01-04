@@ -377,3 +377,7 @@ search(e) {
   const { detail } = e;
 }
 ```
+
+## 24.计算属性
+
+- 引入 miniprogram-computed
