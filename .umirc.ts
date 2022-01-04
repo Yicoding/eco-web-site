@@ -506,7 +506,24 @@ const umiConfig = {
         ],
       },
     ],
-    '/base/node': [{ children: ['/base/node'] }],
+    '/base/node': [
+      {
+        children: [
+          {
+            title: '1.node 基础',
+            path: '/base/node',
+          },
+          {
+            title: '2.node 实战',
+            path: '/base/node/combat',
+          },
+          {
+            title: '3.服务器迁移',
+            path: '/base/node/transfer',
+          },
+        ],
+      },
+    ],
     /***************** nav: 基础 *******************/
     /***************** nav: 框架 *******************/
     // React
