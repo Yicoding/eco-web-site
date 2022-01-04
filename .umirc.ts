@@ -598,6 +598,14 @@ const umiConfig = {
             title: '2.小程序双线程架构',
             path: '/frame/applet/double',
           },
+          {
+            title: '3.小程序场景',
+            path: '/frame/applet/scene',
+          },
+          {
+            title: '4.小程序性能优化',
+            path: '/frame/applet/performance',
+          },
         ],
       },
     ],

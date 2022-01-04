@@ -10,7 +10,7 @@ toc: menu
 
 - 双线程架构：视图线程和逻辑线程，两线程通过 WeixinJSBridge 与 native 通信
 
-- WXS(视图线程，不能调用 js\WXML\WCSS\js(setData),初始化数据使用 setData，后续不于后台交互使用 wxs
+- WXS(视图线程，不能调用 js\WXML\WXSS\js(setData),初始化数据使用 setData，后续不于后台交互使用 wxs
 
 - 视图组件和原生组件：原生组件放在视图组件上方
 
@@ -22,7 +22,7 @@ toc: menu
 
 - 无法使用原生组件覆盖，使用 js-sdk 在 H5 页面实现功能
 
-### 判断是否在小程序环境
+### 3.判断是否在小程序环境
 
 - js-sdk
 
@@ -30,7 +30,7 @@ toc: menu
 
 - 判断 user-agent
 
-## 3.鉴权方式
+## 4.鉴权方式
 
 - HTTP Basic Authentication
 
@@ -42,13 +42,13 @@ toc: menu
 
 wx.login\wx.checkSession\wx.request
 
-## 4.h5 与小程序通信
+## 5.h5 与小程序通信
 
 - h5：postMessage 发送消息
 
 - 小程序：wx.miniProgram.postMessage 获取信息
 
-## 5.三种状态
+## 6.三种状态
 
 访客态、游客态、会员态
 
@@ -58,7 +58,7 @@ wx.login\wx.checkSession\wx.request
 
 - 会员态：授权手机号或使用账号密码登录，使用手机号进行账号关联
 
-## 6.静默登录
+## 7.静默登录
 
 ### 1）登录流程
 
@@ -128,7 +128,7 @@ wx.login\wx.checkSession\wx.request
 
 - 小程序到开发者服务器登录后交易超时：重新发送请求即可
 
-## 7.用户登录
+## 8.用户登录
 
 - 操作具体业务，需要会员及用户体系时，添加用户登录流程，弹出登录弹框，通常使用微信一键登录或账号密码登录两种方式，一般使用手机号进行用户体系关联
 
@@ -144,7 +144,7 @@ wx.login\wx.checkSession\wx.request
 
     - 登录失败返回登录弹框
 
-## 8.小程序生命周期
+## 9.小程序生命周期
 
 ### 1）应用周期
 
@@ -162,6 +162,8 @@ wx.login\wx.checkSession\wx.request
 
 - onHide 前后台切换
 
+- onReady 页面首次渲染完毕时执行
+
 - onUnLoad 重定向 / 路由切换
 
 - onPullDownRefresh 下拉
@@ -170,7 +172,7 @@ wx.login\wx.checkSession\wx.request
 
 - onShareAppMessage 分享
 
-## 9.注意事项
+## 10.注意事项
 
 - 1.在一次渲染周期内，收到多次 setData 的话，只会渲染一次
 
@@ -182,11 +184,11 @@ wx.login\wx.checkSession\wx.request
 
   - 与界面渲染无关的数据最好不要设置在 data
 
-## 10.小程序优势
+## 11.小程序优势
 
 - 无需下载安装，直接使用，运行速度快
 
-## 11.小程序页面构成
+## 12.小程序页面构成
 
 - index.js(js 交互逻辑)
 
@@ -196,7 +198,7 @@ wx.login\wx.checkSession\wx.request
 
 - index.wxss(样式)
 
-## 12.小程序与 H5 的区别
+## 13.小程序与 H5 的区别
 
 - 1.运行环境：H5 的宿主环境是浏览器，小程序基于浏览器内核重构的内置解析器，无 dom、bom 对象
 
@@ -204,12 +206,174 @@ wx.login\wx.checkSession\wx.request
 
 - 3.渲染机制：小程序逻辑层和渲染层是分开的，而 H5 页面 UI 渲染和 js 执行都是一个线程，会出现阻塞
 
-## 13.小程序运行机制
+## 14.小程序运行机制
 
 - 1.热启动：用户已经打开某小程序，然后在一定时间内再次打开该小程序，此时无需重启启动，只需将后台的小程序切换到前台
 
 - 2.冷启动：用户首次打开小程序或被微信主动销毁后再次打开，小程序重新加载启动
 
-- 3.销毁：只有当小程序进入后天一定时间，或者系统占用资源过高，才会被真正销毁
+- 3.销毁：只有当小程序进入后一定时间，或者系统占用资源过高，才会被真正销毁
 
-## 14.不能打开超过 10 个层级的页面
+## 15.不能打开超过 10 个层级的页面
+
+## 16.小程序传值
+
+- 给 HTML 元素添加 `data-*`属性来传递我们需要的值，然后通过 `e.currentTarget.dataset` 或 `onload的 param` 参数获取。但 `data-` 名称不能有大写字母和不可以存放对象
+
+## 17.小程序的 wxss 和 css 有哪些不一样的地方？
+
+- wxss 的图片引入需使用外链地址
+
+- 没有 Body；样式可直接使用 import 导入
+
+## 18.下拉刷新
+
+- json 中配置 enablePullDownRefresh: true
+
+- Page 中定义 onPullDownRefresh 钩子函数
+
+- 调用 wx.stopPullDownRefresh 停止下拉刷新
+
+## 19.阻止冒泡
+
+- 事件前加 catch
+
+## 20.小程序页面间传递数据的方法
+
+### 1）globalData
+
+- 在 app.js 文件中定义全局变量 globalData， 将需要存储的信息存放在里面
+
+### 2）url 传递
+
+- 使用 wx.navigateTo 与 wx.redirectTo 的时候，可以将部分数据放在 url 里面，并在新页面 onLoad 的时候初始化
+
+### 3）本地缓存
+
+- wx.setStorage
+
+- wx.getStorage
+
+### 4）mobx
+
+- mobx-miniprogram
+
+**1.注册**
+
+```js
+// store.js
+import { observable, action } from 'mobx-miniprogram';
+
+export const store = observable({
+  // 数据字段
+  numA: 1,
+  numB: 2,
+
+  // 计算属性
+  get sum() {
+    return this.numA + this.numB;
+  },
+
+  // actions
+  update: action(function () {
+    const sum = this.sum;
+    this.numA = this.numB;
+    this.numB = sum;
+  }),
+});
+```
+
+**2.Component 中使用**
+
+```js
+import { storeBindingsBehavior } from 'mobx-miniprogram-bindings';
+import { store } from './store';
+
+Component({
+  behaviors: [storeBindingsBehavior],
+  data: {
+    someData: '...',
+  },
+  storeBindings: {
+    store,
+    fields: {
+      numA: () => store.numA,
+      numB: (store) => store.numB,
+      sum: 'sum',
+    },
+    actions: {
+      buttonTap: 'update',
+    },
+  },
+  methods: {
+    myMethod() {
+      this.data.sum; // 来自于 MobX store 的字段
+    },
+  },
+});
+```
+
+**3.Page 中使用**
+
+```js
+import { storeBindingsBehavior } from 'mobx-miniprogram-bindings';
+const { common: store } = require('../../../store/index');
+
+Page({
+  data: {
+    someData: '...',
+  },
+  onLoad() {
+    this.storeBindings = createStoreBindings(this, {
+      store,
+      fields: ['numA', 'numB', 'sum'],
+      actions: ['update'],
+    });
+  },
+  onUnload() {
+    this.storeBindings.destroyStoreBindings();
+  },
+  myMethod() {
+    this.data.sum; // 来自于 MobX store 的字段
+  },
+});
+```
+
+## 21.获取当前页面栈
+
+```js
+const pages = getCurrentPages();
+```
+
+- 数组中第一个元素为首页
+
+- 最后一个元素为当前页面
+
+## 22.父组件使用子组件方法 selectComponent
+
+- 返回子组件实例对象
+
+```js
+const child = this.selectComponent('.my-component');
+console.log(child);
+```
+
+- 如果是在组件中 this 替换成 wx 调用
+
+## 23.子组件通知父组件 triggerEvent
+
+- 子组件
+
+```js
+this.triggerEvent('click', '');
+```
+
+- 父组件
+
+```js
+<search bind:click="search" />
+
+search(e) {
+  const { detail } = e;
+}
+```
