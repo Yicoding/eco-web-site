@@ -633,28 +633,19 @@ const umiConfig = {
       {
         children: [
           {
-            title: '1.IIFE',
-            path: 'base',
+            title: '模块化规范',
+            path: '/engineering/modular',
           },
+        ],
+      },
+    ],
+    // 工程化
+    '/engineering/base': [
+      {
+        children: [
           {
-            title: '2.commonJS',
-            path: 'base',
-          },
-          {
-            title: '3.AMD',
-            path: 'hooks',
-          },
-          {
-            title: '4.CMD',
-            path: 'hooks',
-          },
-          {
-            title: '5.UMD',
-            path: 'hooks',
-          },
-          {
-            title: '6.ESModule',
-            path: 'hooks',
+            title: '前端工程化',
+            path: '/engineering/base',
           },
         ],
       },

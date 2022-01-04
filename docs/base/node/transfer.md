@@ -39,3 +39,11 @@ sudo /etc/init.d/bt default
 ## 7.卸载旧的 phpAdmin
 
 - 数据库报错、root 用户设置不了权限：phpAdmin 有关
+
+## 8.端口放行
+
+## 9.申请 ssl 证书
+
+- 一级域名和二级域名不能共用一个证书
+
+## 10.mysql 配置用户 root %
