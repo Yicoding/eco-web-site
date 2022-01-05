@@ -417,3 +417,239 @@ module.exports = function (env) {
   };
 };
 ```
+
+## 17.启用 HMR
+
+- 热模块替换 hot: true
+
+- 从 webpack-dev-server v4.0.0 开始，热模块替换是默认开启的
+
+```js
+// webpack.config.js
+devServer: {
+  static: './dist',
+  hot: true,
+},
+```
+
+## 18.Tree Shaking
+
+- package.json 中设置 sideEffects
+
+- 如果所有代码都不包含副作用，我们就可以简单地将该属性标记为 false
+
+```js
+"sideEffects": false
+```
+
+- 有副作用时，可以改为提供一个数组
+
+```js
+"sideEffects": ["*.less"]
+```
+
+- 如果在项目中使用类似 css-loader 并 import 一个 CSS 文件，则需要将其添加到 side effect 列表中，以免在生产模式中无意中将它删除
+
+## 19.webpack-merge
+
+- 用于区分开发和生产环境配置
+
+### 1）安装依赖
+
+```bash
+yarn add -D webpack-merge
+```
+
+### 2）新建文件
+
+- webpack.common.js
+
+```js
+const path = require('path');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+
+module.exports = {
+  entry: {
+    app: './src/index.js',
+  },
+  plugins: [
+    new HtmlWebpackPlugin({
+      title: 'Production',
+    }),
+  ],
+  output: {
+    filename: '[name].bundle.js',
+    path: path.resolve(__dirname, 'dist'),
+    clean: true,
+  },
+};
+```
+
+- webpack.dev.js
+
+```js
+const { merge } = require('webpack-merge');
+const common = require('./webpack.common.js');
+
+module.exports = merge(common, {
+  mode: 'development',
+  devtool: 'inline-source-map',
+  devServer: {
+    static: './dist',
+  },
+});
+```
+
+- webpack.prod.js
+
+```js
+const { merge } = require('webpack-merge');
+const common = require('./webpack.common.js');
+
+module.exports = merge(common, {
+  mode: 'production',
+});
+```
+
+### 3）配置 npm scripts
+
+```js
+"scripts": {
+  "start": "webpack serve --open --config webpack.dev.js",
+  "build": "webpack --config webpack.prod.js"
+},
+```
+
+## 20.压缩 css
+
+### 1）mini-css-extract-plugin
+
+```js
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+
+module.exports = {
+  plugins: [new MiniCssExtractPlugin()],
+  module: {
+    rules: [
+      {
+        test: /\.css$/i,
+        use: [MiniCssExtractPlugin.loader, 'css-loader'],
+      },
+    ],
+  },
+};
+```
+
+### 2）生产模式压缩 css-minimizer-webpack-plugin
+
+```js
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
+
+module.exports = {
+  plugins: [
+    new MiniCssExtractPlugin({
+      filename: '[name].css',
+      chunkFilename: '[id].css',
+    }),
+  ],
+  module: {
+    rules: [
+      {
+        test: /\.css$/,
+        use: [MiniCssExtractPlugin.loader, 'css-loader'],
+      },
+    ],
+  },
+  optimization: {
+    minimizer: [
+      // For webpack@5 you can use the `...` syntax to extend existing minimizers (i.e. `terser-webpack-plugin`), uncomment the next line
+      // `...`,
+      new CssMinimizerPlugin(),
+    ],
+  },
+};
+```
+
+## 21.加载 Polyfills
+
+### babel-polyfill
+
+```bash
+# 安装依赖
+yarn add babel-polyfill
+```
+
+```js
+// 使用
+import 'babel-polyfill';
+```
+
+## 22.typescript
+
+### 1）安装依赖
+
+```bahs
+yarn add -D typescript ts-loader
+```
+
+### 2）添加 tsconfig.json 文件
+
+```json
+{
+  "compilerOptions": {
+    "outDir": "./dist/",
+    "noImplicitAny": true,
+    "sourceMap": true, // 开启source map
+    "module": "es6",
+    "target": "es5",
+    "jsx": "react",
+    "allowJs": true,
+    "moduleResolution": "node"
+  }
+}
+```
+
+### 3）修改 webpack.config.js
+
+```js
+const path = require('path');
+
+module.exports = {
+  entry: './src/index.ts',
+  module: {
+    rules: [
+      {
+        test: /\.tsx?$/,
+        use: 'ts-loader',
+        exclude: /node_modules/,
+      },
+    ],
+  },
+  resolve: {
+    extensions: ['.tsx', '.ts', '.js'],
+  },
+  output: {
+    filename: 'bundle.js',
+    path: path.resolve(__dirname, 'dist'),
+  },
+};
+```
+
+### 4）使用第三方类库
+
+- 例如：lodash
+
+```bash
+yarn add -D @types/lodash
+```
+
+### 5）导入其他资源
+
+```js
+// custom.d.ts
+declare module '*.svg' {
+  const content: any;
+  export default content;
+}
+```
