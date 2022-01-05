@@ -742,7 +742,7 @@ const umiConfig = {
             path: '/engineering/tool/yalc',
           },
           {
-            title: '8.eslint',
+            title: '8.eslint 和 prettier',
             path: '/engineering/tool/eslint',
           },
         ],
@@ -757,19 +757,35 @@ const umiConfig = {
             path: '/engineering/build',
           },
           {
-            title: '2.webpack',
+            title: '2.webpack基础',
             path: '/engineering/build/webpack',
           },
           {
-            title: '3.rollup',
+            title: '3.webpack核心',
+            path: '/engineering/build/webpack-core',
+          },
+          {
+            title: '4.webpack从0搭建',
+            path: '/engineering/build/webpack-site',
+          },
+          {
+            title: '5.webpack性能优化',
+            path: '/engineering/build/webpack-promote',
+          },
+          {
+            title: '6.webpack考点',
+            path: '/engineering/build/webpack-point',
+          },
+          {
+            title: '7.rollup',
             path: '/engineering/build/rollup',
           },
           {
-            title: '4.esbuild',
+            title: '8.esbuild',
             path: '/engineering/build/esbuild',
           },
           {
-            title: '5.vite',
+            title: '9.vite',
             path: '/engineering/build/vite',
           },
         ],

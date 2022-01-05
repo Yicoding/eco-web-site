@@ -22,11 +22,15 @@ yarn eject
 
 ## 3.路径别名
 
-### 1）修改 config/webpack.config.js
+### 1）js 支持
+
+- 修改 `config/webpack.config.js`
 
 ```js
 // config/webpack.config.js
 // ...
+const path = require('path');
+
 modules.export = {
   // ...
   resolve: {
@@ -39,7 +43,9 @@ modules.export = {
 };
 ```
 
-### 2）添加 tsconfig.paths.json 文件
+### 2）ts 支持
+
+- 添加 `tsconfig.paths.json` 文件
 
 ```json
 {

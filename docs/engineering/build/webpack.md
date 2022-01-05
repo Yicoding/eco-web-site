@@ -2,11 +2,11 @@
 toc: menu
 ---
 
-# webpack
+# webpack 基础
 
 - webpack 是一个 JS 代码模块化的打包工具
 
-- webpack-cli 是使用 webpack 的命令行工具，
+- webpack-cli 是使用 webpack 的命令行工具
 
 ## 1.概念
 
