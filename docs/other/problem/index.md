@@ -89,3 +89,11 @@ yarn add antd-mobile-v5@npm:antd-mobile@next
   "antd-mobile-v5": "npm:antd-mobile@next"
 }
 ```
+
+## 6.商品开发
+
+## 7.图片上传服务端保存问题
+
+## 8.使用 CI/CD 构建好处
+
+- 不在本地打包，统一在服务器上打包，每次安装新的 npm 包，防止项目在本地打包成功，其他人打包失败的情况，可以检查 package.json 中是否漏掉相关依赖

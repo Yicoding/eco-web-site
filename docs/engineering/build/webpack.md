@@ -8,6 +8,8 @@ toc: menu
 
 - webpack-cli 是使用 webpack 的命令行工具
 
+- webpack `默认支持`处理 `JS` 与 `JSON` 文件，`其他类型都处理不了`，必须借助 loader
+
 ## 1.概念
 
 ### 1）入口(entry)
@@ -110,11 +112,11 @@ or
 
 ### 4）模块(loader)
 
-loader 用于对模块的源代码进行转换
+loader 用于对模块的源代码进行转换：Loader 就是将 Webpack 不认识的内容转化为认识的内容
 
-- test 属性，用于标识出应该被对应的 loader 进行转换的某个或某些文件。
+- test 属性，用于标识出应该被对应的 loader 进行转换的某个或某些文件
 
-- use 属性，表示进行转换时，应该使用哪个 loader。
+- use 属性，表示进行转换时，应该使用哪个 loader
 
 三种使用方式
 

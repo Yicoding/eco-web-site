@@ -272,6 +272,51 @@ module.exports = {
 };
 ```
 
+### 1）使用表现
+
+| devtool                      | build | rebuild       | 显示代码 | SourceMap 文件 | 描述         |
+| ---------------------------- | ----- | ------------- | -------- | -------------- | ------------ |
+| (none)                       | 很快  | 很快          | 无       | 无             | 无法定位错误 |
+| eval                         | 快    | 很快（cache） | 编译后   | 无             | 定位到文件   |
+| source-map                   | 很慢  | 很慢          | 源代码   | 有             | 定位到行列   |
+| eval-source-map              | 很慢  | 一般（cache） | 编译后   | 有（dataUrl）  | 定位到行列   |
+| eval-cheap-source-map        | 一般  | 快（cache）   | 源代码   | 有             | 定位到行     |
+| eval-cheap-module-source-map | 慢    | 快（cache）   | 源代码   | 有             | 定位到行     |
+| inline-source-map            | 很慢  | 很慢          | 源代码   | 有（dataUrl）  | 定位到行     |
+| hidden-source-map            | 很慢  | 很慢          | 源代码   | 有             | 无法定位错误 |
+| nosource-source-map          | 很慢  | 很慢          | 源代码   | 无             | 定位到文件   |
+
+### 2）校验规则
+
+| 关键字    | 描述                                                    |
+| --------- | ------------------------------------------------------- |
+| inline    | 代码内通过 dataUrl 形式引入 SourceMap                   |
+| hidden    | 生成 SourceMap 文件，但不使用                           |
+| eval      | eval(...) 形式执行代码，通过 dataUrl 形式引入 SourceMap |
+| nosources | 不生成 SourceMap                                        |
+| cheap     | 只需要定位到行信息，不需要列信息                        |
+| module    | 展示源代码中的错误位置                                  |
+
+### 3）推荐配置
+
+**1.本地开发**
+
+- 推荐：`eval-cheap-module-source-map`
+
+- 理由：
+
+  - 本地开发首次打包慢点没关系，因为 eval 缓存的原因，rebuild 会很快
+
+  - 开发中，我们每行代码不会写的太长，只需要定位到行就行，所以加上 cheap
+
+  - 我们希望能够找到源代码的错误，而不是打包后的，所以需要加上 modele
+
+**2.生产环境**
+
+- 推荐：`不使用 source map`
+
+- 理由：打包速度快
+
 ## 11.使用 webpack-dev-server
 
 - 提供了一个基本的 web server，并且具有 live reloading(实时重新加载) 功能
@@ -429,6 +474,17 @@ module.exports = function (env) {
 devServer: {
   static: './dist',
   hot: true,
+  port: 9000, // 端口
+  proxy: {
+    '^/f': { // 代理所有`api文件`接口中url以/f开头的请求
+      target: 'http://localhost:9090', //
+      ws: true, // 代理 websockets
+      changeOrigin: true, // 是否跨域，虚拟的站点需要更管origin
+      pathRewrite: {
+          '^/f': '', // 把链接中开头的api替换成''
+      }
+    }
+  }
 },
 ```
 
@@ -524,6 +580,8 @@ module.exports = merge(common, {
 
 ### 1）mini-css-extract-plugin
 
+- 作用：分离样式文件
+
 ```js
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
@@ -537,6 +595,11 @@ module.exports = {
       },
     ],
   },
+  plugins: [
+    new MiniCssExtractPlugin({
+      filename: '[name].css',
+    }),
+  ],
 };
 ```
 
@@ -565,7 +628,7 @@ module.exports = {
     minimizer: [
       // For webpack@5 you can use the `...` syntax to extend existing minimizers (i.e. `terser-webpack-plugin`), uncomment the next line
       // `...`,
-      new CssMinimizerPlugin(),
+      new CssMinimizerPlugin(), // 将打包后的css代码压缩（去除换行、空格等）
     ],
   },
 };
@@ -594,6 +657,10 @@ yarn add -D typescript ts-loader
 ```
 
 ### 2）添加 tsconfig.json 文件
+
+```bahs
+tsc --init
+```
 
 ```json
 {
@@ -653,3 +720,196 @@ declare module '*.svg' {
   export default content;
 }
 ```
+
+## 23.publicPath
+
+- 用来指定应用程序中所有资源的基础路径
+
+```js
+// webpack.config.js
+output: {
+  publicPath: 'https://xxx.com/projectname/',
+},
+```
+
+## 25.postcss-loader
+
+- 自动添加 CSS3 部分属性的浏览器前缀
+
+### 1）安装依赖
+
+```bash
+yarn add postcss postcss-loader postcss-preset-env -D
+```
+
+### 2）修改 webpack.config.js
+
+```js
+const config = {
+  // ...
+  module: {
+    rules: [
+      {
+        test: /\.css$/, // 匹配所有的 css 文件
+        use: ['style-loader', 'css-loader', 'postcss-loader'],
+      },
+    ],
+  },
+  // ...
+};
+```
+
+### 3）创建 postcss 配置文件 postcss.config.js
+
+```js
+module.exports = {
+  plugins: [require('postcss-preset-env')],
+};
+```
+
+### 4）创建 postcss-preset-env 配置文件 .browserslistrc
+
+```bash
+last 2 versions # 回退两个浏览器版本
+> 0.5% # 全球超过0.5%人使用的浏览器，可以通过 caniuse.com 查看不同浏览器不同版本占有率
+IE 10 # 兼容IE 10
+```
+
+## 26.使用 less
+
+### 1）安装依赖
+
+```bash
+yarn add -D less less-loader
+```
+
+### 2）修改 webpack.config.js
+
+```js
+const config = {
+  // ...
+  module: {
+    rules: [
+      {
+        test: /\.css$/, // 匹配所有的 css 文件
+        use: ['style-loader', 'css-loader', 'postcss-loader', 'less-loader'],
+      },
+    ],
+  },
+};
+```
+
+## 27.JS 兼容性(Babel)
+
+### 1）安装依赖
+
+```bash
+yarn add babel-loader @babel/core @babel/preset-env -D
+```
+
+### 2）修改 webpack.config.js
+
+```js
+module: {
+  rules: [
+    {
+      test: /\.js$/i,
+      use: [
+        {
+          loader: 'babel-loader',
+          options: {
+            presets: [
+              '@babel/preset-env'
+            ],
+          }
+        }
+      ]
+    },
+  ]
+},
+```
+
+### 3）第二种方式：将 Babel 配置文件提取出来
+
+- 根目录下新增 .babelrc.js
+
+```js
+module.exports = {
+  presets: [
+    [
+      '@babel/preset-env',
+      {
+        // useBuiltIns: false 默认值，无视浏览器兼容配置，引入所有 polyfill
+        // useBuiltIns: entry 根据配置的浏览器兼容，引入浏览器不兼容的 polyfill
+        // useBuiltIns: usage 会根据配置的浏览器兼容，以及你代码中用到的 API 来进行 polyfill，实现了按需添加
+        useBuiltIns: 'entry',
+        corejs: '3.9.1', // 是 core-js 版本号
+        targets: {
+          chrome: '58',
+          ie: '11',
+        },
+      },
+    ],
+  ],
+};
+```
+
+### 4）配置 Babel 插件
+
+- 使用装饰器@
+
+**1.安装依赖**
+
+```bash
+yarn add babel/plugin-proposal-decorators @babel/plugin-proposal-class-properties -D
+```
+
+**2..babelrc.js 加上插件的配置**
+
+```js
+module.exports = {
+  presets: [
+    [
+      '@babel/preset-env',
+      {
+        useBuiltIns: 'entry',
+        corejs: '3.9.1',
+        targets: {
+          chrome: '58',
+          ie: '11',
+        },
+      },
+    ],
+  ],
+  plugins: [
+    ['@babel/plugin-proposal-decorators', { legacy: true }],
+    ['@babel/plugin-proposal-class-properties', { loose: true }],
+  ],
+};
+```
+
+## 28.配置文件 hash 值
+
+```js
+output: {
+  filename: '[name].[hash:8].[ext]';
+}
+```
+
+| 占位符        | 解释                       |
+| :------------ | -------------------------- |
+| `name`        | 文件名                     |
+| `hash`        | 每次构建生成的唯一 hash 值 |
+| `chunkhash`   | 根据 chunk 生成 hash 值    |
+| `contenthash` | 根据文件内容生成 hash 值   |
+| ext           | 文件后缀名                 |
+| path          | 文件相对路径               |
+| folder        | 文件所在文件夹             |
+
+- hash、chunkhash、contenthash 区别：
+
+  - hash ：任何一个文件改动，整个项目的构建 hash 值都会改变
+
+  - chunkhash：文件的改动只会影响其所在 chunk 的 hash 值
+
+  - contenthash：每个文件都有单独的 hash 值，文件的改动只会影响自身的 hash 值
