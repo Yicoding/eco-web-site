@@ -913,3 +913,176 @@ output: {
   - chunkhash：文件的改动只会影响其所在 chunk 的 hash 值
 
   - contenthash：每个文件都有单独的 hash 值，文件的改动只会影响自身的 hash 值
+
+## 29.用 babel-laoder 打包 jsx
+
+### 1）安装
+
+```bash
+yarn add @babel/preset-react -D
+```
+
+### 2）修改配置
+
+```js
+use: {
+  loader: 'babel-loader',
+  options: {
+    presets: [
+      '@babel/preset-env',
+      '@babel/preset-react' // 新增
+    ]
+  }
+}
+```
+
+## 30.用 babel-loader 打包 tsx
+
+### 1）安装依赖
+
+```bash
+yarn add -D @types/react
+```
+
+### 2）修改 tsconfig.json
+
+```js
+"jsx": "react-jsx"
+```
+
+## 31.给 webpack 配置 eslint
+
+```bash
+yarn add -D
+eslint-config-react-app
+@typescript-eslint/eslint-plugin@^4.0.0
+@typescript-eslint/parser@^4.0.0
+babel-eslint@^10.0.0
+eslint@^7.5.0
+eslint-plugin-flowtype@^5.2.0
+eslint-plugin-import@^2.22.0
+eslint-plugin-jsx-a11y@^6.3.1
+eslint-plugin-react@^7.20.3
+eslint-plugin-react-hooks@^4.0.8
+```
+
+```js
+// .eslintrc.js
+module.exports = {
+  //继承 eslint-config-react-app这个里面包含create react app的eslint配置
+  extends: 'react-app',
+  rules: {
+    // jsx使用 react
+    'react/jsx-uses-react': [2],
+    // 提示要在 JSX 文件里手动引入 React
+    'react/react-in-jsx-scope': [2],
+    'no-console': [0],
+  },
+};
+```
+
+- 让 webpack 可以感知到 eslint 的配置,从而在编译的过程中提示报错信息
+
+```bash
+yarn add eslint-webpack-plugin -D
+```
+
+```js
+// webpack.config.js
+const ESLintPlugin = require('eslint-webpack-plugin');
+module.exports = {
+  plugins: [
+    new ESLintPlugin({
+      extensions: ['.js', '.jsx', '.ts', '.tsx'], //不加就不会去检测.jsx文件了
+    }),
+  ],
+};
+```
+
+## 32.让 eslint 支持 TypeScript
+
+```bash
+yarn add eslint-config-airbnb-typescript @types/react -D
+```
+
+```js
+// .eslintrc.js
+//覆盖之前的配置（检测ts代码）
+overrides: [
+  {
+    files: ['*.ts', '*.tsx'],
+    parserOptions: {
+      project: './tsconfig.json',
+    },
+    extends: ['airbnb-typescript'],
+    rules: {
+      '@typescript-eslint/object-curly-spacing': [0],
+      'import/prefer-default-export': [0],
+      'no-console': [0],
+      'import/extensions': [0],
+    },
+  },
+];
+```
+
+## 33.webpack 优化 单独打包 runtime
+
+```js
+optimization: {
+  runtimeChunk: 'single',  // 运行时文件单独打包
+},
+```
+
+### 为什么要单独打包 runtime
+
+- runtime 里面的文件是 webpack 为了运行 main.js 文件所要依赖的文件
+
+- 如果不单独打包，如果我们修改了 webpack 的配置之后 mian.js 里面的内容就会发生变化，用户的缓存就会失效，如果单独打包的话当修改完 webpack 的配置之后只，如果我们没有改变 main.js 里面的内容的话，就不会重新打包 main.js 的内容，这样就可以节省宽带，提高用户访问页面的速度
+
+```js
+// webpack.config.js
+optimization: {
+  moduleIds: 'deterministic',
+  runtimeChunk: 'single',  //运行时文件单独打包
+  splitChunks: {
+    cacheGroups: {
+      common: {
+        priority: 5,
+        minSize: 0,
+        minChunks: 2, // 同一个文件至少被多少个入口引用了
+        chunks: 'all',
+        name: 'common'
+      },
+      vendor: {
+        priority: 10,
+        minSize: 0, /* 如果不写 0，由于 React 文件尺寸太小，会直接跳过 */
+        test: /[\\/]node_modules[\\/]/, // 为了匹配 /node_modules/ 或 \node_modules\
+        name: 'vendors', // 文件名
+        chunks: 'all',  // all 表示同步加载和异步加载，async 表示异步加载，initial 表示同步加载
+        // 这三行的整体意思就是把两种加载方式的来自 node_modules 目录的文件打包为 vendors.xxx.js
+        // 其中 vendors 是第三方的意思
+      }
+    },
+  },
+},
+```
+
+## 34.webpack 多页面
+
+```js
+// webpack.config.js
+entry: {
+  main: './src/index.js',
+  admin: './src/admin.js'
+},
+plugins: [
+  new HtmlWebpackPlugin({
+    filename: 'index.html',
+    chunks: ['main']
+  }),
+  new HtmlWebpackPlugin({
+    filename: 'admin.html',
+    chunks: ['admin']
+  })
+]
+```

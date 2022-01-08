@@ -769,23 +769,19 @@ const umiConfig = {
             path: '/engineering/build/webpack-site',
           },
           {
-            title: '5.webpack性能优化',
-            path: '/engineering/build/webpack-promote',
-          },
-          {
-            title: '6.webpack考点',
+            title: '5.webpack考点',
             path: '/engineering/build/webpack-point',
           },
           {
-            title: '7.rollup',
+            title: '6.rollup',
             path: '/engineering/build/rollup',
           },
           {
-            title: '8.esbuild',
+            title: '7.esbuild',
             path: '/engineering/build/esbuild',
           },
           {
-            title: '9.vite',
+            title: '8.vite',
             path: '/engineering/build/vite',
           },
         ],
