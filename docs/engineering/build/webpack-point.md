@@ -8,6 +8,10 @@ toc: menu
 
 ## 1.devDependencies 和 dependencies 的区别
 
+- devDependencies 里面的插件只用于开发环境，不用于生产环境
+
+- dependencies 是需要发布到生产环境的
+
 ## 2.loader 和 plugin 的区别
 
 - `loader`：`用于转换特定类型的文件`，将 Webpack 不识别的内容转化为可识别的内容
@@ -31,7 +35,7 @@ module: {
 
 ## 4.css-loader 的作用
 
-- 处理 css
+- 处理 css，把 CSS 模块加载到 JS 代码中，但 js 并不会使用这个模块，需要借助 style-loader 来使用
 
 ## 5.style-loader 的作用
 
@@ -822,9 +826,146 @@ img.addEventListener('click', () => {
 import(/* webpackPreload: true */ 'ChartingLibrary');
 ```
 
-## 10.手写 loader
+## 10.loader 原理
 
-## 11.手写 Plugin
+### 1）loader 本质
+
+- 导出一个函数的 js 模块，函数的处理结果应该是 String 或者 Buffer（被转换为一个 string）
+
+  ```js
+  module.exports = function (content, map, meta) {
+    return someSyncOperation(content);
+  };
+  ```
+
+- 如果是单个处理结果，可以在同步模式中直接返回。如果有多个处理结果，则必须调用 `this.callback()`
+
+  ```js
+  module.exports = function (content, map, meta) {
+    this.callback(null, someSyncOperation(content), map, meta);
+    return; // 当调用 callback() 时总是返回 undefined
+  };
+  ```
+
+- 在异步模式中，必须调用 `this.async()`，来指示 loader runner 等待异步结果，它会返回 this.callback() 回调函数，随后 loader 必须返回 undefined 并且调用该回调函数
+
+  ```js
+  module.exports = function (content, map, meta) {
+    var callback = this.async();
+    someAsyncOperation(content, function (err, result) {
+      if (err) return callback(err);
+      callback(null, result, map, meta);
+    });
+  };
+  ```
+
+### 2）异步 loader
+
+- 原因：node 是单线程的，同步计算耗时长，所以尽可能设计异步 loader
+
+- 如果计算量很小，设计为同步也是可以的
+
+### 3）开发一个加载 md 文件的 loader
+
+**1.新建 about.md 文件**
+
+```
+<!-- ./src/about.md -->
+# About
+
+this is a markdown file.
+```
+
+**2.使用 about.md 文件**
+
+```js
+import about from './about';
+console.log('about', about);
+```
+
+**3.开发 md-loader 文件**
+
+```js
+module.exports = function (content, map, meta) {
+  const callback = this.async();
+
+  function transferHtml(source) {
+    const result = `module.exports = ${JSON.stringify(source)}`;
+    callback(null, result);
+  }
+
+  transferHtml(content);
+};
+```
+
+**4.webpack 配置 loader**
+
+```js
+const config = {
+  module: {
+    rules: [
+      {
+        test: /\.md$/i,
+        use: './md-loader',
+      },
+    ],
+  },
+};
+```
+
+## 11.Plugin 原理
+
+### 1）Plugin 机制
+
+- 钩子机制
+
+- 必须是一个函数或者是一个包含 apply 方法的对象
+
+- 一般会定义一个类型，在这个类型中定义 apply 方法。然后在使用时，再通过这个类型来创建一个实例对象去使用这个插件
+
+- `emit` 的钩子，这个钩子会在 Webpack 即将向输出目录输出文件时执行
+
+### 2）开发一个去掉 console.log 的插件
+
+**1.开发 remove-plugin 插件**
+
+```js
+// remove-plugin.js
+class RemovePlugin {
+  apply(complier) {
+    console.log('RemovePlugin启动');
+    complier.hooks.emit.tap('RemovePlugin', (compilation) => {
+      // compilation => 可以理解为此次打包的上下文
+      for (const name in compilation.assets) {
+        // 对象中的 assets 属性获取即将写入输出目录的资源文件信息
+        console.log('name', name);
+        // 文件内容需要通过遍历的值对象中的 source 方法获取
+        console.log('source', compilation.assets[name].source()); // 输出文件内容
+        if (name.endsWith('.js')) {
+          const contents = compilation.assets[name].source();
+          const noComments = contents.replace(/console.log\((.*)\)/g, '');
+          compilation.assets[name] = {
+            source: () => noComments,
+            size: () => noComments.length,
+          };
+        }
+      }
+    });
+  }
+}
+
+module.exports = RemovePlugin;
+```
+
+**2.webpack 配置 plugin**
+
+```js
+const RemovePlugin = require('./plugin/remove-plugin');
+
+const config = {
+  plugins: [new RemovePlugin()],
+};
+```
 
 ## 12.webpack 的作用
 
@@ -844,13 +985,42 @@ import(/* webpackPreload: true */ 'ChartingLibrary');
 
 - 1、读取 webpack 的配置参数
 
-- 2、启动 webpack，创建 Compiler 对象并开始解析项目
+- 2、Webpack CLI 启动打包流程
 
-- 3、从入口文件（entry）开始解析，并且找到其导入的依赖模块，递归遍历分析，形成依赖关系树
+  - Webpack CLI 会通过 `yargs` 模块解析 CLI 参数
 
-- 4、对不同文件类型的依赖模块文件使用对应的 Loader 进行编译，最终转为 Javascript 文件
+  - 调用 `bin/utils/convert-argv.js` 模块将得到的命令行参数转换为 Webpack 的配置选项对象
 
-- 5、整个过程中 webpack 会通过发布订阅模式，向外抛出一些 hooks，而 webpack 的插件即可通过监听这些关键的事件节点，执行插件任务进而达到干预输出结果的目的
+- 3、载入 Webpack 核心模块，创建 Compiler 对象并开始解析项目
+
+  ```js
+  const webpack = require('webpack');
+
+  let compiler = webpack(options);
+  ```
+
+  - 如果不是监视模式就调用 Compiler 对象的 run 方法，开始构建整个应用
+
+    ```js
+    compiler.run();
+    ```
+
+    ```js
+    // run.js
+    run(callback) {
+      this.hooks.beforeRun.callAsync(this, () => {
+        this.compile()
+      })
+    }
+    ```
+
+- 4、从入口文件（entry）开始解析，并且找到其导入的依赖模块，递归遍历分析，形成依赖关系树
+
+- 5、对不同文件类型的依赖模块文件使用对应的 Loader 进行编译，最终转为 Javascript 文件
+
+- 6、合并 Loader 处理完的结果，将打包结果输出到 dist 目录
+
+- 整个过程中 webpack 会通过发布订阅模式，向外抛出一些 hooks，而 webpack 的插件即可通过监听这些关键的事件节点，执行插件任务进而达到干预输出结果的目的
 
 ### 分析
 
@@ -914,7 +1084,7 @@ import(/* webpackPreload: true */ 'ChartingLibrary');
 
 - 是一种源码的映射
 
-## 面试题
+## 15.面试题
 
 ### 1）Webpack 配置中用过哪些 Loader ？都有什么作用？
 
@@ -927,6 +1097,17 @@ import(/* webpackPreload: true */ 'ChartingLibrary');
 ### 5）如何编写 Plugin ? 介绍一下思路？
 
 ### 6）Webpack optimize 有配置过吗？可以简单说说吗？
+
+- 主要用来做性能优化
+
+  - 1.webpack.optimize.UglifyJsPlugin 压缩输出文件
+
+  - 2.webpack.optimize.CommonsChunkPlugin 提取公共模块
+
+  - 3.webpack.optimize.DedupePlugin 文件去重
+
+  - 4.optimization.SplitChunks：功能与上面的 webpack.optimize.CommonsChunkPlugin 一样，只不过 optimization.SplitChunks 是 webpack4 之后推荐使用的
+    - 内置的，不需要安装
 
 ### 7）Webpack 层面如何性能优化？
 
@@ -941,3 +1122,288 @@ import(/* webpackPreload: true */ 'ChartingLibrary');
 ### 12）Webpack 和 Rollup 有什么相同点与不同点？
 
 ### 13）Webpack5 更新了哪些新特性？
+
+## 16.常见问题
+
+### 1）webpack treeShaking 机制的原理
+
+- treeShaking 也叫摇树优化，是一种通过移除多于代码，来优化打包体积的，生产环境默认开启
+
+- 可以在代码不运行的状态下，分析出不需要的代码
+
+- 利用 es6 模块的规范：
+  - ES6 Module 引入进行静态分析，故而编译的时候正确判断到底加载了那些模块
+  - 静态分析程序流，判断那些模块和变量未被使用或者引用，进而删除对应代码
+
+### 2）webpack 的构建流程是什么
+
+- 1.`初始化参数`：解析 webpack 配置参数，合并 shell 传入和 webpack.config.js 文件配置的参数,形成最后的配置结果
+
+- 2.`开始编译`：上一步得到的参数初始化 compiler 对象，注册所有配置的插件，插件 监听 webpack 构建生命周期的事件节点，做出相应的反应，执行对象的 run 方法开始执行编译
+
+- 3.`确定入口`：从配置的 entry 入口，开始解析文件构建 AST 语法树，找出依赖，递归下去
+
+- 4.`编译模块`：递归中根据文件类型和 loader 配置，调用所有配置的 loader 对文件进行转换，再找出该模块依赖的模块，再递归本步骤直到所有入口依赖的文件都经过了本步骤的处理
+
+- 5.`完成模块编译并输出`：递归完成后，得到每个文件结果，包含每个模块以及他们之间的依赖关系，根据 entry 或分包配置生成代码块 chunk
+
+- 6.`输出完成`：输出所有的 chunk 到文件系统
+
+### 3）webpack 的热更新原理
+
+- webpack 开启了 `express` 应用，添加了对 webpack 编译的监听，添加了和浏览器的 `websocket` 长连接，当文件变化触发 webpack 进行编译并完成后，会通过 `sokcet` 消息`告诉浏览器准备刷新`。而为了减少刷新的代价，就是不用刷新网页，而是刷新某个模块，webpack-dev-server 可以支持热更新，通过生成 文件的 hash 值来比对需要更新的模块，浏览器再进行热替换
+
+- 服务端：
+
+  - 启动 webpack-dev-server 服务器
+  - 创建 webpack 实例
+  - 创建 server 服务器
+  - 添加 webpack 的 done 事件回调
+  - 编译完成向客户端发送消息
+  - 创建 express 应用 app
+  - 设置文件系统为`内存文件系统`
+  - 添加 webpack-dev-middleware 中间件
+  - 中间件负责返回生成的文件
+  - 启动 webpack 编译
+  - 创建 http 服务器并启动服务
+  - 使用 sockjs 在浏览器端和服务端之间建立一个 websocket 长连接
+  - 创建 socket 服务器
+
+- 客户端：
+
+  - webpack-dev-server/client 端会监听到此 hash 消息
+  - 客户端收到 ok 消息后会执行 reloadApp 方法进行更新
+  - 在 reloadApp 中会进行判断，是否支持热更新，如果支持的话发生 webpackHotUpdate 事件，如果不支持就直接刷新浏览器
+  - 在 webpack/hot/dev-server.js 会监听 webpackHotUpdate 事件
+  - 在 check 方法里会调用 module.hot.check 方法
+  - HotModuleReplacement.runtime 请求 Manifest
+  - 通过调用 JsonpMainTemplate.runtime 的 hotDownloadManifest 方法
+  - 调用 JsonpMainTemplate.runtime 的 hotDownloadUpdateChunk 方法通过 JSONP 请求获取最新的模块代码
+  - 补丁 js 取回来或会调用 JsonpMainTemplate.runtime.js 的 webpackHotUpdate 方法
+  - 然后会调用 HotModuleReplacement.runtime.js 的 hotAddUpdateChunk 方法动态更新 模块代码
+  - 然后调用 hotApply 方法进行热更
+
+### 4）webpack 打包是 hash 码是如何生成的
+
+- 1.webpack 生态中存在多种计算 hash 的方式
+
+  - hash
+  - chunkhash
+  - contenthash
+
+- hash 代表每次 webpack 编译中生成的 hash 值，所有使用这种方式的文件 hash 都相同。每次构建都会使 webpack 计算新的 hash。chunkhash 基于入口文件及其关联的 chunk 形成，某个文件的改动只会影响与它有关联的 chunk 的 hash 值，不会影响其他文件 contenthash 根据文件内容创建。当文件内容发生变化时，contenthash 发生变化
+
+- 2.避免相同随机值
+
+  - webpack 在计算 hash 后分割 chunk。产生相同随机值可能是因为这些文件属于同一个 chunk,可以将某个文件提到独立的 chunk（如放入 entry）
+
+### 5）webpack 离线缓存静态资源如何实现
+
+- 在配置 webpack 时，我们可以使用 html-webpack-plugin 来注入到和 html 一段脚本来实现将第三方或者共用资源进行 静态化存储在 html 中注入一段标识，例如 <% HtmlWebpackPlugin.options.loading.html %> ,在 html-webpack-plugin 中即可通过配置 html 属性，将 script 注入进去
+- 利用 webpack-manifest-plugin 并通过配置 webpack-manifest-plugin ,生成 manifestjson 文件，用来对比 js 资源的差异，做到是否替换，当然，也要写缓存 script
+- 在我们做 Cl 以及 CD 的时候，也可以通过编辑文件流来实现静态化脚本的注入，来降低服务器的压力，提高性能
+- 可以通过自定义 plugin 或者 html-webpack-plugin 等周期函数，动态注入前端静态化存储 script
+
+### 6）webpack 常见的 plugin 有哪些
+
+- ProvidePlugin：自动加载模块，代替 require 和 import
+- html-webpack-plugin 可以根据模板自动生成 html 代码，并自动引用 css 和 js 文件
+- extract-text-webpack-plugin  将 js 文件中引用的样式单独抽离成 css 文件
+- DefinePlugin  编译时配置全局变量，这对开发模式和发布模式的构建允许不同的行为非常有用
+- HotModuleReplacementPlugin  热更新
+- optimize-css-assets-webpack-plugin  不同组件中重复的 css 可以快速去重
+- webpack-bundle-analyzer  一个 webpack 的 bundle 文件分析工具，将 bundle 文件以可交互缩放的 treemap 的形式展示。
+- compression-webpack-plugin  生产环境可采用 gzip 压缩 JS 和 CSS
+- happypack：通过多进程模型，来加速代码构建
+- clean-wenpack-plugin  清理每次打包下没有使用的文件
+- speed-measure-webpack-plugin:可以看至 U 每个 Loader 和 Plugin 执行耗时（整个扌丁包耗时、每个 Plugin 和 Loader 耗时）
+- webpack-bundle-analyzer:可视化 Webpack 输出文件的体积（业务组件、依赖第三方模块
+
+### 7）webpack 插件如何实现
+
+- webpack 本质是一个事件流机制，核心模块：tabable(Sync + Async)Hooks 构造出 === Compiler(编译) + Compiletion(创建 bundles)
+
+- 创建一个插件函数，在其 prototype 上定义 apply 方法，指定一个 webpack 自身的事件钩子
+- 函数内部处理 webpack 内部实例的特定数据 -处理完成后，调用 webpack 提供的回调函数
+
+### 8）webpack 有哪些常⻅的 Loader
+
+- file-loader：把⽂件输出到⼀个⽂件夹中，在代码中通过相对 URL 去引⽤输出的⽂件
+- url-loader：和 file-loader 类似，但是能在⽂件很⼩的情况下以 base64 的⽅式把⽂件内容注⼊到代码中去
+- source-map-loader：加载额外的 Source Map ⽂件，以⽅便断点调试
+- image-loader：加载并且压缩图⽚⽂件
+- babel-loader：把 ES6 转换成 ES5
+- css-loader：加载 CSS，⽀持模块化、压缩、⽂件导⼊等特性
+- style-loader：把 CSS 代码注⼊到 JavaScript 中，通过 DOM 操作去加载 CSS。
+- eslint-loader：通过 ESLint 检查 JavaScript 代码
+
+### 9）webpack 如何实现持久化缓存
+
+- 服务端设置 http 缓存头（cache-control）
+- 打包依赖和运行时到不同的 chunk，即作为 splitChunk,因为他们几乎是不变的
+- 延迟加载：使用 import()方式，可以动态加载的文件分到独立的 chunk,以得到自己的 chunkhash
+- 保持 hash 值的稳定：编译过程和文件内通的更改尽量不影响其他文件 hash 的计算，对于低版本 webpack 生成的增量数字 id 不稳定问题，可用 hashedModuleIdsPlugin 基于文件路径生成解决
+
+### 10）如何⽤ webpack 来优化前端性能？
+
+- ⽤ webpack 优化前端性能是指优化 webpack 的输出结果，让打包的最终结果在浏览器运⾏快速⾼效
+
+  - `压缩代码`：删除多余的代码、注释、简化代码的写法等等⽅式。可以利⽤ webpack 的 UglifyJsPlugin 和 ParallelUglifyPlugin 来压缩 JS ⽂件， 利⽤ cssnano （css-loader?minimize）来压缩 css
+  - `利⽤ CDN 加速`: 在构建过程中，将引⽤的静态资源路径修改为 CDN 上对应的路径。可以利⽤ webpack 对于 output 参数和各 loader 的 publicPath 参数来修改资源路径
+  - `Tree Shaking`: 将代码中永远不会⾛到的⽚段删除掉。可以通过在启动 webpack 时追加参数 --optimize-minimize 来实现
+  - `Code Splitting`: 将代码按路由维度或者组件分块(chunk),这样做到按需加载,同时可以充分利⽤浏览器缓存
+  - `提取公共第三⽅库`: SplitChunksPlugin 插件来进⾏公共模块抽取,利⽤浏览器缓存可以⻓期缓存这些⽆需频繁变动的公共代码
+
+## 17.常用 webpack 插件
+
+### 1）html-webpack-plugin
+
+- 将一个页面模板打包到 dist 目录下，默认都是自动引入 js or css
+
+### 2）clean-webpack-plugin
+
+- 用于每次打包 dist 目录删除
+
+- webpack5 已经内置，在 output 配置中设置 clean: true
+
+### 3）mini-css-extract-plugin
+
+- 将 css 样式从 js 文件中提取出来最终合成一个 css 文件
+
+### 4）optimization.SplitChunks
+
+- 用于将页面里的公共代码提取出来，从而进行优化加载速度
+
+```js
+module.exports = {
+  mode: 'development',
+  entry: {
+    main: './main.js',
+  },
+  output: {
+    filename: '[name].js',
+    path: __dirname + '/dist',
+  },
+  optimization: {
+    splitChunks: {
+      chunks: 'all',
+    },
+  },
+};
+```
+
+### 5）DefinePlugin
+
+- 用于注入全局变量，一般用在环境变量上
+
+```js
+const Webpack = require('webpack');
+module.exports = {
+  plugins: [
+    new Webpack.DefinePlugin({
+      STR: JSON.stringify('蛙人'),
+      'process.env': JSON.stringify('dev'),
+      name: '蛙人',
+    }),
+  ],
+};
+```
+
+### 6）ProvidePlugin
+
+```js
+const Webpack = require('webpack');
+module.exports = {
+  plugins: [
+    new Webpack.ProvidePlugin({
+      Vue: ['vue', 'default'],
+    }),
+  ],
+};
+```
+
+### 7）hot-module-replacement-plugin
+
+- 开启热模块更新
+
+```js
+const Webpack = require('webpack');
+module.exports = {
+  plugins: [new Webpack.HotModuleReplacementPlugin()],
+};
+```
+
+### 8）IgnorePlugin
+
+- 用于过滤打包文件，减少打包体积大小
+
+```js
+const Webpack = require('webpack');
+module.exports = {
+  plugins: [new Webpack.IgnorePlugin(/.\/lib/, /element-ui/)],
+};
+```
+
+### 8）terser-webpack-plugin
+
+- 用于压缩 js 文件
+
+```js
+const TerserPlugin = require('terser-webpack-plugin');
+module.exports = {
+  optimization: {
+    minimizer: [new TerserPlugin()],
+  },
+};
+```
+
+### 9）copy-webpack-plugin
+
+- 用于将文件拷贝到某个目录下
+
+```js
+const CopyWebpackPlugin = require('copy-webpack-plugin');
+module.exports = {
+  plugins: [
+    new CopyWebpackPlugin({
+      patterns: [
+        {
+          from: './main.js',
+          to: __dirname + '/dist/js',
+          toType: 'dir',
+        },
+      ],
+    }),
+  ],
+};
+```
+
+### 10）optimize-css-assets-webpack-plugin
+
+- 用于压缩 css 样式
+
+```js
+const OptimizeCssAssetsWebpackPlugin = require('optimize-css-assets-webpack-plugin');
+module.exports = {
+  plugins: [new OptimizeCssAssetsWebpackPlugin()],
+};
+```
+
+### 11）imagemin-webpack-plugin
+
+- 用于压缩图片
+
+```js
+const ImageminPlugin = require('imagemin-webpack-plugin').default;
+module.exports = {
+  plugins: [
+    new ImageminPlugin({
+      test: /\.(jpe?g|png|gif|svg)$/i,
+    }),
+  ],
+};
+```
+
+### 12）friendly-errors-webpack-plugin
+
+- 美化控制台，良好的提示错误
