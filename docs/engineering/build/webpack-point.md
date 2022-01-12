@@ -1107,7 +1107,13 @@ const config = {
   - 3.webpack.optimize.DedupePlugin 文件去重
 
   - 4.optimization.SplitChunks：功能与上面的 webpack.optimize.CommonsChunkPlugin 一样，只不过 optimization.SplitChunks 是 webpack4 之后推荐使用的
+
     - 内置的，不需要安装
+
+  - 总结：
+    - 使用 TerserPlugin 压缩 JavaScript
+    - 使用 splitChunks 做自动分包
+    - OptimizeCssAssetsWebpackPlugin 做 CSS 的压缩
 
 ### 7）Webpack 层面如何性能优化？
 
@@ -1337,73 +1343,148 @@ module.exports = {
 
 - 用于过滤打包文件，减少打包体积大小
 
-```js
-const Webpack = require('webpack');
-module.exports = {
-  plugins: [new Webpack.IgnorePlugin(/.\/lib/, /element-ui/)],
-};
-```
+  ```js
+  const Webpack = require('webpack');
+  module.exports = {
+    plugins: [new Webpack.IgnorePlugin(/.\/lib/, /element-ui/)],
+  };
+  ```
 
-### 8）terser-webpack-plugin
+### 9）terser-webpack-plugin
 
 - 用于压缩 js 文件
 
-```js
-const TerserPlugin = require('terser-webpack-plugin');
-module.exports = {
-  optimization: {
-    minimizer: [new TerserPlugin()],
-  },
-};
-```
+  ```js
+  const TerserPlugin = require('terser-webpack-plugin');
+  module.exports = {
+    optimization: {
+      minimizer: [new TerserPlugin()],
+    },
+  };
+  ```
 
-### 9）copy-webpack-plugin
+### 10）copy-webpack-plugin
 
 - 用于将文件拷贝到某个目录下
 
-```js
-const CopyWebpackPlugin = require('copy-webpack-plugin');
-module.exports = {
-  plugins: [
-    new CopyWebpackPlugin({
-      patterns: [
-        {
-          from: './main.js',
-          to: __dirname + '/dist/js',
-          toType: 'dir',
-        },
-      ],
-    }),
-  ],
-};
-```
+  ```js
+  const CopyWebpackPlugin = require('copy-webpack-plugin');
+  module.exports = {
+    plugins: [
+      new CopyWebpackPlugin({
+        patterns: [
+          {
+            from: './main.js',
+            to: __dirname + '/dist/js',
+            toType: 'dir',
+          },
+        ],
+      }),
+    ],
+  };
+  ```
 
-### 10）optimize-css-assets-webpack-plugin
+### 11）optimize-css-assets-webpack-plugin
 
 - 用于压缩 css 样式
 
-```js
-const OptimizeCssAssetsWebpackPlugin = require('optimize-css-assets-webpack-plugin');
-module.exports = {
-  plugins: [new OptimizeCssAssetsWebpackPlugin()],
-};
-```
+  ```js
+  const OptimizeCssAssetsWebpackPlugin = require('optimize-css-assets-webpack-plugin');
+  module.exports = {
+    plugins: [new OptimizeCssAssetsWebpackPlugin()],
+  };
+  ```
 
 ### 11）imagemin-webpack-plugin
 
 - 用于压缩图片
 
-```js
-const ImageminPlugin = require('imagemin-webpack-plugin').default;
-module.exports = {
-  plugins: [
-    new ImageminPlugin({
-      test: /\.(jpe?g|png|gif|svg)$/i,
-    }),
-  ],
-};
-```
+  ```js
+  const ImageminPlugin = require('imagemin-webpack-plugin').default;
+  module.exports = {
+    plugins: [
+      new ImageminPlugin({
+        test: /\.(jpe?g|png|gif|svg)$/i,
+      }),
+    ],
+  };
+  ```
 
 ### 12）friendly-errors-webpack-plugin
 
 - 美化控制台，良好的提示错误
+
+## 18.什么是浏览器的热更新
+
+### 1）一切依赖手动
+
+- 每次修改过后需要手动打包
+
+### 2）Watch 模式
+
+```json
+{
+  "scripts": {
+    "build:watch": "webpack --config webpack.config.js"
+  }
+}
+```
+
+- 效果：不用每次手动执行打包脚本
+
+- 待解决问题：需要手动点击刷新才能看到变更后的效果
+
+### 3）Live Reload
+
+```json
+// webpack.config.reload.js
+{
+  "devServer": {
+    "static": "./dist", // 为./dist目录中的静态页面文件提供本地服务渲染
+  }
+}
+
+// package.json
+{
+  "scripts": {
+    "dev:reload": "webpack-dev-server --open --config webpack.config.reload.js"
+  }
+}
+```
+
+- 效果：每次改动都会自动编译并刷新浏览器
+
+- 原理：通过 websocket，可以使打开的网页和本地服务间建立持久化的通信，当源代码发生变更时，就可以通过 Socket 通知到网页端，网页端在接到通知后会自动触发页面刷新
+
+- 待解决问题：每次修改都会刷新浏览器，不能保存页面状态
+
+### 4）Hot Module Replacement
+
+**1.修改 webpack.config.js**
+
+```js
+const webpack = require('webpack');
+const config = {
+  plugins: [new webpack.HotModuleReplacementPlugin()],
+};
+```
+
+**2.页面使用**
+
+- JS 代码中的热替换
+
+```js
+import { text } from './text.js';
+
+const div = document.createElement('div');
+document.body.appendChild(div);
+function render() {
+  div.innerHTML = text;
+}
+render();
+if (module.hot) {
+  module.hot.accept('./text.js', function () {
+    render();
+  });
+}
+```
