@@ -881,7 +881,19 @@ const umiConfig = {
             path: '/core/algorithm/dfs',
           },
           {
-            title: '算法做题思路总结',
+            title: '10.递归与回溯思想',
+            path: '/core/algorithm/recursion',
+          },
+          {
+            title: '11.二叉树真题',
+            path: '/core/algorithm/tree-code',
+          },
+          {
+            title: '12.二叉搜索树',
+            path: '/core/algorithm/tree-search',
+          },
+          {
+            title: '算法总结',
             path: '/core/algorithm/summary',
           },
         ],

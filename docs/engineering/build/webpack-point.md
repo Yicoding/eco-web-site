@@ -1488,3 +1488,61 @@ if (module.hot) {
   });
 }
 ```
+
+## 19.Source Map
+
+```js
+// ./webpack.config.js
+module.exports = {
+  devtool: 'source-map',
+};
+```
+
+### 1）定义
+
+- Source Map（源代码地图）就是解决此类问题最好的办法，从它的名字就能够看出它的作用：映射转换后的代码与源代码之间的关系。一段转换后的代码，通过转换过程中生成的 Source Map 文件就可以逆向解析得到对应的源代码
+
+- 是一个 json 文件
+
+### 2）模式
+
+**1.Eval 模式**
+
+```js
+// ./webpack.config.js
+module.exports = {
+  devtool: 'eval',
+};
+```
+
+- eval 指的是 JavaScript 中的一个函数，可以用来运行字符串中的 JavaScript 代码
+
+- eval 函数可以通过 sourceURL 指定代码所属文件路径
+
+- 在这种模式下没有 Source Map 文件，所以只能定位是哪个文件出错
+
+**2.eval-source-map**
+
+- 除了定位文件，还可以定位具体的行列信息
+
+- 能够生成 Source Map 文件，可以反推出源代码
+
+**3.eval-cheap-source-map**
+
+- 虽然也生成了 Source Map 文件，但是这种模式下的 Source Map 只能定位到行，而定位不到列
+
+- 构建速度会提升很多
+
+**4.eval-cheap-module-source-map**
+
+- 名字中不带 module 的模式，解析出来的源代码是经过 Loader 加工后的结果
+
+### 3）总结
+
+- 1.eval：定位文件
+
+- 2.source-map：定位行、列
+
+- 3.cheap：阉割版，只能定位到行
+
+- 4.带 module：可以还原原始代码
