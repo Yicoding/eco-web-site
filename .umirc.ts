@@ -893,6 +893,18 @@ const umiConfig = {
             path: '/core/algorithm/tree-search',
           },
           {
+            title: '13.平衡二叉树',
+            path: '/core/algorithm/tree-balance',
+          },
+          {
+            title: '14.基础排序算法',
+            path: '/core/algorithm/order-base',
+          },
+          {
+            title: '15.进阶排序算法',
+            path: '/core/algorithm/order-raise',
+          },
+          {
             title: '算法总结',
             path: '/core/algorithm/summary',
           },
