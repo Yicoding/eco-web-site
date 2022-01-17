@@ -905,6 +905,14 @@ const umiConfig = {
             path: '/core/algorithm/order-raise',
           },
           {
+            title: '16.动态规划通用套路',
+            path: '/core/algorithm/dynamic-base',
+          },
+          {
+            title: '17.动态规划重点解题模型',
+            path: '/core/algorithm/dynamic-raise',
+          },
+          {
             title: '算法总结',
             path: '/core/algorithm/summary',
           },
