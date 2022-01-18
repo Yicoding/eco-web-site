@@ -430,15 +430,19 @@ const umiConfig = {
             path: '/base/internet/https',
           },
           {
-            title: '5.输入 URL 到页面渲染的整个流程',
+            title: '5.AJAX',
+            path: '/base/internet/ajax',
+          },
+          {
+            title: '7.输入 URL 到页面渲染的整个流程',
             path: '/base/internet/url',
           },
           {
-            title: '6.跨域',
+            title: '8.跨域',
             path: '/base/internet/cross',
           },
           {
-            title: '7.前端网络安全',
+            title: '9.前端网络安全',
             path: '/base/internet/safe',
           },
         ],
