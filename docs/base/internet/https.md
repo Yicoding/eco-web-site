@@ -2,7 +2,7 @@
 toc: menu
 ---
 
-# HTTPS
+# https
 
 - HTTPS = HTTP + SSL/TLS
 

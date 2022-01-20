@@ -2,7 +2,7 @@
 toc: menu
 ---
 
-# TCP
+# tcp
 
 - TCP 是一个`可靠`的（reliable）、`面向连接`的（connection-oriented）、`基于字节流`（byte-stream）、`全双工`的（full-duplex）协议
 

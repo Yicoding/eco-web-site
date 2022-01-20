@@ -144,7 +144,14 @@ xhr.onerror = function () {
 xhr.abort();
 ```
 
-## 12.封装 ajax
+## 12.表单
+
+```js
+const form = new FormData();
+form.append('image', file);
+```
+
+## 13.封装 ajax
 
 ```js
 /* {string} method 请求方法

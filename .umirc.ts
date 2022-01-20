@@ -414,24 +414,28 @@ const umiConfig = {
       {
         children: [
           {
-            title: '1.UDP',
+            title: '1.udp',
             path: '/base/internet',
           },
           {
-            title: '2.TCP',
+            title: '2.tcp',
             path: '/base/internet/tcp',
           },
           {
-            title: '3.HTTP',
+            title: '3.http',
             path: '/base/internet/http',
           },
           {
-            title: '4.HTTPS',
+            title: '4.https',
             path: '/base/internet/https',
           },
           {
-            title: '5.AJAX',
+            title: '5.ajax',
             path: '/base/internet/ajax',
+          },
+          {
+            title: '6.axios',
+            path: '/base/internet/axios',
           },
           {
             title: '7.输入 URL 到页面渲染的整个流程',
