@@ -167,7 +167,7 @@ const umiConfig = {
         },
         {
           title: '微前端',
-          path: '/other/interview',
+          path: '/other/micro',
         },
         {
           title: '低代码平台',
@@ -932,6 +932,7 @@ const umiConfig = {
     '/other/problem': [{ children: ['/other/problem'] }],
     '/other/pay': [{ children: ['/other/pay'] }],
     '/other/hybrid': [{ children: ['/other/hybrid'] }],
+    '/other/micro': [{ children: ['/other/micro'] }],
     '/other/wechat': [{ children: ['/other/wechat'] }],
     '/other/diff': [{ children: ['/other/diff'] }],
     '/other/cache': [
