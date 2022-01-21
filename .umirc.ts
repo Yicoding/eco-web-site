@@ -175,7 +175,7 @@ const umiConfig = {
         },
         {
           title: 'hybrid',
-          path: '/other/interview',
+          path: '/other/hybrid',
         },
         {
           title: '开发遇见的问题',
@@ -931,6 +931,7 @@ const umiConfig = {
     /***************** nav: 其他 *******************/
     '/other/problem': [{ children: ['/other/problem'] }],
     '/other/pay': [{ children: ['/other/pay'] }],
+    '/other/hybrid': [{ children: ['/other/hybrid'] }],
     '/other/wechat': [{ children: ['/other/wechat'] }],
     '/other/diff': [{ children: ['/other/diff'] }],
     '/other/cache': [

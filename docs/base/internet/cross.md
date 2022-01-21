@@ -74,14 +74,33 @@ toc: menu
 
   - 设置为`*`，表示接受任意域名的请求（集成环境使用）
 
-  ```js
-  Access-Control-Allow-Origin: http://domain.com
-  Access-Control-Allow-Credentials: true
-  Access-Control-Expose-Headers: FooBar
-  Content-Type: text/html; charset=utf-8
+  - 1.手动设置
 
-  Access-Control-Allow-Origin: *
-  ```
+    ```js
+    // Node.js后台配置(express框架)
+    app.all('*', function (req, res, next) {
+      res.header('Access-Control-Allow-Origin', '*');
+      res.header('Access-Control-Allow-Headers', 'X-Requested-With');
+      res.header('Access-Control-Allow-Methods', 'PUT,POST,GET,DELETE,OPTIONS');
+      res.header('X-Powered-By', ' 3.2.1');
+      // 这段仅仅为了方便返回json而已
+      res.header('Content-Type', 'application/json;charset=utf-8');
+      if (req.method == 'OPTIONS') {
+        // 让options请求快速返回
+        res.sendStatus(200);
+      } else {
+        next();
+      }
+    });
+    ```
+
+  - 2.使用 cors 模块
+
+    ```js
+    const cors = require('koa2-cors');
+
+    app.use(cors());
+    ```
 
 ### 4）复杂请求
 
@@ -127,52 +146,99 @@ toc: menu
 - 由于是 script 标签，所以读不到 ajax 那么精确的状态，`不知道状态码`是什么，也`不知道响应头`是什么，它`只知道成功和失败`。
 - `不支持 post`（因为是 script 标签，所以`只支持 get 请求`）
 
-## 5.postMessage
+## 5.webpack 解决跨域
 
-- postMessage 是 HTML5 XMLHttpRequest Level 2 中的 API，且是为数不多可以跨域操作的 window 属性之一，它可用于解决以下方面的问题：
+- 使用代理
 
-  - 页面和其打开的新窗口的数据传递
-  - 多窗口之间消息传递
-  - 页面与嵌套的 iframe 消息传递
-  - 上面三个场景的跨域数据传递
+### 1）使用
+
+- 在 webpack 的 devServer 中配置 proxy
 
 ```js
-otherWindow.postMessage(message, targetOrigin, [transfer]);
+const webpackConfig = {
+  devServer: {
+    proxy: {
+      // 重写的方式，把请求代理到express服务器上
+      '/api': {
+        target: 'http://localhost:3000',
+        // 如果不希望传递/api，则需要重写路径：
+        pathRewrite: { '/api': '' }, // 把/api 替换为空
+        // 默认情况下，代理时会保留主机头的来源，可以将 changeOrigin 设置为 true 以覆盖此行为
+        changeOrigin: true,
+      },
+    },
+  },
+};
 ```
 
-## 6.websocket
+### 2）webpack 解决跨域的原理
 
-- Websocket 是 HTML5 的一个持久化的协议，它实现了浏览器与服务器的全双工通信，同时也是跨域的一种解决方案
+- 实际上代理是使用了是利用 http-proxy-middleware 这个插件完成的
 
-- WebSocket 和 HTTP 都是应用层协议，都基于 TCP 协议。但是 WebSocket 是一种双向通信协议，在建立连接之后，WebSocket 的 server 与 client 都能主动向对方发送或接收数据
+```js
+const express = require('express');
+const { createProxyMiddleware } = require('http-proxy-middleware');
 
-- Socket.io
+const app = express();
 
-```html
-<!-- socket.html -->
-<script>
-  let socket = new WebSocket('ws://localhost:3000');
-  socket.onopen = function () {
-    socket.send('客户端发送请求'); // 向服务器发送数据
-  };
-  socket.onmessage = function (e) {
-    console.log(e.data); // 接收服务器返回的数据
-  };
-</script>
+app.use(
+  '/api',
+  createProxyMiddleware({
+    target: 'http://www.example.org',
+    changeOrigin: true,
+  }),
+);
+app.listen(3000);
 ```
+
+### 3）http-proxy-middleware 做了什么
+
+- 本地起了一个 node 代理服务器（var httpProxy = require('http-proxy')），通过代理服务器去请求目标服务器，然后返回请求结果
+
+- 由于浏览器请求的是本地路径，所以不会有跨域问题
+
+### 4）代理服务器 http-proxy
+
+- 也就是 node-http-proxy 是一个 HTTP 可编程的，支持 websockets 的代理库。它适合于实现诸如反向代理和负载均衡之类的组件
+
+```js
+var httpProxy = require('http-proxy');
+// 创建代理服务器
+var proxy = httpProxy.createProxyServer({});
+var proxyEvents = [
+  'error',
+  'proxyReq',
+  'proxyReqWs',
+  'proxyRes',
+  'open',
+  'close',
+];
+// 注册代理服务器事件
+proxyEvents.forEach((eventName) => {
+  proxy.on(eventName, handlers[eventName]);
+});
+```
+
+## 6.服务端是自己写的，就可以把前端代码启动到服务端上来解决跨域
+
+- 服务端本地 node 搭建
 
 ```js
 // server.js
-let express = require('express');
-let app = express();
-let WebSocket = require('ws'); // 记得安装ws
-let wss = new WebSocket.Server({ port: 3000 });
-wss.on('connection', function (ws) {
-  ws.on('message', function (data) {
-    console.log(data);
-    ws.send('服务端回复请求');
-  });
+const express = require('express');
+const app = express();
+const webpack = require('webpack');
+
+const middle = require('webpack-dev-middleware'); // 引入这个
+const config = require('./webpack.config.js'); // 配置文件
+const compiler = webpack(config);
+
+app.use(middle(compiler));
+
+app.get('/user', (req, res) => {
+  res.json({ name: '小白2' });
 });
+app.listen(3001);
 ```
 
 ## 7.Node 中间件代理(两次跨域)
@@ -215,7 +281,55 @@ wss.on('connection', function (ws) {
 
 - 通过命令行 nginx -s reload 启动 nginx
 
-## 9.window.name + iframe
+## 9.postMessage
+
+- postMessage 是 HTML5 XMLHttpRequest Level 2 中的 API，且是为数不多可以跨域操作的 window 属性之一，它可用于解决以下方面的问题：
+
+  - 页面和其打开的新窗口的数据传递
+  - 多窗口之间消息传递
+  - 页面与嵌套的 iframe 消息传递
+  - 上面三个场景的跨域数据传递
+
+```js
+otherWindow.postMessage(message, targetOrigin, [transfer]);
+```
+
+## 10.websocket
+
+- Websocket 是 HTML5 的一个持久化的协议，它实现了浏览器与服务器的全双工通信，同时也是跨域的一种解决方案
+
+- WebSocket 和 HTTP 都是应用层协议，都基于 TCP 协议。但是 WebSocket 是一种双向通信协议，在建立连接之后，WebSocket 的 server 与 client 都能主动向对方发送或接收数据
+
+- Socket.io
+
+```html
+<!-- socket.html -->
+<script>
+  let socket = new WebSocket('ws://localhost:3000');
+  socket.onopen = function () {
+    socket.send('客户端发送请求'); // 向服务器发送数据
+  };
+  socket.onmessage = function (e) {
+    console.log(e.data); // 接收服务器返回的数据
+  };
+</script>
+```
+
+```js
+// server.js
+let express = require('express');
+let app = express();
+let WebSocket = require('ws'); // 记得安装ws
+let wss = new WebSocket.Server({ port: 3000 });
+wss.on('connection', function (ws) {
+  ws.on('message', function (data) {
+    console.log(data);
+    ws.send('服务端回复请求');
+  });
+});
+```
+
+## 11.window.name + iframe
 
 - name 值在不同的页面（甚至不同域名）加载后依旧存在，并且可以支持非常长的 name 值（2MB）
 
@@ -253,11 +367,11 @@ wss.on('connection', function (ws) {
 </script>
 ```
 
-## 10.location.hash + iframe
+## 12.location.hash + iframe
 
 - a.html 欲与 c.html 跨域相互通信，通过中间页 b.html 来实现。 三个页面，不同域之间利用 iframe 的 location.hash 传值，相同域之间直接 js 访问来通信
 
-## 11.document.domain + iframe
+## 13.document.domain + iframe
 
 - 该方式只能用于二级域名相同的情况下，比如 a.test.com 和 b.test.com 适用于该方式。 只需要给页面添加 document.domain ='test.com' 表示二级域名都相同就可以实现跨域
 
@@ -291,7 +405,7 @@ wss.on('connection', function (ws) {
 </body>
 ```
 
-## 12.总结
+## 14.总结
 
 - 1.`CORS`支持所有类型的 HTTP 请求，是跨域 HTTP 请求的`根本解决方案`
 - 2.`JSONP` 只支持 `GET` 请求，JSONP 的优势在于`支持老式浏览器`，以及可以向不支持 CORS 的网站请求数据
