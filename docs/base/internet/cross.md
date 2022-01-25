@@ -117,10 +117,33 @@ toc: menu
 
 ### 1）定义
 
+- jsonp： JSON With Padding（填充式 JSON 或参数式 JSON）
+
 - 请求一个 JS 文件，这个 JS 文件会执行一个回调，回调里面就有我们需要的数据
 
+### 2）原理
+
+- 动态创建`<script>`标签，利用`<script>`的 src 属性不受同源策略约束来跨域获取数据
+
+### 3）优点
+
+- 兼容 ie
+- 可以跨域
+
+### 4）缺点
+
+- 由于是 script 标签，所以读不到 ajax 那么精确的状态，`不知道状态码`是什么，也`不知道响应头`是什么，它`只知道成功和失败`。
+- `不支持 post`（因为是 script 标签，所以`只支持 get 请求`）
+
+### 5）实现
+
+- JSONP 由两部分组成：`回调函数` 和 `数据`
+
+  - 回调函数是用来处理服务器端返回的数据，回调函数的名字一般是在请求中指定的
+  - 而数据就是我们需要获取的数据，也就是服务器端的数据
+
   ```js
-  let script = document.createElement('script');
+  const script = document.createElement('script');
 
   script.src = 'http://www.wang.cn/login?username=wang&callback=callback';
 
@@ -131,20 +154,6 @@ toc: menu
     console.log(res);
   }
   ```
-
-### 2）原理
-
-- 利用 `<script>` 标签没有跨域限制的漏洞，网页可以得到从其他来源动态产生的 JSON 数据
-
-### 2）优点
-
-- 兼容 ie
-- 可以跨域
-
-### 3）缺点
-
-- 由于是 script 标签，所以读不到 ajax 那么精确的状态，`不知道状态码`是什么，也`不知道响应头`是什么，它`只知道成功和失败`。
-- `不支持 post`（因为是 script 标签，所以`只支持 get 请求`）
 
 ## 5.webpack 解决跨域
 
@@ -243,6 +252,10 @@ app.listen(3001);
 
 ## 7.Node 中间件代理(两次跨域)
 
+- node 正向代理：利用服务端不跨域的特性
+
+  - /api -> 同域 node 服务 -> /api -> 前端
+
 - 原理：同源策略是浏览器需要遵循的标准，而如果是服务器向服务器请求就无需遵循同源策略
 
   - 接受客户端请求
@@ -251,6 +264,10 @@ app.listen(3001);
   - 将 响应 转发给客户端
 
 ## 8.nginx 反向代理
+
+- 使用 proxy_pass 属性配置
+
+  - /api -> 通过代理转接至/same/api
 
 ### 1）原理
 

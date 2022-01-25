@@ -449,6 +449,10 @@ const umiConfig = {
             title: '9.前端网络安全',
             path: '/base/internet/safe',
           },
+          {
+            title: '10.证书、数字签名、私钥、公钥、对称加密、非对称加密',
+            path: '/base/internet/encry',
+          },
         ],
       },
     ],
