@@ -181,6 +181,10 @@ const umiConfig = {
           title: '开发遇见的问题',
           path: '/other/problem',
         },
+        {
+          title: '项目开发模式',
+          path: '/other/carry',
+        },
       ],
     },
     {
@@ -587,31 +591,35 @@ const umiConfig = {
           },
           {
             title: '2.vue进阶',
-            path: '/frame/vue',
+            path: '/frame/vue/raise',
           },
           {
             title: '3.vuex',
-            path: '/frame/vue',
+            path: '/frame/vue/vuex',
           },
           {
             title: '4.运行机制',
-            path: '/frame/vue',
+            path: '/frame/vue/work',
           },
           {
             title: '5.生命周期',
-            path: '/frame/vue',
+            path: '/frame/vue/life',
           },
           {
             title: '6.响应式原理',
-            path: '/frame/vue',
+            path: '/frame/vue/response',
           },
           {
             title: '7.diff原理',
-            path: '/frame/vue',
+            path: '/frame/vue/diff',
           },
           {
             title: '8.编译原理',
-            path: '/frame/vue',
+            path: '/frame/vue/compile',
+          },
+          {
+            title: '9.eventbus',
+            path: '/frame/vue/eventbus',
           },
         ],
       },
@@ -939,6 +947,28 @@ const umiConfig = {
     '/other/micro': [{ children: ['/other/micro'] }],
     '/other/wechat': [{ children: ['/other/wechat'] }],
     '/other/diff': [{ children: ['/other/diff'] }],
+    '/other/carry': [
+      {
+        children: [
+          {
+            title: '1.项目开发模式',
+            path: '/other/carry',
+          },
+          {
+            title: '2.mobx移动端',
+            path: '/other/carry/mobx',
+          },
+          {
+            title: '3.redux/dva后台系统',
+            path: '/other/carry/redux',
+          },
+          {
+            title: '4.form表格',
+            path: '/other/carry/form',
+          },
+        ],
+      },
+    ],
     '/other/cache': [
       {
         children: [

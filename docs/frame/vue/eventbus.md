@@ -1,3 +1,9 @@
+---
+toc: menu
+---
+
+# eventbus
+
 ```js
 class EventEmitter {
   constructor(maxListeners) {

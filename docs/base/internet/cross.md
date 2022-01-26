@@ -41,6 +41,14 @@ toc: menu
   <image src="http://xxx.xxx.xxx/xxx.png" />
   ```
 
+### 4）同源限制
+
+- cookie、localStorage、IndexDB 无法读取
+
+- DOM 和 js 对象无法获取
+
+- ajax 请求无法发送
+
 ## 2.跨域
 
 - 跨域，即浏览器试图执行其他网站的脚本。但是由于同源策略的限制，导致我们无法实现跨域

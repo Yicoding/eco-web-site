@@ -2,4 +2,4 @@
 toc: menu
 ---
 
-# vue 基础
+# mobx 移动端
