@@ -178,6 +178,14 @@ const umiConfig = {
           path: '/other/hybrid',
         },
         {
+          title: '图片格式',
+          path: '/other/image',
+        },
+        {
+          title: '前端监控与埋点方案',
+          path: '/other/track',
+        },
+        {
           title: '开发遇见的问题',
           path: '/other/problem',
         },
@@ -944,6 +952,8 @@ const umiConfig = {
     '/other/problem': [{ children: ['/other/problem'] }],
     '/other/pay': [{ children: ['/other/pay'] }],
     '/other/hybrid': [{ children: ['/other/hybrid'] }],
+    '/other/image': [{ children: ['/other/image'] }],
+    '/other/track': [{ children: ['/other/track'] }],
     '/other/micro': [{ children: ['/other/micro'] }],
     '/other/wechat': [{ children: ['/other/wechat'] }],
     '/other/diff': [{ children: ['/other/diff'] }],
