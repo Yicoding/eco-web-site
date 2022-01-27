@@ -164,3 +164,47 @@ calc(expression); //expression是数学表达式
 - 使用虚拟滚动技术(目前 react 的 antd4.0 已支持虚拟滚动的 select 长列表)
 
 - 虚拟滚动技术也可以用来优化长列表, 其核心思路就是每次只渲染可视区域的列表数,当滚动后动态的追加元素并通过顶部 padding 来撑起整个滚动内容
+
+- 1.下拉到底，继续加载数据并拼接
+
+- 2.数据太多，做虚拟列表展示：
+
+  - 首屏加载的时候，只加载可视区域内需要的列表项
+  - 滚动时，动态计算，获得可视区域内的列表项，并且将非可视区域内存在的列表项删除。
+    虚拟列表
+
+- 3.计算当前可视区域开始数据索引 startIndex
+
+  - 计算当前可视觉区域结束索引 endIndex
+
+  - 计算当前可视区域的数据，并渲染在页面上
+
+  - 计算开始 startIndex 在总体列表中的位置偏移位置 startOffset，并且设置到列表上
+
+- 4.滚动
+
+  - 由于只是对可视区域内的列表进行渲染，为了保证列表容器的高度并可正常的触发滚动
+
+  - 容器：infinite- list-container，相对定位
+
+  - 需要一个元素来撑开高度保证滚动：infinite-list-phantom，绝对定位，z-index=0
+
+  - 需要一个元素展示真正渲染的数据：infinite-list，绝对定位，z-index=-1
+
+  - 监听滚动：监听 infinite-list-container 的滚动事件，获取 scrollTop
+
+    - 可视区域的高度：screenHeight
+    - 列表项的高度：itemSize
+    - 列表数据：listData
+    - 当前滚动位置：scrollTop
+
+  - 最终想要的数据
+
+        - 列表总高度：listHeigh = listData.length * itemSize
+        - 可显示的列表项：visibleCount = Math.ceil(screenHeight / itemSize)
+        - 数据的起始索引：startIndex = Math.floor(scrollTop / itemSize)
+        - 数据的结束索引：endIndex = startIndex + visibleCount
+        - 列表真正显示数据：visibleData = listData.slice(startIndex, endIndex)
+        - 偏移量：startOffset = scrollTop -（scrollTop%itemSize），当滚动后，由于渲染区域相对于可视区域已经发生了偏移，此时需要获取一个偏移量startOffset，通过样式控制将渲染区域偏移至可视区域中。
+
+  - 无限滚动：当滚动触底, 就加载新一批数据, 拼接到原来的数据上

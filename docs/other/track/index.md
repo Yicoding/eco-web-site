@@ -86,6 +86,12 @@ console.log(
 
 - 前端代码在执行过程中发生异常
 
+  - JS 代码异常：运行错误
+  - Promise 异常
+  - 静态资源加载异常
+  - api 请求异常
+  - 跨域 script 异常
+
 **1.JS 执行异常**
 
 - try-catch：捕捉不到具体语法错误和异步错误，所以推荐用在可预见情况下的错误监控
@@ -125,11 +131,13 @@ console.log(
 
   - 2.用 Image 对象：图片请求没有跨域
 
-  ```js
-  let img = new Image(1, 1);
-  let src = `后端脚本地址?args=${encodeURIComponent(args)}`;
-  img.src = src;
-  ```
+    - 原理：get 请求`1*1`像素的 git 图片：体积最小、能完成完整的 http 请求、比 xmlHttpRequest 对象发送 get 请求性能好、跨域好
+
+      ```js
+      const img = new Image(1, 1);
+      const src = `后端脚本地址?args=${encodeURIComponent(args)}`;
+      img.src = src;
+      ```
 
 **2.资源加载异常**
 
@@ -177,7 +185,12 @@ new Promise(() => {
 });
 ```
 
-**4.React 异常**
+**4.vue 框架**
+
+- 打开所有日志和警告：Vue.config.silent = true
+- errorHandler 函数：指定组件的渲染和观察期间未捕获错误的处理函数
+
+**5.React 异常**
 
 - 生命周期中的 getDerivedStateFromError 和 componentDidCatch
 
@@ -239,7 +252,7 @@ self.addEventListener('fetch', (e) => {
 
 ## 3.埋点方案
 
-- 目前现有的埋点方案有命令式埋点、声明式埋点、可视化埋点、无痕埋点
+- 目前现有的埋点方案有代码埋点(命令式埋点、声明式埋点)、可视化埋点、无痕埋点
 
 ```js
 // 页面加载时发送埋点请求
@@ -253,8 +266,8 @@ $('button').click(function () {
   sendRequest(params);
 });
 // 通过伪装成 Image 对象，传递给后端，防止跨域
-let img = new Image(1, 1);
-let src = `http://aaaaa/api/test.jpg?args=${encodeURIComponent(args)}`;
+const img = new Image(1, 1);
+const src = `http://后端接口地址?args=${encodeURIComponent(args)}`;
 img.src = src;
 //css实现的埋点
 .link:active::after{
@@ -282,6 +295,10 @@ img.src = src;
 ### 4）无埋点
 
 - 是前端自动采集全部事件，上报埋点数据，由后端来过滤和计算出有用的数据，优点是完全无需业务参与，完全与业务解耦，目前比较流行的例如 `GrowingIO`
+
+- 1.实现：监听所有事件，上报所有点击事件以及对应的事件所在的元素，最后通过后台去分析数据
+
+- 2.监听 window 事件，获取元素唯一标识 id（getXPath）以及位置
 
 ```html
 <script>
@@ -318,3 +335,58 @@ window.addEventListener(
   - 引入 tracker 模块需要判断 ImportDeclaration 是否包含了 tracker 模块，没有的话就用 @babel/helper-module-import 来引入
 
   - 函数插桩就是在函数体开始插入一段代码，如果没有函数体，需要包装一层，并且处理下返回值
+
+## 4.埋点上报
+
+- 1.实时上报：调用 report 之后立即发送请求
+
+- 2.延时上报：sdk 内部统一收集业务方要上报的信息，依拖于防抖或者在浏览器空闲时间或者在页面卸载前统一上送，上报失败做补偿
+
+- 3.埋点补偿
+
+## 5.埋点系统
+
+- 原理：get 请求 1\*1 像素的 git 图片：体积最小、能完成完整的 http 请求、比 xmlHttpRequest 对象发送 get 请求性能好、跨域好
+
+- 埋点数据：埋点标识信息、设备信息、用户信息
+
+- 实时上报
+
+- 使用非侵入式埋点代码埋点：h5 使用装饰器、小程序重写 page 和 app 对象，对生命周期及相关事件添加埋点 hook。
+
+- 后端：pv 服务器记录 web 日志，保存为非机构化数据
+
+  - bdp 通过 ftp 方式每日获取 pv 日志，进行结构化处理，然后入湖
+  - pv 服务器扫描 pv 日志通过 kafka 异步消息推送至 bdsp 并准实时入湖
+
+- 反哺：入湖数据分析，客户画像描述。
+
+- 扩展：
+
+  - 异步上报：防抖、上报失败补偿机制
+
+  - 无埋点：使用 sdk 封装好逻辑，业务侧使用，监听页面所有事件，上报点击事件、事件所在元素，发送后台分析
+
+    - 监听所有事件：捕获机制，监听 window 元素
+    - 获取元素唯一表示：xPath
+    - 获取元素位置：offsetX、offsetY
+    - 小程序和 H5 两端代码设计，采用设计模式基类复用，实现不同。
+
+  - 数据采集 baseLogger 基类：
+
+    - 小程序 MPlogger：小程序 api
+      - getCurrentPages
+      - wx.getSystemInfoSync
+      - wx.onError
+      - wx.onUnhandledRejection
+    - H5 端 H5Logger：浏览器 API
+      - window.location.href
+      - window.navigator.userAgent
+      - Window.addEventListener
+
+  - 用户访问页面路径
+
+    - H5 端：根组件 watch route
+    - 小程序：onLoad Mixin
+
+  - 使用 axio 库全局监听请求，记录日志进行分析
