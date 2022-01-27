@@ -586,6 +586,10 @@ const umiConfig = {
             title: '8.Create React App',
             path: '/frame/react/cra',
           },
+          {
+            title: '9.craco',
+            path: '/frame/react/craco',
+          },
         ],
       },
     ],
