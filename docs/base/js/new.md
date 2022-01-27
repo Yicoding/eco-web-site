@@ -10,6 +10,28 @@ toc: menu
 
 new 运算符创建一个用户定义的对象类型的实例或具有构造函数的内置对象的实例。
 
+- 构造函数不需要显式的返回值。使用 new 来创建对象(调用构造函数)时，如果 return 的是非对象(数字、字符串、布尔类型等)会忽而略返回值
+
+  ```js
+  function Person(name) {
+    this.name = name;
+    return name;
+  }
+  let p = new Person('Tom');
+  console.log(p); // { name: 'Tom' }
+  ```
+
+- 如果 return 的是对象，则返回该对象(注：若 return null 也会忽略返回值）
+
+  ```js
+  function Person(name) {
+    this.name = name;
+    return {};
+  }
+  let p = new Person('Tom');
+  console.log(p); // {}
+  ```
+
 ### 2）new 的结果
 
 - 1.返回了一个新的对象

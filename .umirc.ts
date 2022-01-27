@@ -117,7 +117,7 @@ const umiConfig = {
         },
         {
           title: 'CI/CD',
-          path: '/engineering/ast',
+          path: '/engineering/ci',
         },
       ],
     },
@@ -171,7 +171,7 @@ const umiConfig = {
         },
         {
           title: '低代码平台',
-          path: '/other/interview',
+          path: '/other/low',
         },
         {
           title: 'hybrid',
@@ -815,6 +815,8 @@ const umiConfig = {
         ],
       },
     ],
+    '/engineering/ast': [{ children: ['/engineering/ast'] }],
+    '/engineering/ci': [{ children: ['/engineering/ci'] }],
     /***************** nav: 工程化 *******************/
     /***************** nav: 核心竞争力 *******************/
     '/core/mode': [
@@ -949,12 +951,14 @@ const umiConfig = {
     ],
     /***************** nav: 核心竞争力 *******************/
     /***************** nav: 其他 *******************/
+    '/other/interview': [{ children: ['/other/interview'] }],
     '/other/problem': [{ children: ['/other/problem'] }],
     '/other/pay': [{ children: ['/other/pay'] }],
     '/other/hybrid': [{ children: ['/other/hybrid'] }],
     '/other/image': [{ children: ['/other/image'] }],
     '/other/track': [{ children: ['/other/track'] }],
     '/other/micro': [{ children: ['/other/micro'] }],
+    '/other/low': [{ children: ['/other/low'] }],
     '/other/wechat': [{ children: ['/other/wechat'] }],
     '/other/diff': [{ children: ['/other/diff'] }],
     '/other/carry': [
