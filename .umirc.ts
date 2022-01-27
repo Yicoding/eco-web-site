@@ -590,6 +590,10 @@ const umiConfig = {
             title: '9.craco',
             path: '/frame/react/craco',
           },
+          {
+            title: '10.React 面试宝典',
+            path: '/frame/react/face',
+          },
         ],
       },
     ],
