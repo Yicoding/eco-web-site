@@ -816,7 +816,20 @@ const umiConfig = {
       },
     ],
     '/engineering/ast': [{ children: ['/engineering/ast'] }],
-    '/engineering/ci': [{ children: ['/engineering/ci'] }],
+    '/engineering/ci': [
+      {
+        children: [
+          {
+            title: 'CI/CD',
+            path: '/engineering/ci',
+          },
+          {
+            title: 'github Actions',
+            path: '/engineering/ci/gitactions',
+          },
+        ],
+      },
+    ],
     /***************** nav: 工程化 *******************/
     /***************** nav: 核心竞争力 *******************/
     '/core/mode': [
