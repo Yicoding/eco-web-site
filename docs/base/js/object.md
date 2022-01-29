@@ -282,6 +282,8 @@ console.log(Person.age); // 20          通过构造函数可直接访问静态�
 
 ## 4.继承
 
+![image](images/base/4.png)
+
 ### 1）原型链继承
 
 **1.原理**
@@ -549,35 +551,36 @@ console.log(person2.friends); // ["rose", "tom", "jack", "lily"]
 - 组合继承的优化，通过 Child.prototype 间接访问到 Parent.prototype，减少一次构造函数执行
 
 ```js
-function Parent(name, actions) {
-  this.name = name;
-  this.actions = actions;
+function clone(parent, child) {
+  // 这里改用 Object.create 就可以减少组合继承中多进行一次构造的过程
+  child.prototype = Object.create(parent.prototype);
+  child.prototype.constructor = child;
 }
 
-Parent.prototype.eat = function () {
-  console.log(`${this.name} - eat`);
+function Parent6() {
+  this.name = 'parent6';
+  this.play = [1, 2, 3];
+}
+
+Parent6.prototype.getName = function () {
+  return this.name;
 };
 
-function Child(id) {
-  Parent.apply(this, Array.from(arguments).slice(1));
-  this.id = id;
+function Child6() {
+  Parent6.call(this);
+  this.friends = 'child5';
 }
 
-// 模拟Object.create的效果
-let TempFunction = function () {};
-TempFunction.prototype = Parent.prototype;
-Child.prototype = new TempFunction();
-Child.prototype.constructor = Child;
-//封装写法
-function inheritPrototype(child, parent) {
-  let prototype = Object.create(parent.prototype); //object(parent.prototype)
-  prototype.constructor = child;
-  child.prototype = prototype;
-}
-inheritPrototype(Child, Parent);
+clone(Parent6, Child6);
 
-const child1 = new Child(1, 'c1', ['hahahahahhah']);
-const child2 = new Child(2, 'c2', ['xixixixixixx']);
+Child6.prototype.getFriends = function () {
+  return this.friends;
+};
+
+let person6 = new Child6();
+console.log(person6);
+console.log(person6.getName());
+console.log(person6.getFriends());
 ```
 
 **2.优点**
@@ -668,6 +671,6 @@ function _inherits(subType, superType) {
 
 ## 5.ES5 继承和 ES6 继承的区别
 
-- ES5 的继承实质上是先创建子类的实例对象，然后再将父类的方法添加到 this 上（Parent.call(this)）.
+- ES5 的继承实质上是先创建子类的实例对象，然后再将父类的方法添加到 this 上（Parent.call(this)）
 
-- ES6 的继承有所不同，实质上是先创建父类的实例对象 this，然后再用子类的构造函数修改 this。因为子类没有自己的 this 对象，所以必须先调用父类的 super()方法，否则新建实例报错。
+- ES6 的继承有所不同，实质上是先创建父类的实例对象 this，然后再用子类的构造函数修改 this。因为子类没有自己的 this 对象，所以必须先调用父类的 super()方法，否则新建实例报错
