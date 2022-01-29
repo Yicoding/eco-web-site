@@ -4,6 +4,8 @@ toc: menu
 
 # 数据类型
 
+![image](images/base/2.png)
+
 > 分为基本数据类型和引用数据类型
 
 ## 1.基本类型

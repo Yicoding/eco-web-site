@@ -4,227 +4,188 @@ toc: menu
 
 # 类型转换
 
-## 1.显示转换
+## 1.强制类型转换
 
-### 1）Number
+- 强制类型转换方式包括 Number()、parseInt()、parseFloat()、toString()、String()、Boolean()
 
-> 转换成数值
+### 1）Number() 方法的强制转换规则
+
+- 如果是布尔值，true 和 false 分别被转换为 1 和 0；
+
+- 如果是数字，返回自身；
+
+- 如果是 null，返回 0；
+
+- 如果是 undefined，返回 NaN；
+
+- 如果是字符串，遵循以下规则：如果字符串中只包含数字（或者是 0X / 0x 开头的十六进制数字字符串，允许包含正负号），则将其转换为十进制；如果字符串中包含有效的浮点格式，将其转换为浮点数值；如果是空字符串，将其转换为 0；如果不是以上格式的字符串，均返回 NaN；
+
+- 如果是 Symbol，抛出错误；
+
+- 如果是对象，并且部署了 [Symbol.toPrimitive] ，那么调用此方法，否则调用对象的 valueOf() 方法，然后依据前面的规则转换返回的值；如果转换的结果是 NaN ，则调用对象的 toString() 方法，再次依照前面的顺序转换返回对应的值
 
 ```js
 Number(true); // 1
+
 Number(false); // 0
-Number(10); // 10
+
+Number('0111'); // 111
+
 Number(null); // 0
-Number(undefined); // NaN
-Number(); // 0
+
 Number(''); // 0
-Number('00012'); // 12
-Number('hello'); // NaN
+
+Number('1a'); // NaN
+
+Number(-0x11); // -17
+
+Number('0X11'); // 17
 ```
 
-### 2）parseInt
+### 2）Boolean() 方法的强制转换规则
 
-> 取整
-
-```
-parseInt 第二个参数: 转换时使用的基数(即多少进制)
-  重点: parseInt(string,radix)
-  radix：解析字符串的基数，基数规则如下
-    1）区间范围介于 2~36 之间
-    2）当参数为 0，parseInt() 会根据十进制来解析
-```
+- 规则是：除了 undefined、 null、 false、 ''、 0（包括 +0，-0）、 NaN 转换出来是 false，其他都是 true
 
 ```js
-parseInt(); // NaN
-parseInt(''); // NaN
-parseInt(null); // NaN
-parseInt(undefined); // NaN
-parseInt(true); // NaN
-parseInt(false); // NaN
-parseInt('123blue'); // 123
-parseInt('a123blue'); // NaN
-parseInt(22.5); // 22
-
-[1, 2, 3].map(parseInt); // [1, NaN, NaN]
-// ===>
-[1, 2, 3].map((item, index) => {
-  return parseInt(item, index);
-});
-// ===>
-parseInt(1, 0); // 1
-parseInt(2, 1); // NaN(1不在parseInt第二个参数解析区间内)
-parseInt(3, 2); // Nan(用2进制来解析，应以 0 和 1 开头，所以结果为 NaN)
-
-// parseFloat
-[1, 2, 3].map(parseFloat); // [1,2,3]
-```
-
-### 3）parseFloat
-
-> 取浮点数
-
-```js
-parseFloat(); // NaN
-parseFloat(''); // NaN
-parseFloat(null); // NaN
-parseFloat(undefined); // NaN
-parseFloat(true); // NaN
-parseFloat(false); // NaN
-parseFloat('123blue'); // 123
-parseFloat('22.5'); // 22.5
-parseFloat('22.5.2'); // 22.5
-parseFloat('0901.5'); // 901.5
-```
-
-### 4）String
-
-```js
-String(); // ''
-String(1); // '1'
-String(null); // 'null'
-String(undefined); // 'undefined'
-String(true); // 'true'
-String(false); // 'false'
-String([1, 2, 3]); // 1,2,3
-String({ name: 1 }); // '[object Object]'
-String([{ name: 1 }]); // '[object Object]'
-String(function () {
-  console.log(1);
-}); // 'function() {console.log(1)}'
-String(new Date()); // 'Mon Nov 29 2021 10:31:45 GMT+0800 (中国标准时间)'
-```
-
-### 5）toString
-
-```js
-// 整数转换
-1.toString(); // 报错，因为 JavaScript 解析器把 . 和 1 连在了一起
-// 解决：
-1..toString(); // '1'
-(1).toString(); // '1'
-
-// 小数转换
-1.2.toString(); // '1.2'
-
-// 字符串、 boolean类型、数组、Date也可以调用
-'1'.toString(); // '1'
-true.toString(); // 'true'
-false.toString() // 'false'
-[1,2,3].toString(); // '1,2,3'
-new Date().toString() // 'Mon Nov 29 2021 10:47:57 GMT+0800 (中国标准时间)'
-
-// null、undefined、object
-[{name: 1}].toString(); // '[object Object]'
-null.toString(); // 报错
-undefined.toString(); // 报错
-{}.toString(); // 报错
-```
-
-### 6）Boolean
-
-```js
-Boolean(undefined); // false
-Boolean(null); // false
 Boolean(0); // false
+
+Boolean(null); // false
+
+Boolean(undefined); // false
+
 Boolean(NaN); // false
-Boolean(''); // false
+
+Boolean(1); // true
+
+Boolean(13); // true
+
+Boolean('12'); // true
 ```
 
-## 2.隐式转换
+## 2.隐式类型转换
 
-在 js 中，当运算符在运算时，如果两边数据不统一，CPU 就无法计算，这时我们编译器会自动将运算符两边的数据做一个数据类型转换，转成一样的数据类型再计算，这种无需程序员手动转换，而由编译器自动转换的方式就称为隐式转换
+- 凡是通过逻辑运算符 (&&、 ||、 !)、运算符 (+、-、\*、/)、关系操作符 (>、 <、 <= 、>=)、相等运算符 (==) 或者 if/while 条件的操作，如果遇到两个数据类型不一样的情况，都会出现隐式类型转换
 
-### 1）转换为 String 类型
+### 1）'==' 的隐式类型转换规则
 
-- 转换为 String 类型：可以为任意的数据类型加一个空串的形式将其转换为字符串
+- 如果类型相同，无须进行类型转换
 
-- 原理和 String()函数一样
+- 如果其中一个操作值是 null 或者 undefined，那么另一个操作符必须为 null 或者 undefined，才会返回 true，否则都返回 false
+
+- 如果其中一个是 Symbol 类型，那么返回 false
+
+- 两个操作值如果为 string 和 number 类型，那么就会将字符串转换为 number
+
+- 如果一个操作值是 boolean，那么转换成 number
+
+- 如果一个操作值为 object 且另一方为 string、number 或者 symbol，就会把 object 转为原始类型再进行判断（调用 object 的 valueOf/toString 方法进行转换）
 
 ```js
-1 + '2'; // '12'
+null == undefined; // true  规则2
+
+null == 0; // false 规则2
+
+'' == null; // false 规则2
+
+'' == 0; // true  规则4 字符串转隐式转换成Number之后再对比
+
+'123' == 123; // true  规则4 字符串转隐式转换成Number之后再对比
+
+0 == false; // true  e规则 布尔型隐式转换成Number之后再对比
+
+1 == true; // true  e规则 布尔型隐式转换成Number之后再对比
+
+var a = {
+  value: 0,
+
+  valueOf: function () {
+    this.value++;
+
+    return this.value;
+  },
+};
+
+// 注意这里a又可以等于1、2、3
+
+console.log(a == 1 && a == 2 && a == 3); //true f规则 Object隐式转换
+
+// 注：但是执行过3遍之后，再重新执行a==3或之前的数字就是false，因为value已经加上去了，这里需要注意一下
 ```
 
-### 2）转换为 Number 类型
+### 2）'+' 的隐式类型转换规则
 
-- 可以通过一元的 + （+0 /1 \*1）来将一个其他的数据类型转换为 Number。
+- 1.仅当 '+' 号两边都是数字时，进行的是加法运算
 
-- 原理和 Number()函数一样
+- 2.如果两边都是字符串，则直接拼接，无须进行隐式类型转换
+
+- 3.如果其中有一个是字符串，另外一个是 undefined、null 或布尔型，则调用 toString() 方法进行字符串拼接；如果是纯对象、数组、正则等，则默认调用对象的转换方法会存在优先级，然后再进行拼接
+
+- 4.如果其中有一个是数字，另外一个是 undefined、null、布尔型或数字，则会将其转换成数字进行加法运算，对象的情况还是参考上一条规则
+
+- 5.如果其中一个是字符串、一个是数字，则按照字符串规则进行拼接
 
 ```js
-var a = '10';
-console.log(+a); // 10
-console.log(a / 1); // 10
-console.log(a * 1); // 10
+1 + 2; // 3  常规情况
+
+'1' + '2'; // '12' 常规情况
+
+// 下面看一下特殊情况
+
+'1' + undefined; // "1undefined" 规则3，undefined转换字符串
+
+'1' + null; // "1null" 规则3，null转换字符串
+
+'1' + true; // "1true" 规则3，true转换字符串
+
+'1' + 1n; // '11' 比较特殊字符串和BigInt相加，BigInt转换为字符串
+
+1 + undefined; // NaN  规则4，undefined转换数字相加NaN
+
+1 + null; // 1    规则4，null转换为0
+
+1 + true; // 2    规则4，true转换为1，二者相加为2
+
+1 + 1n; // 错误  不能把BigInt和Number类型直接混合相加
+
+'1' + 3; // '13' 规则5，字符串拼接
 ```
 
-### 3）转成 boolean 类型
+### 3）Object 的转换规则
 
-- `!` 逻辑非运算符
+- 对象转换的规则，会先调用内置的 [ToPrimitive] 函数，其规则逻辑如下：
 
-### 4）== 的转换规则
+  - 1.如果部署了 Symbol.toPrimitive 方法，优先调用再返回
 
-- 如果其中一个操作数为布尔类型，那么先将布尔类型转换为数字类型
+  - 2.调用 valueOf()，如果转换为基础类型，则返回
 
-- 如果一个对象与数字或字符串向比较，JavaScript 会尝试返回对象的默认值。操作符会尝试通过方法 valueOf 和 toString 将对象转换为其原始值（一个字符串或数字类型的值）。如果尝试转换失败，会产生一个运行时错误
+  - 3.调用 toString()，如果转换为基础类型，则返回
 
-  1.转换时如果两边都是引用类型，则直接比较内存中的地址（也就是指针指向的地址）
-
-  ```js
-  [] == []; //false，指针指向的地址不同
-  ```
-
-  2.如果两边类型不一致，则两边都转成 number 类型，引用类型先调用 valueOf()方法，如果能转成数字就 OK，不能转成数字的话，就调用 toString()转成字符串
+  - 4.如果都没有返回基础类型，会报错
 
   ```js
-  '123' == false; // false,'123'转成数字是123,右侧转成数字是0,最终比较123==0
-  '123' == 123; // true,右边是数字，直接转换左右即可
+  var obj = {
+    value: 1,
 
-  [] == 0; // true
+    valueOf() {
+      return 2;
+    },
+
+    toString() {
+      return '3';
+    },
+
+    [Symbol.toPrimitive]() {
+      return 4;
+    },
+  };
+
+  console.log(obj + 1); // 输出5
+
+  // 因为有Symbol.toPrimitive，就优先执行这个；如果Symbol.toPrimitive这段代码删掉，则执行valueOf打印结果为3；如果valueOf也去掉，则调用toString返回'31'(字符串拼接)
+
+  // 再看两个特殊的case：
+
+  10 + {}; // "10[object Object]"，注意：{}会默认调用valueOf是{}，不是基础类型继续转换，调用toString，返回结果"[object Object]"，于是和10进行'+'运算，按照字符串拼接规则来，参考'+'的规则
+
+  [1, 2, undefined, 4, 5] + 10; // "1,2,,4,510"，注意[1,2,undefined,4,5]会默认先调用valueOf结果还是这个数组，不是基础数据类型继续转换，也还是调用toString，返回"1,2,,4,5"，然后再和10进行运算，还是按照字符串拼接规则，参考'+'的第5条规则
   ```
-
-  3.null、NaN、undefined 和 string、number、boolean、object 类型比较时，都不做隐式转换，比较的结果直接为 false
-
-  ```js
-  // 特殊情况
-  NaN == NaN; //false
-  undefined == null; //true
-  null == null; //true
-  null == undefined; //true
-  ```
-
-### 5）大于或小于符
-
-- 字符串类型比较大小时，不进行类型转换，而是逐位比较 ascii 码，第 1 位不同则返回结果，否则继续比较第 2 位，直到某一位不同为止
-
-  ```js
-  console.log('23' < '3'); // true
-  ```
-
-- sort()方法默认的比较规则会先把每个元素转成字符串，然后比较字符串的 ascii 码来确定先后顺序
-
-  ```js
-  [1, 10, 3, 100].sort(); // [1, 10, 100, 3]
-
-  // 正确做法
-  [1, 10, 3, 100].sort(function (a, b) {
-    return a - b;
-  }); // [1, 10, 100, 3]
-  ```
-
-### 6）+号规则
-
-- A + B
-
-- 第一步：如果 A 和 B 都是 number 类型，直接相加；
-
-- 第二步：接下来看 A 或 B 中是否有一个是否为 string 类型，如果有，则将另一个也转成字符串，然后连接；
-
-- 第三步：既不是 number,也不是 string,则按如下规则转换：
-
-  - 1.能转换成数字，返回之
-
-  - 2.否则调用 valueOf()，如果执行结果是基本类型，返回之
-
-  - 3.否则调用 toString()，如果执行结果是基础类型，返回之
-
-  - 4.无法得到原始值，抛异常
