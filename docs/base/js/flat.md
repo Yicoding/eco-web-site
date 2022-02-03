@@ -36,15 +36,18 @@ const arr = [1, [2, [3, 4]]];
 console.log(flatten(arr));
 ```
 
-### 2）toString()
+### 2）split 和 toString 共同处理
 
 - 如果数组的项全为数字，可以使用 join()，toString()
 
 - 该方法是利用 toString 把数组变成以逗号分隔的字符串，然后遍历数组把每一项再变回原来的类型
 
 ```js
-[1, [2, 3, [4]]].toString();
-// "1,2,3,4"
+var arr = [1, [2, [3, 4]]];
+function flatten(arr) {
+  return arr.toString().split(',');
+}
+console.log(flatten(arr)); // [1, 2, 3, 4]
 ```
 
 具体实现
@@ -60,7 +63,7 @@ const arr = [1, [2, [3, 4]]];
 console.log(flatten(arr));
 ```
 
-### 3）[].concat.apply + some
+### 3）[].concat.apply + some + 扩展运算符实现
 
 利用 arr.some 判断当数组中还有数组的话，循环调用 flatten 扁平函数(利用 [].concat.apply 扁平), 用 concat 连接，最终返回 arr
 
@@ -69,7 +72,7 @@ console.log(flatten(arr));
 const flatten = (arr) => {
   if (!arr.length) return;
   while (arr.some((item) => Array.isArray(item))) {
-    arr = [].concat(arr);
+    arr = [].concat(...arr);
   }
   return arr;
 };
@@ -102,4 +105,17 @@ console.log(flatten(arr));
 ```js
 let a = [1, [2, 3, [4, [5]]]];
 a.flat(Infinity); // [1,2,3,4,5]  a是4维数组
+```
+
+### 6）正则和 JSON 方法共同处理
+
+```js
+let arr = [1, [2, [3, [4, 5]]], 6];
+function flatten(arr) {
+  let str = JSON.stringify(arr);
+  str = str.replace(/(\[|\])/g, '');
+  str = '[' + str + ']';
+  return JSON.parse(str);
+}
+console.log(flatten(arr)); //  [1, 2, 3, 4，5]
 ```

@@ -8,7 +8,7 @@ toc: menu
 
 ### 1）定义
 
-new 运算符创建一个用户定义的对象类型的实例或具有构造函数的内置对象的实例。
+new 运算符创建一个用户定义的对象类型的实例或具有构造函数的内置对象的实例
 
 - 构造函数不需要显式的返回值。使用 new 来创建对象(调用构造函数)时，如果 return 的是非对象(数字、字符串、布尔类型等)会忽而略返回值
 
@@ -44,7 +44,7 @@ new 运算符创建一个用户定义的对象类型的实例或具有构造函�
 
 - 1.创建一个新的空对象
 
-- 2.将这个空对象的\_\_proto\_\_指向构造函数的原型
+- 2.将这个空对象的`__proto_`指向构造函数的原型
 
 - 3.将 this 指向这个空对象
 
@@ -55,10 +55,13 @@ new 运算符创建一个用户定义的对象类型的实例或具有构造函�
 **方法 1.**
 
 ```js
-function _new_() {
+function _new() {
+  const Constructor = [].shift.call(arguments);
+  if (typeof Constructor !== 'function') {
+    throw '必须是函数';
+  }
   // 创建一个新的空对象
   const obj = {};
-  const Constructor = [].shift.call(arguments);
   // 将这个空对象的__proto__指向构造函数的原型
   // obj.__proto__ = Constructor.prototype;
   Object.setPrototypeOf(obj, Constructor.prototype);

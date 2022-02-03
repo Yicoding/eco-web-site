@@ -305,7 +305,19 @@ const umiConfig = {
             path: '/base/js/tail',
           },
           {
-            title: '25.零散知识点',
+            title: '25.JSON.stringify 实现',
+            path: '/base/js/json',
+          },
+          {
+            title: '26.数组',
+            path: '/base/js/array',
+          },
+          {
+            title: '27.arguments/callee/caller',
+            path: '/base/js/arguments',
+          },
+          {
+            title: '28.零散知识点',
             path: '/base/js/small',
           },
         ],
