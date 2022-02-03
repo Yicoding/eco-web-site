@@ -400,7 +400,7 @@ const child2 = new Child(2, 'c2', ['sing', 'jump', 'rap']);
 console.log(child1.eat === child2.eat); // false
 ```
 
-### 3）组合继承
+### 3）组合继承（前两种组合）
 
 **1.原理**
 
@@ -487,6 +487,30 @@ person2.sayName(); // "gsr"
 console.log(person.friends); // ["jack", "tom", "rose", "lily", "kobe"]
 ```
 
+```js
+// 使用Object.create
+let parent4 = {
+  name: 'parent4',
+  friends: ['p1', 'p2', 'p3'],
+  getName: function () {
+    return this.name;
+  },
+};
+
+let person4 = Object.create(parent4);
+person4.name = 'tom';
+person4.friends.push('jerry');
+
+let person5 = Object.create(parent4);
+person5.friends.push('lucy');
+
+console.log(person4.name);
+console.log(person4.name === person4.getName());
+console.log(person5.name);
+console.log(person4.friends);
+console.log(person5.friends);
+```
+
 **2.优点**
 
 - 父类方法可复用
@@ -512,6 +536,8 @@ function objectCopy(obj) {
 
 function createAnother(original) {
   let clone = objectCopy(original);
+  // 使用Object.create
+  // let clone = Object.create(original);
   clone.getName = function () {
     console.log(this.name);
   };

@@ -659,6 +659,10 @@ const umiConfig = {
             title: '4.小程序性能优化',
             path: '/frame/applet/performance',
           },
+          {
+            title: '5.小程序宝典',
+            path: '/frame/applet/face',
+          },
         ],
       },
     ],
