@@ -349,7 +349,7 @@ const child2 = new Child();
 child1.actions.pop();
 
 console.log(child1.actions); // ['eat']
-console.log(child1.actions); // ['eat', 'run']
+console.log(child2.actions); // ['eat', 'run']
 ```
 
 **2.可以传递参数**

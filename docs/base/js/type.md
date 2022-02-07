@@ -37,7 +37,7 @@ toc: menu
 
 ## 3.JS 数据类型
 
-> `String`、 `Number`、 `Boolean`、 `Null`、 `Undefined`、 `Object` 以及 ES6 新加的 `Symbol`和`BigInt`
+> `String`、 `Number`、 `Boolean`、 `Null`、 `Undefined`、 `Object` 以及 ESNext 新加的 `Symbol`和`BigInt`
 
 ## 4.null 和 undefined 区别
 
@@ -54,7 +54,7 @@ undefined: undefined 类型，代表`未定义`
 ```js
 Number(null); // 0
 1 + null; // 1
-Number(undefined); //NaN
+Number(undefined); // NaN
 1 + undefined; // NaN
 ```
 

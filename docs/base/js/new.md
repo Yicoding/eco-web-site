@@ -58,7 +58,7 @@ new 运算符创建一个用户定义的对象类型的实例或具有构造函�
 function _new() {
   const Constructor = [].shift.call(arguments);
   if (typeof Constructor !== 'function') {
-    throw '必须是函数';
+    throw 'must be a function';
   }
   // 创建一个新的空对象
   const obj = {};
@@ -90,6 +90,9 @@ function _new() {
   var args = [].slice.call(arguments);
   // 第一个参数是构造函数，把它拿出来
   var constructor = args.shift();
+  if (typeof constructor !== 'function') {
+    throw 'must be a function';
+  }
   // Object.create()返回一个新对象，这个对象的构造函数的原型指向Foo
   var obj = Object.create(constructor.prototype);
   // 将this指向obj

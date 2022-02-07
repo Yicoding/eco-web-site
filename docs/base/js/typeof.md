@@ -75,18 +75,20 @@ myDate instanceof String; // 返回 false
 
 ```js
 function myInstanceof(left, right) {
-  left = left.__proto__;
-  const prototype = right.prototype;
+  // 这里先用typeof来判断基础数据类型，如果是，直接返回false
+  if (typeof left !== 'object' || left === null) return false;
+  // getProtypeOf是Object对象自带的API，能够拿到参数的原型对象
+  let proto = Object.getPrototypeOf(left);
   while (true) {
-    if (left === null || left === undefined) return false;
-    if (prototype === left) return true;
-    left = left.__proto__;
+    //循环往下寻找，直到找到相同的原型对象
+    if (proto === null) return false;
+    if (proto === right.prototype) return true; //找到相同原型对象，返回true
+    proto = Object.getPrototypeof(proto);
   }
 }
-
-// 测试
-console.log(c); // false
-console.log(myInstanceof(new String('111'), String)); // true
+// 验证一下自己实现的myInstanceof是否OK
+console.log(myInstanceof(new Number(123), Number)); // true
+console.log(myInstanceof(123, Number));
 ```
 
 ## 3.constructor
