@@ -2,7 +2,7 @@
 toc: menu
 ---
 
-# new/call/apply/bind
+# new/call/apply/bind/inherit
 
 ## 1.new
 
@@ -367,3 +367,25 @@ Function.prototype.bind =
   - 因为 bind 可以实现类似这样的代码 `f.bind(obj, 1)(2)`，所以我们需要将两边的参数拼接起来，于是就有了这样的实现 `args.concat(...arguments)`
 
 - 3.对于 `new` 的情况来说，`不会被任何方式改变 this`，所以对于这种情况我们需要忽略传入的 this
+
+## 7.inherit
+
+- 通过原型创建一个新对象
+
+```js
+function inherit(p) {
+  if (p === null) {
+    throw TypeError();
+  }
+  if (Object.create) {
+    return Object.create(p);
+  }
+  var t = typeof p;
+  if (t !== 'object' && t !== 'function') {
+    throw TypeError();
+  }
+  function f() {}
+  f.prototype = p;
+  return new f();
+}
+```

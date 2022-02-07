@@ -6,6 +6,10 @@ toc: menu
 
 ![image](images/js/1.png)
 
+![image](images/summary/9.png)
+
+![image](images/summary/10.png)
+
 ## 1.JavaScript 相关知识
 
 ![image](images/summary/1.png)
