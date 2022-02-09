@@ -33,22 +33,21 @@ console.log(fn3(fn1(fn2(fn1(4)))));
 
 ```js
 /**
- * @param  funcs 存储按照顺序执行的函数(数组) => [fn1, fn3, fn2, fn4]
- * @param  args 存储第一个函数执行需要传递的实参信息(数组) => [5]
+ * @param  fn 存储按照顺序执行的函数(数组) => [fn1, fn3, fn2, fn4]
+ * @param   存储第一个函数执行需要传递的实参信息(数组) => [5]
  */
-function compose(...funcs) {
-  return function anonymous(...args) {
-    if (funcs.length === 0) return args;
-    if (funcs.length === 1) return funcs[0](...args);
-    // funcs 里有 多个函数时
-    return funcs.reduce((n, func) => {
-      // 第一次执行：
-      // n：第一个函数执行的实参 func：第一个函数
-      // 第二次执行：
-      // n的值：上一次func执行后的返回值，作为实参传递给下一个函数执行 func：第二个函数
-      return Array.isArray(n) ? func(...n) : func(n);
-    }, args);
-  };
+function compose(...fn) {
+  if (fn.length === 0) return (num) => num;
+  if (fn.length === 1) return fn[0];
+  // 第一次执行：
+  // n：第一个函数执行的实参 func：第一个函数
+  // 第二次执行：
+  // n的值：上一次func执行后的返回值，作为实参传递给下一个函数执行 func：第二个函数
+  return fn.reduce((pre, next) => {
+    return (num) => {
+      return next(pre(num));
+    };
+  });
 }
 
 const fn1 = (x) => x + 10;

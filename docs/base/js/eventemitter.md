@@ -2,20 +2,22 @@
 toc: menu
 ---
 
-# eventbus
+# EventEmitter
 
 ```js
 class EventEmitter {
   constructor(maxListeners) {
-    this.events = {}; //监听key-value
+    this.events = {}; // 监听key-value
     this.maxListeners = maxListeners || Infinity;
   }
-
   on(event, cb) {
+    if (!(cb instanceof Function)) {
+      console.warn('must be a function');
+      return this;
+    }
     if (!this.events[event]) {
       this.events[event] = [];
     }
-
     if (
       this.maxListeners !== Infinity &&
       this.events[event].length >= this.maxListeners
@@ -26,7 +28,15 @@ class EventEmitter {
     this.events[event].push(cb);
     return this;
   }
-
+  emit(event, ...args) {
+    const cbs = this.events[event];
+    if (!cbs) {
+      console.warn(`${event} event is not registered.`);
+      return this;
+    }
+    cbs.forEach((cb) => cb.apply(this, args));
+    return this;
+  }
   /* 无cb全部移除：事件名、callback */
   off(event, cb) {
     if (!cb) {
@@ -34,29 +44,14 @@ class EventEmitter {
     } else {
       this.events[event] = this.events[event].filter((item) => item !== cb);
     }
-
-    return this; //链式调用
+    return this; // 链式调用
   }
-
   once(event, cb) {
     const func = (...args) => {
-      this.off(event, func); //先移除
+      this.off(event, func); // 先移除
       cb.apply(this, args);
     };
     this.on(event, func);
-    return this;
-  }
-
-  emit(event, ...args) {
-    const cbs = this.events[event];
-
-    if (!cbs) {
-      console.warn(`${event} event is not registered.`);
-      return this;
-    }
-
-    cbs.forEach((cb) => cb.apply(this, args));
-
     return this;
   }
 }

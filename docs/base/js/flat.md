@@ -22,11 +22,11 @@ var arr = [1, [2, [3, 4]]];
 const flatten = (arr) => {
   if (!arr.length) return;
   let result = [];
-  arr.forEach((item, i, arr) => {
+  arr.forEach((item) => {
     if (Array.isArray(item)) {
       result = result.concat(flatten(item));
     } else {
-      result.push(arr[i]);
+      result.push(item);
     }
   });
   return result;
@@ -65,7 +65,7 @@ console.log(flatten(arr));
 
 ### 3）[].concat.apply + some + 扩展运算符实现
 
-利用 arr.some 判断当数组中还有数组的话，循环调用 flatten 扁平函数(利用 [].concat.apply 扁平), 用 concat 连接，最终返回 arr
+利用 arr.some 判断当数组中还有数组的话，循环调用 flatten 扁平函数(利用 ... 扁平), 用 concat 连接，最终返回 arr
 
 ```js
 /* ES6 */

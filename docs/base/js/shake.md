@@ -18,10 +18,10 @@ function debounce(fn, wait) {
     var args = arguments;
     if (timer) {
       clearTimeout(timer);
-      timer = null;
     }
     timer = setTimeout(function () {
       fn.apply(context, args);
+      timer = null;
     }, wait);
   };
 }

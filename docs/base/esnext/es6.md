@@ -647,15 +647,15 @@ console.log(Symbol('foo') === Symbol('foo')); // false
   const set2 = new Set([1, 2, 3]);
   // 增加元素 使用 add
   set2.add(4);
-  set2.add('林三心');
-  console.log(set2); // Set(5) { 1, 2, 3, 4, '林三心' }
+  set2.add('Bob');
+  console.log(set2); // Set(5) { 1, 2, 3, 4, 'Bob' }
   // 是否含有某个元素 使用 has
   console.log(set2.has(2)); // true
   // 查看长度 使用 size
   console.log(set2.size); // 5
   // 删除元素 使用 delete
   set2.delete(2);
-  console.log(set2); // Set(4) { 1, 3, 4, '林三心' }
+  console.log(set2); // Set(4) { 1, 3, 4, 'Bob' }
   ```
 
 **1.应用场景**
@@ -682,13 +682,13 @@ console.log([...new Set(numbers)]);
 // [2, 3, 4, 5, 6, 7, 32]
 
 // 两个对象都是不用的指针，所以没法去重
-const set1 = new Set([1, { name: '林三心' }, 2, { name: '林三心' }]);
-console.log(set1); // Set(4) { 1, { name: '林三心' }, 2, { name: '林三心' } }
+const set1 = new Set([1, { name: 'Bob' }, 2, { name: 'Bob' }]);
+console.log(set1); // Set(4) { 1, { name: 'Bob' }, 2, { name: 'Bob' } }
 
 // 如果是两个对象是同一指针，则能去重
-const obj = { name: '林三心' };
+const obj = { name: 'Bob' };
 const set2 = new Set([1, obj, 2, obj]);
-console.log(set2); // Set(3) { 1, { name: '林三心' }, 2 }
+console.log(set2); // Set(3) { 1, { name: 'Bob' }, 2 }
 
 // NaN !== NaN，NaN是自身不等于自身的，但是在Set中他还是会被去重
 const set = new Set([1, NaN, 1, NaN]);

@@ -646,34 +646,39 @@ run(myGenerator);
   - 返回值是 Promise：`async/await` 的返回值是一个 Promise，我们这里也需要保持一致，给返回值包一个 Promise
 
 ```js
-function run(gen) {
-  //把返回值包装成promise
-  return new Promise((resolve, reject) => {
-    var g = gen();
+function generatorToAsync(generatorFn) {
+  return function () {
+    const gen = generatorFn.apply(this, arguments); // gen有可能传参
 
-    function _next(val) {
-      //错误处理
-      try {
-        var res = g.next(val);
-      } catch (err) {
-        return reject(err);
+    // 返回一个Promise
+    return new Promise((resolve, reject) => {
+      function go(key, arg) {
+        let res;
+        try {
+          res = gen[key](arg); // 这里有可能会执行返回reject状态的Promise
+        } catch (error) {
+          return reject(error); // 报错的话会走catch，直接reject
+        }
+
+        // 解构获得value和done
+        const { value, done } = res;
+        if (done) {
+          // 如果done为true，说明走完了，进行resolve(value)
+          return resolve(value);
+        } else {
+          // 如果done为false，说明没走完，还得继续走
+
+          // value有可能是：常量，Promise，Promise有可能是成功或者失败
+          return Promise.resolve(value).then(
+            (val) => go('next', val),
+            (err) => go('throw', err),
+          );
+        }
       }
-      if (res.done) {
-        return resolve(res.value);
-      }
-      //res.value包装为promise，以兼容yield后面跟基本类型的情况
-      Promise.resolve(res.value).then(
-        (val) => {
-          _next(val);
-        },
-        (err) => {
-          //抛出错误
-          g.throw(err);
-        },
-      );
-    }
-    _next();
-  });
+
+      go('next'); // 第一次执行
+    });
+  };
 }
 
 function* myGenerator() {
@@ -685,8 +690,12 @@ function* myGenerator() {
     console.log(error);
   }
 }
+const asyncFn = generatorToAsync(myGenerator);
 
-const result = run(myGenerator); //result是一个Promise
+asyncFn().then((res) => console.log(res));
+//输出 1 2 error
+
+// const result = run(myGenerator); //result是一个Promise
 //输出 1 2 error
 ```
 

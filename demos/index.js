@@ -140,25 +140,26 @@ function inherit(p) {
 
 // 15.debounce
 function debounce(fn, timeout) {
-  let timer = null;
+  let timee = null;
   return function (...args) {
-    if (timer) {
-      clearTimeout(timer);
+    if (timee) {
+      clearTimeout(timee);
     }
-    timer = setTimeout(() => {
+    timee = setTimeout(() => {
       fn.apply(this, args);
+      timee = null;
     }, timeout);
   };
 }
 
 // 16.throttle
 function throttle(fn, timeout) {
-  let timer = null;
+  let timee = null;
   return function (...args) {
-    if (timer) return;
-    timer = setTimeout(() => {
+    if (timee) return;
+    timee = setTimeout(() => {
       fn.apply(this, args);
-      timer = null;
+      timee = null;
     }, timeout);
   };
 }
@@ -324,9 +325,297 @@ function isObj(obj) {
   return t !== null && (t === 'object' || t === 'function');
 }
 
-function deepClone(obj) {}
+function copyFn(fn) {
+  const fnStr = fn.toString();
+  // 普通函数属于函数声明， 不能直接使用eval， 需要用小括号包起来形成函数表达式， 而箭头函数本身就是函数表达式
+  return fn.prototype ? eval(`(${fnStr})`) : eval(fnStr);
+}
+
+function deepClone(obj, hash = new WeakMap()) {
+  if (!isObj) return obj;
+  // 处理函数
+  if (typeof obj === 'function') {
+    return copyFn(obj);
+  }
+  // 处理日期
+  if (obj.constructor === Date) {
+    return new Date(obj);
+  }
+  if (obj.constructor === RegExp) {
+    return new RegExp(obj);
+  }
+  if (obj.constructor === Error) {
+    return new Error(obj);
+  }
+  if (hash.has(obj)) {
+    return hash.get(obj);
+  }
+  let target = Array.isArray(obj) ? [] : {};
+  hash.set(obj, target);
+  Reflect.ownKeys(obj).forEach((key) => {
+    if (isObj(obj[key])) {
+      target[key] = deepClone(obj[key], hash);
+    } else {
+      target[key] = obj[key];
+    }
+  });
+  return target;
+}
+
+// 26.defineproperty
+const obj = {};
+let _val = undefined;
+Object.defineProperty(obj, 'name', {
+  configurable: true,
+  enumerable: true,
+  get() {
+    console.log('get', _val);
+    return _val;
+  },
+  set(newVal) {
+    console.log('set', newVal);
+    if (newVal !== _val) {
+      _val = newVal;
+    }
+  },
+});
+obj.name = 'Bob';
+obj.name;
+
+// 27.observe
+function observe(data) {
+  if (typeof data === 'object') {
+    if (Array.isArray(data)) {
+      data.__proto__ = defineArray();
+    } else {
+      Object.keys(data).forEach((key) => {
+        defineObj(data, key, data[key]);
+      });
+    }
+  }
+}
+
+function defineObj(obj, key, val) {
+  observe(val);
+  Object.defineProperty(obj, key, {
+    configurable: true,
+    enumerable: true,
+    get() {
+      return val;
+    },
+    set(newVal) {
+      if (newVal !== val) {
+        val = newVal;
+      }
+    },
+  });
+}
+
+function defineArray() {
+  const arrayProto = Array.prototype;
+  const arrayMethods = Object.create(arrayProto);
+  const methods = [
+    'push',
+    'pop',
+    'shift',
+    'unshift',
+    'sort',
+    'slice',
+    'reverse',
+    'splice',
+    'concat',
+    'join',
+    'toString',
+    'indexOf',
+    'lastIndexOf',
+    'toLocalString',
+  ];
+  methods.forEach((method) => {
+    const original = arrayMethods[method];
+    Object.defineProperty(arrayMethods, method, {
+      value: function v(...args) {
+        original.apply(this, [...args]);
+      },
+    });
+  });
+}
+
+// 28.proxy
+const proxy = new Proxy(
+  {},
+  {
+    get(obj, key) {
+      return obj[key];
+    },
+    set(obj, key, val) {
+      obj[key] = val;
+    },
+  },
+);
+
+// 29.flat
+// 递归
+function flatten(arr) {
+  if (!arr.length) return;
+  let result = [];
+  arr.forEach((item) => {
+    if (Array.isArray(item)) {
+      result = result.concat(flatten(item));
+    } else {
+      result.push(item);
+    }
+  });
+  return result;
+}
+
+// reduce
+function flatten(arr) {
+  return arr.reduce((prev, item) => {
+    return prev.concat(Array.isArray(item) ? flatten(item) : item);
+  }, []);
+}
+
+// some
+function flatten(arr) {
+  if (!arr.length) return;
+  while (arr.some((item) => Array.isArray(item))) {
+    arr = [].concat(...arr);
+  }
+  return arr;
+}
+
+// flat
+let a = [1, [2, [3, [4]]]];
+a.flat(Infinity);
+
+// 30.闭包实现函数重载
+function addMethod(obj, name, fn) {
+  const old = obj[name];
+  obj[name] = function () {
+    if (fn.length === arguments.length) {
+      return fn.apply(this, arguments);
+    }
+    return old.apply(this, arguments);
+  };
+}
+
+// 31.curry
+function curry(fn) {
+  return function F(...args) {
+    if (args.length < fn.length) {
+      return (...arg) => F(...args, ...arg);
+    }
+    return fn(...args);
+  };
+}
+
+// 32.compose
+function compose(...fn) {
+  if (fn.length === 0) return (num) => num;
+  if (fn.length === 1) return fn[0];
+  return fn.reduce((pre, next) => {
+    return (num) => {
+      return next(pre(num));
+    };
+  });
+}
+
+// 33.数组去重
+function unique(arr) {
+  return [...new Set(arr)];
+  return Array.from(new Set(arr));
+}
+
+function unique(arr) {
+  const newArr = [];
+  arr.reduce((pre, next) => {
+    if (!pre.has(next)) {
+      pre.set(next, 1);
+      newArr.push(next);
+    }
+    return pre;
+  }, new Map()); // 这里不能使用WeakMap，WeakMap只接受对象作为key值
+  return newArr;
+}
+
+// 34.eventBUs
+class EventEmitter {
+  constructor(maxListeners) {
+    this.events = {}; // 监听key-value
+    this.maxListeners = maxListeners || Infinity;
+  }
+  on(event, cb) {
+    if (!(cb instanceof Function)) {
+      console.warn('must be a function');
+      return this;
+    }
+    if (!this.events[event]) {
+      this.events[event] = [];
+    }
+    if (
+      this.maxListeners !== Infinity &&
+      this.events[event].length >= this.maxListeners
+    ) {
+      console.warn(`${event} has reached max listeners.`);
+      return this;
+    }
+    this.events[event].push(cb);
+    return this;
+  }
+  emit(event, ...args) {
+    const cbs = this.events[event];
+    if (!cbs) {
+      console.warn(`${event} event is not registered.`);
+      return this;
+    }
+    cbs.forEach((cb) => cb.apply(this, args));
+    return this;
+  }
+  /* 无cb全部移除：事件名、callback */
+  off(event, cb) {
+    if (!cb) {
+      this.events[event] = null;
+    } else {
+      this.events[event] = this.events[event].filter((item) => item !== cb);
+    }
+    return this; // 链式调用
+  }
+  once(event, cb) {
+    const func = (...args) => {
+      this.off(event, func); // 先移除
+      cb.apply(this, args);
+    };
+    this.on(event, func);
+    return this;
+  }
+}
+
+// 35.
 
 // 二、es6
+function run(gen) {
+  return function () {
+    const g = gen.apply(this, arguments);
+    return new Promise((resolve, reject) => {
+      function go(key, arg) {
+        let res;
+        try {
+          res = g[key](arg);
+        } catch (error) {
+          return reject(error);
+        }
+        const { value, done } = res;
+        if (done) {
+          return resolve(value);
+        }
+        return Promise.resolve(value).then(
+          (val) => go('next', val),
+          (err) => go('throw', err),
+        );
+      }
+    });
+  };
+}
 
 // 三、css：BFC、FFC
 

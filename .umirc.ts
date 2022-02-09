@@ -193,6 +193,10 @@ const umiConfig = {
           title: '项目开发模式',
           path: '/other/carry',
         },
+        {
+          title: '手写题汇总',
+          path: '/other/write',
+        },
       ],
     },
     {
@@ -317,7 +321,11 @@ const umiConfig = {
             path: '/base/js/arguments',
           },
           {
-            title: '28.零散知识点',
+            title: '28.EventEmitter',
+            path: '/base/js/eventemitter',
+          },
+          {
+            title: '29.零散知识点',
             path: '/base/js/small',
           },
         ],
@@ -644,10 +652,6 @@ const umiConfig = {
           {
             title: '8.编译原理',
             path: '/frame/vue/compile',
-          },
-          {
-            title: '9.eventbus',
-            path: '/frame/vue/eventbus',
           },
         ],
       },
@@ -998,6 +1002,7 @@ const umiConfig = {
     '/other/low': [{ children: ['/other/low'] }],
     '/other/wechat': [{ children: ['/other/wechat'] }],
     '/other/diff': [{ children: ['/other/diff'] }],
+    '/other/write': [{ children: ['/other/write'] }],
     '/other/carry': [
       {
         children: [
