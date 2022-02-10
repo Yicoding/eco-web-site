@@ -284,6 +284,280 @@ clone(P, C);
 let child = new C();
 ```
 
+### 21）浅拷贝
+
+```js
+var arr = [1, 2, 3];
+arr.slice();
+arr.concat();
+var o = [...arr];
+
+var a = { name: 1 };
+var b = { ...a };
+Object.assign({}, a);
+var c = {};
+Object.keys(a).forEach((key) => {
+  c[key] = a[key];
+});
+```
+
+### 22）深拷贝
+
+```js
+// 暴力
+JSON.parse(JSON.stringify());
+// 简易版考虑到Symbol
+function deepClone(obj, hash = new WeakMap()) {
+  function isObj(o) {
+    return o !== null && (typeof o === 'object' || typeof o === 'function');
+  }
+  if (!isObj(obj)) {
+    return obj;
+  }
+  if (hash.has(obj)) {
+    return hash.get(obj);
+  }
+  let target = Array.isArray(obj) ? [] : {};
+  hash.set(obj, target);
+  Reflect.ownKeys(obj).forEach((key) => {
+    if (isObj(obj[key])) {
+      target[key] = deepClone(obj[key], hash);
+    } else {
+      target[key] = obj[key];
+    }
+  });
+  return target;
+}
+// 改进版
+function isObj(obj) {
+  const t = typeof obj;
+  return t !== null && (t === 'object' || t === 'function');
+}
+
+function copyFn(fn) {
+  const fnStr = fn.toString();
+  // 普通函数属于函数声明， 不能直接使用eval， 需要用小括号包起来形成函数表达式， 而箭头函数本身就是函数表达式
+  return fn.prototype ? eval(`(${fnStr})`) : eval(fnStr);
+}
+
+function deepClone(obj, hash = new WeakMap()) {
+  if (!isObj) return obj;
+  // 处理函数
+  if (typeof obj === 'function') {
+    return copyFn(obj);
+  }
+  // 处理日期
+  if (obj.constructor === Date) {
+    return new Date(obj);
+  }
+  if (obj.constructor === RegExp) {
+    return new RegExp(obj);
+  }
+  if (obj.constructor === Error) {
+    return new Error(obj);
+  }
+  if (hash.has(obj)) {
+    return hash.get(obj);
+  }
+  let target = Array.isArray(obj) ? [] : {};
+  hash.set(obj, target);
+  Reflect.ownKeys(obj).forEach((key) => {
+    if (isObj(obj[key])) {
+      target[key] = deepClone(obj[key], hash);
+    } else {
+      target[key] = obj[key];
+    }
+  });
+  return target;
+}
+```
+
+### 23）defineproperty
+
+```js
+const obj = {};
+let _val = undefined;
+Object.defineProperty(obj, 'name', {
+  configurable: true,
+  enumerable: true,
+  get() {
+    console.log('get', _val);
+    return _val;
+  },
+  set(newVal) {
+    console.log('set', newVal);
+    if (newVal !== _val) {
+      console.log('onChange', newVal);
+      _val = newVal;
+    }
+  },
+});
+obj.name = 'Bob';
+obj.name;
+```
+
+### 24）observe
+
+```js
+function observe(target) {
+  if (typeof target === 'object' && target !== null) {
+    if (Array.isArray(target)) {
+      target.__proto__ = defineArr();
+    } else {
+      Object.keys(target).forEach((key) => {
+        defineObj(target, key, target[key]);
+      });
+    }
+  }
+}
+function defineObj(obj, key, val) {
+  observe(obj);
+  Object.defineProperty(obj, key, {
+    configurable: true,
+    enumerable: true,
+    get() {
+      return val;
+    },
+    set(newVal) {
+      if (newVal !== val) {
+        val = newVal;
+      }
+    },
+  });
+}
+function defineArr() {}
+```
+
+### 25）proxy
+
+```js
+const info = {};
+const proxy = new Proxy(info, {
+  get(obj, key) {
+    return obj[key];
+  },
+  set(obj, key, val) {
+    obj[key] = val;
+  },
+});
+```
+
+### 26）flat
+
+```js
+const flatten = (arr) => {
+  return arr.reduce((prev, cur) => {
+    return prev.concat(Array.isArray(cur) ? flatten(cur) : cur);
+  }, []);
+};
+
+const flatten = (arr) => {
+  if (!arr.length) return;
+  while (arr.some((item) => Array.isArray(item))) {
+    arr = [].concat(...arr);
+  }
+  return arr;
+};
+```
+
+### 27）curry
+
+```js
+function curry(fn) {
+  return function F(...args) {
+    if (args.length < fn.length) {
+      return (...arg) => F(...args, ...arg);
+    }
+    return fn(...args);
+  };
+}
+```
+
+### 28）compose
+
+```js
+function compose(...fn) {
+  if (fn.length === 0) return (num) => num;
+  if (fn.length === 1) return fn[0];
+  return fn.reduce((prev, next) => {
+    return (num) => {
+      return next(prev(num));
+    };
+  });
+}
+```
+
+### 29）数组去重
+
+```js
+function unique(arr) {
+  const newArr = [];
+  arr.reduce((pre, next) => {
+    if (!pre.has(next)) {
+      pre.set(next, 1);
+      newArr.push(next);
+    }
+    return pre;
+  }, new Map()); // 这里不能使用WeakMap，WeakMap只接受对象作为key值
+  return newArr;
+}
+```
+
+### 30）EventEmitter
+
+```js
+class EventEmitter {
+  constructor(maxListeners) {
+    this.events = {}; // 监听key-value
+    this.maxListeners = maxListeners || Infinity;
+  }
+  on(event, cb) {
+    if (!(cb instanceof Function)) {
+      console.warn('must be a function');
+      return this;
+    }
+    if (!this.events[event]) {
+      this.events[event] = [];
+    }
+    if (
+      this.maxListeners !== Infinity &&
+      this.events[event].length >= this.maxListeners
+    ) {
+      console.warn(`${event} has reached max listeners.`);
+      return this;
+    }
+    this.events[event].push(cb);
+    return this;
+  }
+  emit(event, ...args) {
+    const cbs = this.events[event];
+    if (!cbs) {
+      console.warn(`${event} event is not registered.`);
+      return this;
+    }
+    cbs.forEach((cb) => cb.apply(this, args));
+    return this;
+  }
+  /* 无cb全部移除：事件名、callback */
+  off(event, cb) {
+    if (!cb) {
+      this.events[event] = null;
+    } else {
+      this.events[event] = this.events[event].filter((item) => item !== cb);
+    }
+    return this; // 链式调用
+  }
+  once(event, cb) {
+    const func = (...args) => {
+      this.off(event, func); // 先移除
+      cb.apply(this, args);
+    };
+    this.on(event, func);
+    return this;
+  }
+}
+```
+
 ## 2.ES
 
 ### 1）Promise
