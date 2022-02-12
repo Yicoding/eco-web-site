@@ -353,7 +353,7 @@ toc: menu
 
 - 根元素，即 html
 - float 为 left | right
-- overflow 为 hidden | auto | scorll
+- overflow 为 hidden | auto | scroll
 - display 为 table-cell | table-caption | inline-block | flex | inline-flex
 - position 的值为 absolute 或 fixed
 
