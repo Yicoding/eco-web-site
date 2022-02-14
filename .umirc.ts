@@ -194,8 +194,12 @@ const umiConfig = {
           path: '/other/carry',
         },
         {
-          title: '手写题汇总',
+          title: '核心知识点',
           path: '/other/write',
+        },
+        {
+          title: '面经',
+          path: '/other/face',
         },
       ],
     },
@@ -1044,6 +1048,20 @@ const umiConfig = {
           {
             title: '性能检测',
             path: '/other/perform/detection',
+          },
+        ],
+      },
+    ],
+    '/other/face': [
+      {
+        children: [
+          {
+            title: '面试题',
+            path: '/other/face',
+          },
+          {
+            title: '1.酷家乐',
+            path: '/other/face/kjl',
           },
         ],
       },
