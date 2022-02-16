@@ -851,3 +851,38 @@ asyncFn().then((res) => console.log(res));
   - http/3： 基于 udp 实现类似 tcp 多路传输流、传输可靠性的协议 QUIC
 
 ### 4）网络安全
+
+## 4.算法
+
+### 1）数组转树形结构
+
+```js
+// 递归
+const arr = [
+  { id: '29', pid: '', name: '总裁办' },
+  { id: '2c', pid: '', name: '财务部' },
+  { id: '2d', pid: '2c', name: '财务核算部' },
+  { id: '2f', pid: '2c', name: '薪资管理部' },
+  { id: 'd2', pid: '', name: '技术部' },
+  { id: 'd3', pid: 'd2', name: 'Java研发部' },
+];
+// 递归 自己调用自己
+function todo2(arr, pid) {
+  const newArr = [];
+  // 查找一级根据传进来的pid和每一项的pid
+  arr.forEach((item) => {
+    if (item.pid === pid) {
+      // 1- 还需要往一级里面追加子children
+      const children = todo2(arr, item.id);
+      if (children) {
+        // 判定二级节点
+        item.children = children;
+      }
+      // 一级根节点
+      newArr.push(item);
+    }
+  });
+  return newArr;
+}
+console.log(todo2(arr, ''));
+```
