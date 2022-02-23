@@ -208,3 +208,24 @@ calc(expression); //expression是数学表达式
         - 偏移量：startOffset = scrollTop -（scrollTop%itemSize），当滚动后，由于渲染区域相对于可视区域已经发生了偏移，此时需要获取一个偏移量startOffset，通过样式控制将渲染区域偏移至可视区域中。
 
   - 无限滚动：当滚动触底, 就加载新一批数据, 拼接到原来的数据上
+
+## 12.ios 缓存清不掉的问题
+
+- 之前是 UIWebview
+
+- 现在苹果强制用 wkwebview
+
+- 清理缓存要单独处理下
+
+## 13.如何处理 JSON.parse 解析报错
+
+- 使用 try catch 捕获错误
+
+  ```js
+  var item = "{'name': 1}";
+  try {
+    item = JSON.parse(item);
+  } catch {
+    item = {};
+  }
+  ```

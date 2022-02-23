@@ -197,10 +197,10 @@ const umiConfig = {
           title: '核心知识点',
           path: '/other/write',
         },
-        // {
-        //   title: '面经',
-        //   path: '/other/face',
-        // },
+        {
+          title: '面经',
+          path: '/other/face',
+        },
       ],
     },
     {

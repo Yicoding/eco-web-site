@@ -147,3 +147,21 @@ interface VIPUser extends User, SupperUser {
   broadcast: () => void;
 }
 ```
+
+## 7.interface 和 type 区别
+
+### 1）相同点
+
+- 都可以描述一个对象或者函数
+
+- 都允许继承（extends），也可以相互继承
+
+  - interface 通过 extends 继承，type 通过&连接符继承
+
+### 2）不同点
+
+- type 可以声明基本类型别名，联合类型，元组等类型
+
+- type 可以通过 typeof 操作符来定义
+
+- interface 能够声明合并
