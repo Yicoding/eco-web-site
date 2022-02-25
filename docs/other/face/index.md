@@ -215,3 +215,143 @@ function get(val) {
 }
 get(1).minus(2).add(10).result();
 ```
+
+## 12.import 动态加载 js 原理
+
+- 采用 JSONP 的思路，首先，将动态引入模块单独打成一个 js 文件；其次，在 import 执行时创建 script 标签传入 src 为引入模块地址；从而实现动态加载的效果，注意，JSONP 必然是异步的，所以必须要结合 Promise
+
+## 13.跨域场景
+
+- ip 访问对应域名不跨域，域名访问对应 ip 算跨域，因为一个 ip 地址可能会对应多个域名，一个域名只能对应一个 ip 地址
+
+- http://a.com/a.js访问http://www.a.com/a.js算跨域，域名不同
+
+## 14.遍历值
+
+```js
+var tree = {
+  a: 1,
+  b: {
+    c: 2,
+    d: {
+      e: 3,
+      d: {
+        f: 4,
+      },
+    },
+  },
+  c: 5,
+  d: {
+    t: 6,
+    h: {
+      l: 7,
+    },
+  },
+};
+
+// 深度优先遍历/递归
+function recursion(root) {
+  Object.keys(root).forEach((key) => {
+    const item = root[key];
+    if (typeof item === 'object') {
+      recursion(item);
+    } else {
+      console.log(item);
+    }
+  });
+}
+
+// 广度
+function bfs(root) {
+  const queue = [];
+  queue.push(root);
+  while (queue.length) {
+    const top = queue.shift();
+    Object.keys(top).forEach((key) => {
+      const item = top[key];
+      if (typeof item === 'object') {
+        queue.push(item);
+      } else {
+        console.log(item);
+      }
+    });
+  }
+}
+
+recursion(tree);
+bfs(tree);
+```
+
+## 15.语义化标签的好处
+
+- 去掉或样式丢失的时候能让页面呈现清晰的结构
+
+- 方便其他设备解析（如屏幕阅读器、盲人阅读器、移动设备）以意义的方式来渲染网页
+
+- 有利于 SEO
+
+- 便于团队开发和维护，遵循 W3C 标准，可以减少差异化
+
+## 16.webpack 中 module、chunk、bundle 区别
+
+### 1）module
+
+- 模块可以理解为一个单独的文件，一个文件可以看做一个模块
+
+### 2）chunk
+
+- chunk 是 webpack 用来命名编译的中间产物，如一个入口依赖多个模块，编译时就会将多个模块和入口编译到一个文件，这时候这个文件就叫 chunk。当然这是最简单情况，一个入口对应一个 chunk，然后一个 chunk 生成一个 bundle。如果使用了 code spliting，那么一个入口就可能生成多个 chunk，对应的 bundle 也可能会增加
+
+### 3）bundle
+
+- bundle 就是 webpack 编译生成的最终代码，一般来说和 chunk 一一对应
+
+## 17.浏览器的每一帧发生了什么
+
+- 页面的内容都是一帧一帧绘制出来的，浏览器刷新率代表浏览器一秒绘制多少帧。原则上说 1s 内绘制的帧数也多，画面表现就也细腻。目前浏览器大多是 60Hz（60 帧/s），每一帧耗时也就是在 16.6ms 左右。那么在这一帧的（16.6ms） 过程中浏览器又干了些什么呢？
+
+【1】接受输入事件
+【2】执行事件回调
+【3】开始一帧
+【4】执行 RAF (RequestAnimationFrame)
+【5】页面布局，样式计算
+【6】绘制渲染
+【7】执行 RIC (RequestIdelCallback)
+
+- 第七步的 RIC 事件不是每一帧结束都会执行，只有在一帧的 16.6ms 中做完了前面 6 件事儿且还有剩余时间，才会执行。如果一帧执行结束后还有时间执行 RIC 事件，那么下一帧需要在事件执行结束才能继续渲染，所以 RIC 执行不要超过 30ms，如果长时间不将控制权交还给浏览器，会影响下一帧的渲染，导致页面出现卡顿和事件响应不及时
+
+```js
+requestIdleCallback(myNonEssentialWork, { timeout: 2000 });
+
+// 任务队列
+const tasks = [
+  () => {
+    console.log('第一个任务');
+  },
+  () => {
+    console.log('第二个任务');
+  },
+  () => {
+    console.log('第三个任务');
+  },
+];
+
+function myNonEssentialWork(deadline) {
+  // 如果帧内有富余的时间，或者超时
+  while (
+    (deadline.timeRemaining() > 0 || deadline.didTimeout) &&
+    tasks.length > 0
+  ) {
+    work();
+  }
+
+  if (tasks.length > 0) requestIdleCallback(myNonEssentialWork);
+}
+
+function work() {
+  tasks.shift()();
+  console.log('执行任务');
+}
+```
+
+## 18.强缓存、协商缓存 区别、应用场景

@@ -715,3 +715,7 @@ if (shouldTrackSideEffects) {
 ```
 
 - 最后一步，对于没有复用的 oldFiber ，统一删除处理
+
+## 8.Fiber 调度过程
+
+[iber Scheduler (调度器)](https://www.jianshu.com/p/24431173b2e3)

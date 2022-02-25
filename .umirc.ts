@@ -1059,10 +1059,10 @@ const umiConfig = {
             title: '面试题',
             path: '/other/face',
           },
-          {
-            title: '1.酷家乐',
-            path: '/other/face/kjl',
-          },
+          // {
+          //   title: '1.酷家乐',
+          //   path: '/other/face/kjl',
+          // },
         ],
       },
     ],
