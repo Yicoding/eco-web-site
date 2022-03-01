@@ -18,6 +18,8 @@ toc: menu
 
 ### 2）hooks
 
+![react-hooks原理](https://juejin.cn/post/6944863057000529933)
+
 **1.原理**
 
 **2.为什么要保证顺序**
@@ -27,6 +29,14 @@ toc: menu
 **4.hooks 和 vue 的不同**
 
 **5.hooks 如何实现**
+
+**6.react 链表原理**
+
+- 按顺序去遍历之前构建好的链表，取出对应的数据信息进行渲染
+
+- hooks 的渲染是通过“依次遍历”来定位每个 hooks 内容的。如果前后两次读到的链表在顺序上出现差异，那么渲染的结果自然是不可控的
+
+- 因为 useState 这个钩子在设计层面并没有“状态命名”这个动作，也就是说每生成一个新的状态，React 并不知道这个状态名字叫啥，所以需要通过顺序来索引到对应的状态值
 
 ### 3）合成事件
 
@@ -355,3 +365,70 @@ function work() {
 ```
 
 ## 18.强缓存、协商缓存 区别、应用场景
+
+## 19.为什么代码没有使用 react 相关方法，也要在文件顶部 import react
+
+- 原因：通过 babel 会将 jsx 编译成普通 js 代码会用到 React.createElement，所以需要 React
+
+## 20.算法求数字区间
+
+- 题目描述：给定一个无序整形数组，请设计一个算法找出其中连续出现的数字区间
+
+```js
+var list = [7, 2, 11, 2, 0, 1, 2, 4, 5, 10, 13, 14, 15];
+
+// 得到结果
+// [0->2, 4->5, 10->11, 13->15]
+```
+
+- 思路：先对数组进行去重和排序
+
+```js
+var list = [7, 2, 11, 2, 0, 1, 2, 4, 5, 10, 13, 14, 15];
+
+function summaryRanges(arr) {
+  arr = [...new Set(arr.sort((a, b) => a - b))];
+  var result = [],
+    i = 0;
+  result[i] = [arr[0]];
+  arr.reduce((prev, cur) => {
+    cur - prev === 1
+      ? result[i].push(cur)
+      : (result[result[i].length > 1 ? ++i : i] = [cur]);
+    return cur;
+  });
+  return result;
+}
+
+function summaryRanges2(arr) {
+  arr = [...new Set(arr.sort((a, b) => a - b))];
+  var result = [],
+    index = 0;
+  result[index] = [arr[0]];
+  for (let i = 0; i < arr.length - 1; i++) {
+    if (arr[i + 1] - arr[i] === 1) {
+      result[index].push(arr[i + 1]);
+    } else {
+      result[result[index].length > 1 ? ++index : index] = [arr[i + 1]];
+    }
+  }
+  return result;
+}
+
+var result = summaryRanges(list);
+console.log(result);
+```
+
+## 21.http/1.1 的 keep-alive 和 http/2 多路复用的区别
+
+- 1.1 增加了管线化技术，允许客户端不用等到服务器的响应就能发送下一个请求，服务器必须按照请求的顺序来响应。即后续请求的响应必须等到第一个响应发送之后才能发送，即使后续响应已经完成
+
+- 2.0 无需多个 TCP 连接，允许在单一的 HTTP2 连接上发起多重请求
+
+- 1.1 使用的是串行请求，2.0 使用的是并行发送
+
+- 1.1 是基于文本传输，因为是文本，就导致了它必须是个整体，在传输是不可切割的，只能整体去传
+
+- 2.0 是基于二进制流的，将 HTTP 消息分解为独立的帧，交错发送，然后在另一端重新组装
+
+## 22.浏览器进程
