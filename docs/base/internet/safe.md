@@ -108,7 +108,7 @@ toc: menu
 
 **4.开启浏览器的 XSS 防御**
 
-- http only Cookie，禁止 js 读取 cookie 值，完成 xss 注入也无法窃取 cookie，eg：set-cookie，httponly
+- http only Cookie，禁止 js 读取 cookie 值，完成 xss 注入也无法窃取 cookie，eg：set-cookie: httponly
 
 **5.验证码**
 
@@ -122,19 +122,45 @@ toc: menu
 
 - 攻击者诱导受害者进⼊恶意⽹站，在第三⽅⽹站中，向被攻击⽹站发送跨站请求。利⽤受害者在被攻击⽹站已经获取的注册凭证，绕过后台的⽤户验证，达到冒充⽤户对被攻击的⽹站执⾏某项操作的⽬的
 
+- 攻击者无法直接窃取到用户的信息（Cookie，Header，网站内容等），仅仅是冒用 Cookie 中的信息
+
 ### 3）攻击步骤
+
+![image](images/base/5.png)
 
 - 受害者登录 a.com，并且保留了登录凭证 cookie
 - 攻击者诱导受害者访问 b.com
-- b.com 向 a.com 发送请求，a.com/xxxx，浏览器就会直接带上 a.com 的 cookie
-- a.com 收到了请求，验证通过后，执行相应操作
+- b.com 向 a.com 发送请求，a.com/act=xx，浏览器就会直接带上 a.com 的 cookie
+- a.com 接收到请求后，对请求进行验证，并确认是受害者的凭证，误以为是受害者自己发送的请求
+- a.com 以受害者的名义执行了 act=xx
 - 攻击完成，攻击者在受害者不知情的情况下，冒充受害者，让 a.com 执行了自己定义的操作
 
 ### 4）攻击类型
 
-- `GET` 型：如在⻚⾯的某个 img 中发起⼀个 get 请求
+- `GET` 类型的 CSRF：如在⻚⾯的某个 img 中发起⼀个 get 请求
 
-- `POST` 型：通过⾃动提交表单到恶意⽹站
+  - 在受害者访问含有这个 img 的页面后，浏览器会自动向`http://bank.example/withdraw?account=xiaoming&amount=10000&for=hacker`发出一次 HTTP 请求。 bank.example 就会收到包含受害者登录信息的一次跨域请求
+
+    ```html
+    <img src="http://bank.example/withdraw?amount=10000&for=hacker" />
+    ```
+
+- `POST` 类型的 CSRF：通常使用的是一个自动提交的表单到恶意⽹站
+
+  - 访问该页面后，表单会自动提交，相当于模拟用户完成了一次 POST 操作
+
+  - POST 类型的攻击通常比 GET 要求更加严格一点，但仍并不复杂。任何个人网站、博客，被黑客上传页面的网站都有可能是发起攻击的来源，后端接口不能将安全寄托在仅允许 POST 上面
+
+    ```html
+    <form action="http://bank.example/withdraw" method="POST">
+      <input type="hidden" name="account" value="xiaoming" />
+      <input type="hidden" name="amount" value="10000" />
+      <input type="hidden" name="for" value="hacker" />
+    </form>
+    <script>
+      document.forms[0].submit();
+    </script>
+    ```
 
 ### 5）防御方式
 
@@ -146,15 +172,21 @@ toc: menu
 - CSRF 一般发生在第三方域名，攻击者无法获取到 cookie 信息，只是利用浏览器机制使用 cookie
 
 - 1.同源策略
+
   - 通过检查 request header 中的 origin、referer、host 等，判断请求站点是否是自己允许的站点。
     - host：任何请求携带，域名和端口号
     - origin：一般存在于跨域请求中，协议和域名，和 Access-Control-Allow-Origin 一起存在
     - referer：告知服务器原始 url，其用于所有类型的请求，并且包括：协议+域名+查询参数
-  - Referrer-Policy：可设置携带 referer 头，eg：Referrer-Policy: no-referrer ｜ same-origin 等。
+  - Referrer-Policy：可设置携带 referer 头，eg：Referrer-Policy: no-referrer ｜ same-origin 等
+
 - 2.Cookie SameSite
+
   - Strict：完全禁止第三方 cookie，⽐如 a.com 的⻚⾯中访问 b.com 的资源，那么 a.com 中的 cookie 不会被发送到 b.com 服务器，只有从 b.com 的站点去请求 b.com 的资源，才会带上这些 Cookie
   - Lax：在跨站点的情况下，从第三⽅站点链接打开和从第三⽅站点提交 Get ⽅式的表单这两种⽅式都会携带 Cookie。但如果在第三⽅站点中使⽤ POST ⽅法或者通过 img、Iframe 等标签加载的 URL，这些场景都不会携带 Cookie
   - None：任何情况下都会发送 Cookie 数据
+
+  - 所以，我们可以将 SameSite 设置为 `Strict` 或 `Lax` 来解决 Cookie 问题
+
 - 3.CSRF `Token`：提交请求时携带额外信息
   - 服务器下发一个随机 Token，每次发起请求时将 Token 携带上，服务器验证 Token 是否有效
 

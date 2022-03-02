@@ -53,7 +53,7 @@ parseInt(22.5); // 22
 // ===>
 parseInt(1, 0); // 1
 parseInt(2, 1); // NaN(1不在parseInt第二个参数解析区间内)
-parseInt(3, 2); // Nan(用2进制来解析，应以 0 和 1 开头，所以结果为 NaN)
+parseInt(3, 2); // NaN(用2进制来解析，应以 0 和 1 开头，所以结果为 NaN)
 
 // parseFloat
 [1, 2, 3].map(parseFloat); // [1,2,3]

@@ -443,7 +443,7 @@ module.exports = {
 
 **1.按需加载**
 
-- 原理：当使用的时候再去下载对应文件，返回一个 Promise，当 Promise 成功以后去执行回调。
+- 原理：当使用的时候再去下载对应文件，返回一个 Promise，当 Promise 成功以后去执行回调
 
 **2.Scope Hoisting**
 
@@ -459,7 +459,7 @@ module.exports = {
   };
   ```
 
-  **3.Tree Shaking**
+**3.Tree Shaking**
 
 - Tree Shaking 可以实现删除项目中未被引用的代码
 
