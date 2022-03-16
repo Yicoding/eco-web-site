@@ -445,11 +445,17 @@ const proxy = new Proxy(info, {
 ### 26）flat
 
 ```js
-const flatten = (arr) => {
+function flatten(arr, n = 1) {
+  if (n < 1) {
+    return arr;
+  }
   return arr.reduce((prev, cur) => {
-    return prev.concat(Array.isArray(cur) ? flatten(cur) : cur);
+    return prev.concat(Array.isArray(cur) ? flatten(cur, n - 1) : cur);
   }, []);
-};
+}
+
+const arr = [1, [2, [3, 4]]];
+console.log(flatten(arr, Infinity));
 
 const flatten = (arr) => {
   if (!arr.length) return;

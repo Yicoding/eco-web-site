@@ -86,14 +86,17 @@ console.log(flatten(arr));
 reduce 本身就是一个迭代循环器，通常用于累加，所以根据这一特点有以下
 
 ```js
-function flatten(arr) {
-  return arr.reduce(function (prev, cur) {
-    return prev.concat(Array.isArray(cur) ? flatten(cur) : cur);
+function flatten(arr, n = 1) {
+  if (n < 1) {
+    return arr;
+  }
+  return arr.reduce((prev, cur) => {
+    return prev.concat(Array.isArray(cur) ? flatten(cur, n - 1) : cur);
   }, []);
 }
 
 const arr = [1, [2, [3, 4]]];
-console.log(flatten(arr));
+console.log(flatten(arr, Infinity));
 ```
 
 ### 5）es6 提供的新方法 flat(depth)

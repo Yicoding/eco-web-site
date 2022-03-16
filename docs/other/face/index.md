@@ -18,7 +18,7 @@ toc: menu
 
 ### 2）hooks
 
-![react-hooks原理](https://juejin.cn/post/6944863057000529933)
+[react-hooks 原理](https://juejin.cn/post/6944863057000529933)
 
 **1.原理**
 
@@ -37,6 +37,8 @@ toc: menu
 - hooks 的渲染是通过“依次遍历”来定位每个 hooks 内容的。如果前后两次读到的链表在顺序上出现差异，那么渲染的结果自然是不可控的
 
 - 因为 useState 这个钩子在设计层面并没有“状态命名”这个动作，也就是说每生成一个新的状态，React 并不知道这个状态名字叫啥，所以需要通过顺序来索引到对应的状态值
+
+**7.hooks 遇到的坑，如何解决**
 
 ### 3）合成事件
 
@@ -138,7 +140,7 @@ function workLoop(hasTimeRemaining, initialTime) {
 
 - 项目怎么开发图片上传、怎么转 base64、图片压缩原理、base 类怎么写的、怎么扩展为文件上传的、图片预览怎么写的、什么是 blob、fileReader、大文件怎么切片、文件进度
 
-## 6.hbrid
+## 6.hybrid
 
 - 怎么处理 jsbride 各个 app 不同
 
@@ -260,32 +262,62 @@ var tree = {
 };
 
 // 深度优先遍历/递归
-function recursion(root) {
-  Object.keys(root).forEach((key) => {
-    const item = root[key];
-    if (typeof item === 'object') {
-      recursion(item);
+function recursion(tree) {
+  if (!tree) {
+    return;
+  }
+  var result = [];
+  if (typeof tree === 'object') {
+    Object.keys(tree).forEach((key) => {
+      result.push(...recursion(tree[key]));
+    });
+  } else {
+    result.push(tree);
+  }
+  return result;
+}
+
+// 深度优先遍历/迭代法
+function dfs(tree) {
+  if (!tree) {
+    return;
+  }
+  var result = [];
+  var arr = [];
+  arr.push(tree);
+  while (arr.length) {
+    var top = arr.pop();
+    if (typeof top === 'object') {
+      Object.keys(top)
+        .reverse()
+        .forEach((key) => {
+          arr.push(top[key]);
+        });
     } else {
-      console.log(item);
+      result.push(top);
     }
-  });
+  }
+  return result;
 }
 
 // 广度
 function bfs(root) {
-  const queue = [];
-  queue.push(root);
+  if (!tree) {
+    return;
+  }
+  var result = [];
+  const queue = [root];
   while (queue.length) {
     const top = queue.shift();
-    Object.keys(top).forEach((key) => {
-      const item = top[key];
-      if (typeof item === 'object') {
-        queue.push(item);
-      } else {
-        console.log(item);
-      }
-    });
+    if (typeof top === 'object') {
+      Object.keys(top).forEach((key) => {
+        queue.push(top[key]);
+      });
+    } else {
+      result.push(top);
+    }
   }
+  return result;
 }
 
 recursion(tree);
@@ -432,3 +464,112 @@ console.log(result);
 - 2.0 是基于二进制流的，将 HTTP 消息分解为独立的帧，交错发送，然后在另一端重新组装
 
 ## 22.浏览器进程
+
+## 23.写一个 delay 函数
+
+```js
+const delay = (duration) => {
+  return function (val) {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve(val);
+      }, duration);
+    });
+  };
+};
+Promise.resolve('hello')
+  .then(delay(1000))
+  .then((val) => console.log(val));
+```
+
+## 24.查找包含当前节点的所有父级节点
+
+[JavaScript 处理树 列表转树 遍历树 查找树](https://juejin.cn/post/6973923346333302791#heading-3)
+
+```js
+function findPath(tree, id) {
+  if (tree.id === id) return [id];
+  function treeFindPath(arr, id, path = []) {
+    if (!tree) return [];
+    for (const data of arr) {
+      path.push(data.id);
+      if (data.id === id) {
+        return path;
+      }
+      if (data.children) {
+        const findChildren = treeFindPath(data.children, id, path);
+        if (findChildren.length) return findChildren;
+      }
+      path.pop();
+    }
+    return [];
+  }
+  return treeFindPath(tree?.children, id, [tree.id]);
+}
+findPath(
+  {
+    id: 1,
+    children: [
+      {
+        id: 2,
+        children: [{ id: 3 }, { id: 4 }],
+      },
+      { id: 5 },
+    ],
+  },
+  3,
+);
+```
+
+```js
+function findPath(arr, id, path = []) {
+  if (!arr) return [];
+  for (let item of arr) {
+    path.push(item.id);
+    if (item.id === id) {
+      return path;
+    }
+    if (item.children) {
+      const result = findPath(item.children, id, path);
+      if (result.length) return result;
+    }
+    path.pop();
+  }
+  return [];
+}
+findPath(
+  [
+    {
+      id: 1,
+      children: [{ id: 2, children: [{ id: 3 }] }],
+    },
+  ],
+  3,
+);
+```
+
+## 25.已知数组 a=[1,[2,[3,[4,null]]]], 实现数组 b=[4,[3,[2,[1,null]]]] ，考虑 n 级嵌套的情况
+
+```js
+function reverseArray(arr) {
+  let a = arr.flat(Infinity);
+
+  for (let i = 0; i < Math.floor((a.length - 1) / 2); i++) {
+    [a[i], a[a.length - 2 - i]] = [a[a.length - 2 - i], a[i]];
+  }
+
+  for (let i = a.length - 2; i >= 1; i--) {
+    if (i === a.length - 2) {
+      a[i] = [a[i], null];
+      continue;
+    }
+    a[i] = [a[i], a[i + 1]];
+  }
+  return a.slice(0, 2);
+}
+
+//测试
+let arr = [1, [2, [3, [4, [5, [6, [7, [8, [9, [10, [11, null]]]]]]]]]]];
+
+console.log(reverseArray(arr));
+```
