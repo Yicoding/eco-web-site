@@ -96,3 +96,19 @@ const fib = memozi(function (n) {
 
 console.log(fib(5)); // 1 1 2 3 5
 ```
+
+### 5）动态规划的思路
+
+```js
+function fibonacci(n) {
+  const aFi = [];
+  aFi[0] = 0;
+  aFi[1] = 1;
+  for (let i = 2; i <= n; i++) {
+    aFi[i] = aFi[i - 1] + aFi[i - 2];
+  }
+
+  return aFi[n];
+}
+console.log(fibonacci(5)); // 1 1 2 3 5
+```

@@ -166,6 +166,10 @@ const umiConfig = {
           path: '/other/pay',
         },
         {
+          title: '常用工具库',
+          path: '/other/tools',
+        },
+        {
           title: '微前端',
           path: '/other/micro',
         },
@@ -1003,6 +1007,7 @@ const umiConfig = {
     '/other/interview': [{ children: ['/other/interview'] }],
     '/other/problem': [{ children: ['/other/problem'] }],
     '/other/pay': [{ children: ['/other/pay'] }],
+    '/other/tools': [{ children: ['/other/tools'] }],
     '/other/hybrid': [{ children: ['/other/hybrid'] }],
     '/other/image': [{ children: ['/other/image'] }],
     '/other/track': [{ children: ['/other/track'] }],

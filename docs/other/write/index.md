@@ -775,6 +775,26 @@ const asyncFn = generatorToAsync(myGenerator);
 asyncFn().then((res) => console.log(res));
 ```
 
+### 3）Promise 输出
+
+```js
+new Promise((resolve) => {
+  resolve(1);
+})
+  .then((e) => {
+    console.log('e', e); // 1
+    return new Promise((resolve) => resolve(2));
+  })
+  .then((val) => {
+    console.log('val', val); // 2
+    return new Promise((reject) => reject(3));
+  })
+  .then(
+    (a) => console.log('a', a), // 不执行
+    (b) => console.log('b', b), // 3
+  );
+```
+
 ## 3.网络
 
 ### 1）浏览器缓存
