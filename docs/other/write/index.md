@@ -912,3 +912,77 @@ function todo2(arr, pid) {
 }
 console.log(todo2(arr, ''));
 ```
+
+### 2）js 随机发红包
+
+- 发 100 元红包，群里 10 个人，随机发放，每个人都有
+
+```js
+function getMoneyArray(amount, number) {
+  const average = amount / number;
+  let i = 0;
+  let total = amount;
+  const result = [];
+  const len = number - 1;
+  while (i < len && total > 0) {
+    const random = Math.random();
+    const t = Math.abs(random - 0.5);
+    const num = Number(
+      Math.abs(random > 0.5 ? average + t * amount : average - t * amount),
+    );
+    if (total > num && num > 0.01) {
+      total -= num;
+      i++;
+      result.push(Number(num.toFixed(2)));
+    }
+  }
+  result.push(Number(total.toFixed(2)));
+  return result;
+}
+
+getMoneyArray(100, 10);
+```
+
+```js
+//随机金额
+function random(min, max) {
+  return parseFloat(parseFloat(Math.random() * (max - min) - min).toFixed(2));
+}
+//抢红包🧧算法
+function redBag(totalVal, total) {
+  if (total === 1) {
+    return totalVal;
+  }
+  if (!total) {
+    return new Error('total must be big than 0');
+  }
+  let result = [];
+  const min = 0.01;
+  let max = (totalVal / total) * 2;
+  while (total > 1) {
+    max = Math.floor(totalVal / total) * 2; //每次的最大是平均*2 比如100元红包分2个人，那第一次随机数是0.01～100/5*2，可以理解为一个人抢到了接近0，另一个抢到了100
+    let randomMoney; //每次随机红包
+    if (total === 2) {
+      randomMoney = totalVal <= min ? min : random(min, max - 0.01); //倒数第二个
+    } else {
+      randomMoney = totalVal <= min ? min : random(min, max); //other
+    }
+    result.push(randomMoney);
+    totalVal = Number(
+      parseFloat(Math.round((totalVal - randomMoney) * 100) / 100).toFixed(2),
+    ); //每次抢完红包剩余的金额
+    total--;
+  }
+  result.push(totalVal);
+  return result;
+}
+
+let arr = redBag(100, 8);
+console.log(arr);
+let s = Math.round(
+  arr.reduce((a, b) => {
+    return a + b;
+  }),
+);
+console.log(s);
+```
