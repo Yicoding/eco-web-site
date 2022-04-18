@@ -559,6 +559,10 @@ const umiConfig = {
             title: '14.赋值断言、is 关键字、可调用类型注解和类型推导',
             path: '/base/ts/compre',
           },
+          {
+            title: '15.react 中的 ts',
+            path: '/base/ts/react',
+          },
         ],
       },
     ],
