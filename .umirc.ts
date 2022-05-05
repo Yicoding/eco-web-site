@@ -139,6 +139,39 @@ const umiConfig = {
       ],
     },
     {
+      title: '领域',
+      children: [
+        {
+          title: '低代码',
+          path: '/domain/low',
+        },
+        {
+          title: '微前端',
+          path: '/domain/micro',
+        },
+        {
+          title: '服务端渲染',
+          path: '/domain/micro',
+        },
+        {
+          title: '前端监控与埋点方案',
+          path: '/domain/track',
+        },
+        {
+          title: 'hybrid',
+          path: '/domain/hybrid',
+        },
+        {
+          title: 'PWA',
+          path: '/domain/track',
+        },
+        {
+          title: 'Web Components',
+          path: '/domain/track',
+        },
+      ],
+    },
+    {
       title: '其他',
       children: [
         {
@@ -170,24 +203,8 @@ const umiConfig = {
           path: '/other/tools',
         },
         {
-          title: '微前端',
-          path: '/other/micro',
-        },
-        {
-          title: '低代码平台',
-          path: '/other/low',
-        },
-        {
-          title: 'hybrid',
-          path: '/other/hybrid',
-        },
-        {
           title: '图片格式',
           path: '/other/image',
-        },
-        {
-          title: '前端监控与埋点方案',
-          path: '/other/track',
         },
         {
           title: '开发遇见的问题',
@@ -1007,16 +1024,18 @@ const umiConfig = {
       },
     ],
     /***************** nav: 核心竞争力 *******************/
+    /***************** nav: 领域 *******************/
+    '/domain/track': [{ children: ['/domain/track'] }],
+    '/domain/micro': [{ children: ['/domain/micro'] }],
+    '/domain/low': [{ children: ['/domain/low'] }],
+    '/domain/hybrid': [{ children: ['/domain/hybrid'] }],
+    /***************** nav: 领域 *******************/
     /***************** nav: 其他 *******************/
     '/other/interview': [{ children: ['/other/interview'] }],
     '/other/problem': [{ children: ['/other/problem'] }],
     '/other/pay': [{ children: ['/other/pay'] }],
     '/other/tools': [{ children: ['/other/tools'] }],
-    '/other/hybrid': [{ children: ['/other/hybrid'] }],
     '/other/image': [{ children: ['/other/image'] }],
-    '/other/track': [{ children: ['/other/track'] }],
-    '/other/micro': [{ children: ['/other/micro'] }],
-    '/other/low': [{ children: ['/other/low'] }],
     '/other/wechat': [{ children: ['/other/wechat'] }],
     '/other/diff': [{ children: ['/other/diff'] }],
     '/other/write': [{ children: ['/other/write'] }],

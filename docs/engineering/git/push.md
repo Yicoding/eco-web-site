@@ -60,3 +60,7 @@ git push
 ### 3）git push --set-upstream-to=origin/
 
 - 这个方法跟 git push -u 则不同，当`远端没有对应的分支`时，则`无法`进行`关联`。
+
+### 4）git push --follow-tags
+
+- 把改动和 tag 同时推到远程分支
