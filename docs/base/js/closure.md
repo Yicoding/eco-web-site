@@ -114,7 +114,7 @@ setTimeout(function timeHandler() {
 }, 100);
 ```
 
-### 6）防抖、节流
+### 6）防抖、截流
 
 ```js
 // 防抖
@@ -128,7 +128,7 @@ function debounce(fn, timeout) {
   };
 }
 
-// 节流
+// 截流
 function throttle(fn, timeout) {
   let timer = null;
   return function (...arg) {

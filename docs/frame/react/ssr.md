@@ -220,7 +220,7 @@ ReactDOMServer.renderToStaticMarkup(element);
 
   - 在浏览器端渲染时，该方法会最大限度的保留服务端使用 renderToString()渲染的内容，同时添加事件绑定等交互
 
-  - 提供了可以将组件转换为字节流的 `renderToNodeStream` 方法，性能有提升，可以有效缩短 `TTFB` 时间
+  - 提供了可以将组件转换为字截流的 `renderToNodeStream` 方法，性能有提升，可以有效缩短 `TTFB` 时间
   - 采用`流`的形式，可以边读边输出，可以要让页面更快的展现，缩短首屏展现时间
 
 ## 9.同构应用流程图

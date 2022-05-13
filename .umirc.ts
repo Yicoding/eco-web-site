@@ -302,7 +302,7 @@ const umiConfig = {
             path: '/base/js/hijack',
           },
           {
-            title: '17.防抖/节流',
+            title: '17.防抖/截流',
             path: '/base/js/shake',
           },
           {

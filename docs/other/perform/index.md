@@ -104,7 +104,7 @@ toc: menu
 ### 2）滚动/移动/操作流畅
 
 - DOM 增删操作要少(`虚拟长列表`、`DOM Diff`)
-- 高频操作使用`防抖`和`节流`
+- 高频操作使用`防抖`和`截流`
 
 ### 3）密集型计算
 
@@ -194,7 +194,7 @@ function _isShow(el) {
     time = 250,
     offset = 0;
   function _delay() {
-    //函数节流
+    //函数截流
     clearTimeout(delay);
     delay = setTimeout(() => {
       _loadImg();
