@@ -415,6 +415,23 @@ function render() {
 }
 ```
 
+### 5）注意事项
+
+- 当 useEffect 中使用函数时，需要将函数作为依赖性，同时被使用的函数应该使用 useCallback 声明，如果被使用的函数中用到了其他变量或函数，也应该加入依赖项
+
+- useEffect 和 useCallback 依赖项需要加入所有被用到的变量或函数
+
+```js
+const getNum = useCallback(() => {
+  console.log('num', num);
+  linkPage();
+}, [num, linkPage]);
+
+useEffect(() => {
+  getNum();
+}, [getNum]);
+```
+
 ## 9.useContext()
 
 - 赋值相同的值，`不会`触发 render
