@@ -795,6 +795,10 @@ const umiConfig = {
             title: '13.常用命令总结',
             path: '/engineering/git/summary',
           },
+          {
+            title: '14.SSH keys',
+            path: '/engineering/git/ssh',
+          },
         ],
       },
     ],
