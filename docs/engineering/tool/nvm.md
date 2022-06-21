@@ -8,8 +8,46 @@ toc: menu
 
 ## 1.安装 nvm
 
-```bahs
+### 1）首先打开终端，进入当前用户的 home 目录中
+
+```bash
+cd ~/
+```
+
+### 2）然后使用 ls -a 显示这个目录下的所有文件（夹）（包含隐藏文件及文件夹），查看有没有 .bash_profile 这个文件
+
+```bash
+ls -a
+```
+
+如果没有，则新建一个
+
+```bash
+touch ~/.bash_profile
+```
+
+### 3）终端中执行以下命令安装 nvm
+
+```bash
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
+```
+
+### 4）然后等待，安装完成之后，如果出现下面红框内容，表示缺少环境配置
+
+![image](images/engineering/8.png)
+
+### 5）在 .bash_profile 同一目录下创建一个 .zshrc 文件
+
+```bash
+touch .zshrc
+```
+
+### 6）打开文件添加下面两句话，重启终端即可
+
+```bash
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 ```
 
 ## 2.查看本地安装的所有 node 版本
