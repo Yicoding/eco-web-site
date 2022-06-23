@@ -598,6 +598,10 @@ const umiConfig = {
             title: '3.服务器迁移',
             path: '/base/node/transfer',
           },
+          {
+            title: '4.mysql',
+            path: '/base/node/mysql',
+          },
         ],
       },
     ],
