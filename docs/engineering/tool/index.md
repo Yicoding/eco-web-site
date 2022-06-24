@@ -301,3 +301,25 @@ npm ls
   - npm version minor : 升级次版本号
 
   - npm version major : 升级主版本号
+
+## 5.npm 发布规范
+
+### 1）发布正式版本
+
+```bash
+npm publish
+# or
+npm publish --tag next
+```
+
+### 2）发布 beta 版本
+
+```bash
+npm publish --tag beta
+```
+
+### 3）发布 alpha 版本
+
+```bash
+npm publish --tag alpha
+```
