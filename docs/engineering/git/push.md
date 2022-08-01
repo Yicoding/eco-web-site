@@ -64,3 +64,9 @@ git push
 ### 4）git push --follow-tags
 
 - 把改动和 tag 同时推到远程分支
+
+### 5）push 的时候第一次可能遇到报错，报错的原因是本地的文件和仓库里的没有合并这个时候你可以这样
+
+```bash
+git pull origin master --allow-unrelated-histories
+```
