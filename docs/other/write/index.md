@@ -83,7 +83,7 @@ function _instanceof(left, right) {
   while (true) {
     if (proto === null) return false;
     if (proto === right.prototype) return true;
-    proto = Object.getPrototypeOf(left);
+    proto = Object.getPrototypeOf(proto);
   }
 }
 ```
