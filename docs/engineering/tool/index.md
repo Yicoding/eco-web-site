@@ -323,3 +323,61 @@ npm publish --tag beta
 ```bash
 npm publish --tag alpha
 ```
+
+## 6.CI/CD 中需要登录 npm 账号
+
+### 1）node 执行 shell
+
+```js
+const shell = requier('shelljs');
+
+function npmlogin() {
+  return new Promise((resolve) => {
+    var username = 'my_username';
+    var password = 'my_password';
+    var email = 'my_email';
+    var inputArray = [userName + '\n', password + '\n', email + '\n'];
+
+    var child = shell.exec('npm login', { async: true });
+
+    child.stdout.on('data', (chunk) => {
+      try {
+        // shell.echo(byteToString(chunk));
+        var cmd = inputArray.shift();
+        if (cmd) {
+          shell.echo('input ' + cmd);
+          child.stdin.write(cmd);
+        } else {
+          child.stdin.end();
+          resolve();
+        }
+      } catch (err) {
+        console.log('err', err);
+        process.exit(1);
+      }
+    });
+  });
+}
+await npmlogin();
+```
+
+### 2）.npmrc 文件（推荐）
+
+- 本地执行 `npm login` 后，会生成 `~/.npmrc` 文件
+
+- npm publish 目录下添加 `.npmrc` 文件
+
+```
+@xmly:registry=http://xxx.com
+@xmc:registry=http://xxx.com
+registry=http://xxx.com/
+email=public-u@xxx.com
+//registry.npmjs.org/:_authToken=xxxxxxxx
+//localhost:4873/:_authToken="xxxxxxxx"
+//xxx.com/:username=public-u
+//xxx.com/:_password=xxxxx
+```
+
+## 7.npm 账号管理工具 npmsu
+
+- [文档](https://www.npmjs.com/package/npmsu)
