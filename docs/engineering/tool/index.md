@@ -381,3 +381,26 @@ email=public-u@xxx.com
 ## 7.npm 账号管理工具 npmsu
 
 - [文档](https://www.npmjs.com/package/npmsu)
+
+## 8.解决 npm 版本依赖
+
+- `npm/yarn` 中使用 `resolutions` 字段解决
+
+```json
+"resolutions": {
+  "axios": "1.0.2"
+}
+```
+
+- `pnpm` 中使用 `overrides` 字段解决
+
+```json
+"pnpm": {
+  "overrides": {
+    "foo": "^1.0.0",
+    "quux": "npm:@myorg/quux@^1.0.0",
+    "bar@^2.1.0": "3.0.0",
+    "qar@1>zoo": "2"
+  }
+}
+```
