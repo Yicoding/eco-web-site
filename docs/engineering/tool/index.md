@@ -404,3 +404,109 @@ email=public-u@xxx.com
   }
 }
 ```
+
+## 9.npm 脚本通配符
+
+- 由于 npm 脚本就是 shell 脚本，因此可以使用 shell 通配符
+
+```bash
+"lint": "jshint *.js"
+"lint": "jshint **/*.js"
+```
+
+- 上面代码中，`*` 表示任意文件名，`**` 表示任意一层子目录。如果要将通配符传入原始命令，防止被 shell 转义，要将 `*` 号转义
+
+## 10.传参
+
+- 向 npm 脚本传入参数，要使用 `--` 标明
+
+## 11.执行顺序
+
+- 如果 npm 脚本里面需要执行多个任务，那么需要明确它们的执行顺序。如果是并行执行（即同时的平行执行），可以使用 & 符号。
+
+```bash
+npm run script1.js & npm run script2.js
+```
+
+- 如果是继发执行（即只有前一个任务成功，才能执行下一个任务），可以使用 && 符号。
+
+```bash
+npm run script1.js && npm run script2.js
+```
+
+## 12.变量
+
+- npm 脚本有一个非常强大的功能，就是可以使用 npm 的内部变量
+
+- 首先，通过 `npm_package_` 前缀，npm 脚本可以拿到 package.json 里面的字段。比如，下面是一个 package.json
+
+```json
+{
+  "name": "foo",
+  "version": "1.2.5",
+  "scripts": {
+    "view": "node view.js"
+  }
+}
+```
+
+那么，变量 `npm_package_name` 返回 foo, 变量 `npm_package_version` 返回 1.2.5
+
+```js
+// view.js
+console.log(process.env.npm_package_name); // foo
+console.log(process.env.npm_package_version); // 1.2.5
+```
+
+- 上面代码中，我们通过环境变量 process.env 对象，拿到 package.json 的字段值。如果是 bash 脚本，可以用 `$npm_package_name` 和 `$npm_package_version` 取到这两个值
+
+- npm*package* 前缀也支持嵌套的 package.json 字段
+
+```json
+"repository": {
+  "type": "git",
+  "url": "xxx"
+ },
+ "scripts": {
+  "view": "echo $npm_package_repository_type"
+ }
+```
+
+- 上面代码中，repository 字段的 type 属性，可以通过 `npm_package_repository_type` 取到
+
+- npm 脚本还可以通过 npm*config* 前缀，拿到 npm 的配置变量，即 npm config get xxx 命令返回的值。比如，当前模块的发行标签，可以通过 npm_config_tag 取到。（注意，package.json 里面的 config 对象，可以被环境变量覆盖）
+
+```json
+"view": "echo $npm_config_tag",
+```
+
+## 13.常用脚本示例
+
+```bash
+// 删除目录
+"clean": "rimraf dist/*",
+
+// 本地搭建一个 HTTP 服务
+"serve": "http-server -p 9090 dist/",
+
+// 打开浏览器
+"open:dev": "opener http://localhost:9090",
+
+// 实时刷新
+ "livereload": "live-reload --port 9091 dist/",
+
+// 构建 HTML 文件
+"build:html": "jade index.jade > dist/index.html",
+
+// 只要 CSS 文件有变动，就重新执行构建
+"watch:css": "watch "npm run build:css" assets/styles/",
+
+// 只要 HTML 文件有变动，就重新执行构建
+"watch:html": "watch "npm run build:html" assets/html",
+
+// 部署到 Amazon S3
+"deploy:prod": "s3-cli sync ./dist/ s3://example-com/prod-site/",
+
+// 构建 favicon
+"build:favicon": "node scripts/favicon.js",
+```
