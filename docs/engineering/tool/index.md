@@ -510,3 +510,20 @@ console.log(process.env.npm_package_version); // 1.2.5
 // 构建 favicon
 "build:favicon": "node scripts/favicon.js",
 ```
+
+## 14.npm 包名规范
+
+- 不能以 `数字-` 开头
+
+- 可以使用 `validate-npm-package-name` 验证
+
+```js
+var validate = require('validate-npm-package-name');
+
+validate('some-package');
+validate('example.com');
+validate('under_score');
+validate('123numeric');
+validate('@npm/thingy');
+validate('@jane/foo.js');
+```

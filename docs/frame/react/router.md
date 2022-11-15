@@ -564,6 +564,8 @@ ReactDOM.render(
 
 ## 17.使用 react-router-dom v6 版
 
+### 1）
+
 ```js
 import React from 'react';
 import { HashRouter, Route, Routes } from 'react-router-dom';
