@@ -1581,6 +1581,106 @@ Promise.any([d, d, d, d, e])
   .catch((err) => console.log('err', err)); // err AggregateError: All promises were rejected
 ```
 
+**4.race 控制请求并发数**
+
+```js
+const request = (i) => {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      resolve(i);
+    }, 1000);
+  });
+};
+const asyncPool = async (tasks, max) => {
+  const pool = [];
+  for (let i = 0; i < tasks.length; i++) {
+    const task = request(i);
+    pool.push(task);
+    task.then((res) => {
+      console.log(res, `当前并发数为${pool.length}`);
+      pool.splice(pool.indexOf(task), 1);
+    });
+    if (pool.length === max) {
+      await Promise.race(pool);
+    }
+  }
+};
+const tasks = new Array(10).fill(0).map((v, i) => i);
+asyncPool(tasks, 3);
+```
+
+- 实际案例
+
+```js
+const request = require('request');
+const data = require('./public/data'); // 源数据
+
+/**
+ * 获取图片大小
+ */
+function getImageSize(url) {
+  return new Promise((resolve, reject) => {
+    request(
+      {
+        url,
+        encoding: 'binary',
+        timeout,
+      },
+      function (err, res) {
+        if (err) {
+          // 请求失败的图片
+          console.log('err', err);
+          return reject({ url, code: -1 });
+        }
+        const size = res.headers['content-length'];
+        resolve({ url, size, code: 0 });
+      },
+    );
+  });
+}
+/**
+ * 并发控制请求
+ */
+const asyncPool = (max) => {
+  const sizeList = []; // 图片列表，包含图片大小
+  const failRequestList = []; // 请求失败的图片列表
+  console.log('开始获取图片大小...');
+  const startTime = +new Date();
+  return new Promise(async (resolve) => {
+    const pool = [];
+    for (let i = 0; i < data.length; i++) {
+      const task = getImageSize(data[i]);
+      pool.push(task);
+      task
+        .then((res) => {
+          console.log('task success', res, `当前并发数为${pool.length}`);
+          sizeList.push(res);
+        })
+        .catch((err) => {
+          console.log('task err', err, `当前并发数为${pool.length}`);
+          if (err?.url) {
+            failRequestList.push(err.url);
+          }
+        })
+        .finally(() => {
+          if (pool.length === 1) {
+            const endTime = +new Date();
+            console.log(
+              `获取图片大小结束，共用时：${calcUseTime(startTime, endTime)} s`,
+            );
+            resolve({ sizeList, failRequestList });
+          }
+          pool.splice(pool.indexOf(task), 1);
+        });
+      // 到达最大请求数，等待队列执行
+      if (pool.length === max) {
+        await Promise.race(pool);
+      }
+    }
+  });
+};
+```
+
 ## 18.Generator 生成器
 
 - 定义：`封装多个内部状态的异步编程解决方案`
