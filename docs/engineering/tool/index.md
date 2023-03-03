@@ -527,3 +527,43 @@ validate('123numeric');
 validate('@npm/thingy');
 validate('@jane/foo.js');
 ```
+
+## 15.给 node_modules 中的某个 npm 包单独打补丁
+
+> 问题描述：
+>
+> > 当你依赖的某个 npm 包有问题，但是包作者来不及或无法进行修复时，可以自行修改 node_modules 中的代码，并打上补丁，将补丁跟随代码一起上传即可快速解决。后续等待包作者修复问题后，可再升级对应的版本。这个是一种临时性、快速的解决方案
+
+### 解决方案
+
+[patch-package](https://github.com/ds300/patch-package)
+
+1.先修改 node_module 中的代码
+
+2.开始打补丁
+
+```bash
+npx patch-package some-package
+```
+
+3.添加 scripts
+
+```json
+"scripts": {
++  "postinstall": "patch-package"
+}
+```
+
+4.安装依赖
+
+- npm
+
+```bash
+npm i patch-package
+```
+
+- yarn v1
+
+```bash
+yarn add patch-package postinstall-postinstall
+```
