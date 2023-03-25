@@ -211,6 +211,10 @@ const umiConfig = {
           path: '/other/problem',
         },
         {
+          title: '难点/亮点',
+          path: '/other/light-point',
+        },
+        {
           title: '项目开发模式',
           path: '/other/carry',
         },
@@ -1041,6 +1045,7 @@ const umiConfig = {
     /***************** nav: 其他 *******************/
     '/other/interview': [{ children: ['/other/interview'] }],
     '/other/problem': [{ children: ['/other/problem'] }],
+    '/other/light-point': [{ children: ['/other/light-point'] }],
     '/other/pay': [{ children: ['/other/pay'] }],
     '/other/tools': [{ children: ['/other/tools'] }],
     '/other/image': [{ children: ['/other/image'] }],
