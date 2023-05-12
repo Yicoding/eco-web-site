@@ -119,6 +119,14 @@ const umiConfig = {
           title: 'CI/CD',
           path: '/engineering/ci',
         },
+        {
+          title: '脚手架',
+          path: '/engineering/cli',
+        },
+        {
+          title: 'Mock数据方案',
+          path: '/engineering/mock',
+        },
       ],
     },
     {
@@ -899,6 +907,34 @@ const umiConfig = {
           {
             title: 'github Actions',
             path: '/engineering/ci/gitactions',
+          },
+        ],
+      },
+    ],
+    '/engineering/cli': [
+      {
+        children: [
+          {
+            title: '基础',
+            path: '/engineering/cli',
+          },
+          {
+            title: '从0到1',
+            path: '/engineering/cli/create',
+          },
+        ],
+      },
+    ],
+    '/engineering/mock': [
+      {
+        children: [
+          {
+            title: '文件获取',
+            path: '/engineering/mock',
+          },
+          {
+            title: '从0到1',
+            path: '/engineering/mock/create',
           },
         ],
       },

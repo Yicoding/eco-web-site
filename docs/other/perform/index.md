@@ -177,7 +177,7 @@ img.src = img.dataset.src;
 function _isShow(el) {
   let coords = el.getBoundingClientRect();
   return (
-    (coords.left >= 0 && coords.left >= 0 && coords.top) <=
+    (coords.top >= 0 && coords.left >= 0 && coords.top) <=
     (document.documentElement.clientHeight || window.innerHeight) +
       parseInt(offset)
   );
@@ -213,7 +213,7 @@ function _isShow(el) {
     //判断img是否出现在可视窗口
     let coords = el.getBoundingClientRect();
     return (
-      (coords.left >= 0 && coords.left >= 0 && coords.top) <=
+      (coords.top >= 0 && coords.left >= 0 && coords.top) <=
       (document.documentElement.clientHeight || window.innerHeight) +
         parseInt(offset)
     );
