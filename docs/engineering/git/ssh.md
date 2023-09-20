@@ -36,13 +36,26 @@ touch ~/.ssh/config
 
 ```
 Host gitlab
+	HostkeyAlgorithms +ssh-rsa
+	PubkeyAcceptedAlgorithms +ssh-rsa
 	HostName 公司的代码仓库服务器地址(gitlab.xxx.com)
 	User gitlab用户名
 	IdentityFile ~/.ssh/id_rsa.gitlab
 Host github.com
+	HostkeyAlgorithms +ssh-rsa
+	PubkeyAcceptedAlgorithms +ssh-rsa
 	HostName github.com
 	User github用户名
 	IdentityFile ~/.ssh/id_rsa.github
+```
+
+- `macOS` 升 `Ventura` 后无法使用 `git ssh`, `openssh` 不再支持 `ssh-rsa` 算法
+
+- 解决办法：添加
+
+```
+HostkeyAlgorithms +ssh-rsa
+PubkeyAcceptedAlgorithms +ssh-rsa
 ```
 
 ## 3.添加 SSH 公钥
