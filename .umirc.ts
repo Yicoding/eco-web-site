@@ -526,6 +526,10 @@ const umiConfig = {
             title: '11.Session、Cookie、Token',
             path: '/base/internet/cookie',
           },
+          {
+            title: '12.其他知识',
+            path: '/base/internet/other',
+          },
         ],
       },
     ],
