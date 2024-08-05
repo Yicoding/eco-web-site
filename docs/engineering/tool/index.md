@@ -567,3 +567,11 @@ npm i patch-package
 ```bash
 yarn add patch-package postinstall-postinstall
 ```
+
+## 16.下载 node18 超时
+
+项目根目录添加 `.npmrc` 文件
+
+```bash
+export NODEJS_ORG_MIRROR="https://cdn.npmmirror.com/binaries/node"
+```
