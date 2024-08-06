@@ -858,6 +858,10 @@ const umiConfig = {
             title: '8.eslint 和 prettier',
             path: '/engineering/tool/eslint',
           },
+          {
+            title: '9.常用配置文件',
+            path: '/engineering/tool/file',
+          },
         ],
       },
     ],
