@@ -675,7 +675,7 @@ const umiConfig = {
       {
         children: [
           {
-            title: '1.vue基础',
+            title: '1.vue 基础',
             path: '/frame/vue',
           },
           {
