@@ -78,3 +78,22 @@ PubkeyAcceptedAlgorithms +ssh-rsa
 ssh -T git@github.com
 ssh -T git@gitlab.com
 ```
+
+## 5.多 Git 账户的本地配置与使用
+
+有时候不同的 Git 项目可能需要使用不同的账户。在本地的 Git 仓库中可以通过设置 `user.name` 和 `user.email` 来指定使用的账户。
+
+为单个项目设置特定的账户：
+进入你的仓库根目录，运行以下命令：
+
+```bash
+git config user.name "Your Name"
+git config user.email "your_email@example.com"
+```
+
+检查配置是否生效：
+
+```bash
+git config user.name
+git config user.email
+```
