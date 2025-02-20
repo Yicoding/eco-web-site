@@ -6,25 +6,7 @@
     "start": "dumi dev",
     "docs": "dumi build",
     "prettier": "prettier --write \"**/*.{js,jsx,tsx,ts,less,md,json}\"",
-    "commit": "cz",
     "push": "git push && git push gitlab"
-  },
-  "gitHooks": {
-    "pre-commit": "lint-staged",
-    "commit-msg": "npx --no -- commitlint --edit \"$1\""
-  },
-  "config": {
-    "commitizen": {
-      "path": "./node_modules/cz-conventional-changelog"
-    }
-  },
-  "lint-staged": {
-    "*.{js,jsx,less,md,json}": [
-      "prettier --write"
-    ],
-    "*.ts?(x)": [
-      "prettier --parser=typescript --write"
-    ]
   },
   "devDependencies": {
     "@commitlint/cli": "^15.0.0",
@@ -32,7 +14,6 @@
     "cz-conventional-changelog": "^3.3.0",
     "dumi": "^1.0.13",
     "lint-staged": "^10.0.7",
-    "prettier": "^2.2.1",
-    "yorkie": "^2.0.0"
+    "prettier": "^2.2.1"
   }
 }
