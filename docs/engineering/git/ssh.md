@@ -49,7 +49,9 @@ Host github.com
 	IdentityFile ~/.ssh/id_rsa.github
 ```
 
-注意：`公司的代码仓库服务器地址(gitlab.xxx.com)` 这个地方需要替换成 `gitlab.xxx.com`
+注意：
+
+- `公司的代码仓库服务器地址(gitlab.xxx.com)` 这个地方需要替换成 `gitlab.xxx.com`
 
 - `macOS` 升 `Ventura` 后无法使用 `git ssh`, `openssh` 不再支持 `ssh-rsa` 算法
 
