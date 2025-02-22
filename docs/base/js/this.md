@@ -8,7 +8,7 @@ toc: menu
 
 参考资料：[MDN 中 this 解析](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/this)
 
-this 的指向，是在调用函数时根据执行上下文所动态确定的
+this 的指向，是在调用函数时根据执行上下文所动态确定的，不是在定义的时候确定的（跟闭包自由变量相反）
 
 - this 就是函数运行时所在的环境对象，即上下文对象
 
@@ -85,6 +85,8 @@ console.log(o.a, o.f(), o.g(), o.h()); // 37, 37(this指向o), azerty, azerty(bi
 ## 5.箭头函数
 
 箭头函数中，根据外层上下文绑定的 this 决定 this 指向
+
+永远取它上级作用域的 this，它自己本身不会决定 this 的值
 
 ```js
 var test = {
