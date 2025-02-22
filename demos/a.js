@@ -55,3 +55,5 @@ class EventEmiter {
     return this;
   }
 }
+
+// 测试
