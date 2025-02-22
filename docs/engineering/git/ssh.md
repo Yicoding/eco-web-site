@@ -39,13 +39,13 @@ Host gitlab
 	HostkeyAlgorithms +ssh-rsa
 	PubkeyAcceptedAlgorithms +ssh-rsa
 	HostName 公司的代码仓库服务器地址(gitlab.xxx.com)
-	User gitlab用户名
+	User git
 	IdentityFile ~/.ssh/id_rsa.gitlab
 Host github.com
 	HostkeyAlgorithms +ssh-rsa
 	PubkeyAcceptedAlgorithms +ssh-rsa
 	HostName github.com
-	User github用户名
+	User git
 	IdentityFile ~/.ssh/id_rsa.github
 ```
 
