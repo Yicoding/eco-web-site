@@ -1145,13 +1145,13 @@ const umiConfig = {
       {
         children: [
           {
-            title: '面试题',
+            title: '面经一',
             path: '/other/face',
           },
-          // {
-          //   title: '1.酷家乐',
-          //   path: '/other/face/kjl',
-          // },
+          {
+            title: '面经二',
+            path: '/other/face/kjl',
+          },
         ],
       },
     ],

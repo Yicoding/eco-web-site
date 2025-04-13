@@ -4,6 +4,7 @@
   "license": "MIT",
   "scripts": {
     "start": "dumi dev",
+    "dev": "dumi dev",
     "docs": "dumi build",
     "prettier": "prettier --write \"**/*.{js,jsx,tsx,ts,less,md,json}\"",
     "push": "git push && git push gitlab"

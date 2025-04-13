@@ -2,11 +2,9 @@
 toc: menu
 ---
 
-# 酷家乐
+# 面经二
 
-## 1.一面
-
-### 1）变量提升
+## 1）变量提升
 
 - 严格模式下，以下输出的结果
 
@@ -34,7 +32,7 @@ foo();
 console.log(v1); // 100
 ```
 
-### 2）变量提升优缺点
+## 2）变量提升优缺点
 
 - 优点：
 
@@ -43,7 +41,7 @@ console.log(v1); // 100
 
 - 缺点：难以理解，相比其他语言来说，不够规范
 
-### 3）ts 和 js 的不同
+## 3）ts 和 js 的不同
 
 - js 语言本身的特性，无法适应大型项目，由于 js 是弱语言类型，声明的变量可以随时进行类型替换，同时 js 属于解释性语言，错误发生在执行时，前端大部分时间都在排错，占用了大量时间
 
@@ -51,11 +49,11 @@ console.log(v1); // 100
 
 - 通过 ts 提供的类型提示功能，减少沟通成本、代码的阅读成本
 
-### 4）ts 在 webpack 打包时的优化
+## 4）ts 在 webpack 打包时的优化
 
 - 使用 thread-loaders 多进程打包：use: ['thread-loader']
 
-### 5）用过哪些 webpack 插件
+## 5）用过哪些 webpack 插件
 
 - CopyWebpackPlugin：将单个文件或目录复制到生成目录
 
@@ -71,7 +69,7 @@ console.log(v1); // 100
 
 - imagemin-webpack-plugin：压缩图片
 
-### 6）webpack plugin 原理
+## 6）webpack plugin 原理
 
 - compiler 生命周期：
 
@@ -84,7 +82,7 @@ console.log(v1); // 100
 
 - 发布-订阅的事件机制,webpack 内部借助了 Tapable 第三方库实现了事件的绑定和触发
 
-### 7）react diff
+## 7）react diff
 
 - 1.分层对比
 
@@ -94,13 +92,13 @@ console.log(v1); // 100
 
 - 3.key 属性设置，可以尽可能重用同一层级内的节点
 
-### 8）react 设置了重复的 key
+## 8）react 设置了重复的 key
 
-### 9）react 合成事件和原生事件都注册，哪个有效
+## 9）react 合成事件和原生事件都注册，哪个有效
 
 - 都有效，原生事件要快于合成事件触发，不要一起设置
 
-### 10）原生事件中阻止冒泡，合成事件将不再触发
+## 10）原生事件中阻止冒泡，合成事件将不再触发
 
 ```js
 class Demo extends React.PureComponent {
@@ -123,7 +121,7 @@ class Demo extends React.PureComponent {
 }
 ```
 
-### 11）算法
+## 11）算法
 
 - 背包问题：递归加优化
 
