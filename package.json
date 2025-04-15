@@ -7,7 +7,7 @@
     "dev": "dumi dev",
     "docs": "dumi build",
     "prettier": "prettier --write \"**/*.{js,jsx,tsx,ts,less,md,json}\"",
-    "push": "git push && git push gitlab"
+    "push": "git push && git push jihulab"
   },
   "devDependencies": {
     "@commitlint/cli": "^15.0.0",
